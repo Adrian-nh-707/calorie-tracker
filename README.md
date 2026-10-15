@@ -13,5 +13,7 @@ Target audience is essentially anyone but more so those who want to track their 
 What is the scope of your project?
 Project aims to make a web app that lets users track their calorie intake and keep track of previous records
 
-Does this project have many individual features or one main feature with many subproblems? These are the 'epics' of your project.
+Does this project have many individual features or one main feature with many subproblems? These are the 'epics' of your project. What are the epics?
+
+Is the amount of work sufficient for five group members? A rough rule of thumb is that each group member should have one major feature.
 
