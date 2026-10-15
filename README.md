@@ -14,7 +14,7 @@ Target audience is essentially anyone but more so those who want to track their 
 Project aims to make a web app that lets users track their calorie intake and keep track of previous records
 
 ## 6. Does this project have many individual features or one main feature with many subproblems? These are the 'epics' of your project. What are the epics?
-The amount of work is sufficient for 5 members. The project will be divided into five major features, with each member responsible for the development of the feature: 
+The project will be divided into five major features (epics), with each member responsible for the development of the feature: 
 1. User Accounts & Personalization
 2. API integration
 3. Meal logging (Calculations)
