@@ -1,6 +1,4 @@
-# calorie-tracker
 # calorie-tracker (CMPT 276 — Group 19)
-
 
 ## Project Abstract
 Calorie Tracker is a web application that helps users track their daily calorie intake. Users can search for food, log meals, and keep records of previous days. 
