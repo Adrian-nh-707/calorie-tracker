@@ -22,4 +22,4 @@ The project will be divided into five major features (epics), with each member r
 5. Analytics (History & Daily/Weekly Charts)
 
 ## 7. Is the amount of work sufficient for five group members? A rough rule of thumb is that each group member should have one major feature.
-
+Yes, the amount of work is enough for five group members. The project is divded into five major features, which means each member takes resposibility for one feature. All the features have distinctive dev tasks, with group collaboration needed to connect the database/api and integrate the features as a whole, and test the app.
