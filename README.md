@@ -21,12 +21,6 @@ Target audience is university students, fitness enthusiasts, those who want a co
 The project aims to make a web app that lets users track and record their calorie intake through an API, view historical calorie intake. The app will take calorie info from an API and calculate totals based on servings. Users can also manually enter calorie information for foods that are not available in the API. The app will also provide personal calorie goals daily, with a dashboard showing the current calories and remaining intake, historical records with daily and weekly charts. It will recommend food that are based on the remaining daily calories left. There will be three user roles: regular users, trainers, and administrators.
 
 ## 6. Does this project have many individual features or one main feature with many subproblems? These are the 'epics' of your project. What are the epics?
-The project will be divided into five major features (epics), with each member responsible for the development of the feature: 
-1. User Management: Registration, authentication, roles, user profiles, nutrition goals
-2. Food Search and Meal Logging: Food API, searching foods, logging meals, portions, calorie calculations
-3. Dashboard and Analytics: Daily calorie totals, macros, progress tracking, nutrition history
-4. Smart Food Recommendations: Food suggestions based on remaining calories, protein, dietary preferences
-5. Meal Planning: Custom recipes, saved meals, weekly meal plans, shopping lists
 The project will be divided into five major features:
 
 ### 1. User Accounts & Personalization
