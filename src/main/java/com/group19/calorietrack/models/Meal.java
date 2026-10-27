@@ -1,40 +1,42 @@
+
 package com.group19.calorietrack.models;
+
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-// Represents a meal logged by a user
 @Entity
 public class Meal {
 
-    // Unique ID for each meal
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Meal information
     private String name;
+    private String mealType;
+    private LocalDate mealDate;
+
     private double calories;
     private double protein;
     private double carbs;
     private double fat;
 
-    // Empty constructor required by JPA
     public Meal() {
     }
 
-    // Constructor to create a meal
-    public Meal(String name, double calories, double protein, double carbs, double fat) {
+    public Meal(String name, String mealType, LocalDate mealDate,
+                double calories, double protein, double carbs, double fat) {
         this.name = name;
+        this.mealType = mealType;
+        this.mealDate = mealDate;
         this.calories = calories;
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -46,6 +48,22 @@ public class Meal {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getMealType() {
+        return mealType;
+    }
+
+    public void setMealType(String mealType) {
+        this.mealType = mealType;
+    }
+
+    public LocalDate getMealDate() {
+        return mealDate;
+    }
+
+    public void setMealDate(LocalDate mealDate) {
+        this.mealDate = mealDate;
     }
 
     public double getCalories() {

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Logger</title>
+    <link rel="stylesheet" th:href="@{/css/meals.css}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Meal Logger</h1>
+        <p>Track your daily meals and nutrition.</p>
+
+        <!-- Daily Nutrition -->
+        <section>
+            <h2>Daily Nutrition</h2>
+
+            <form th:action="@{/meals}" method="get">
+                <label for="date">Select Date</label>
+                <input type="date" id="date" name="date"
+                       th:value="${selectedDate}" required>
+                <button type="submit">View Date</button>
+            </form>
+
+            <div class="nutrition-summary">
+                <div class="nutrition-card">
+                    <h3>Calories</h3>
+                    <p><span th:text="${totalCalories} ?: 0">0</span> kcal</p>
+                </div>
+
+                <div class="nutrition-card">
+                    <h3>Protein</h3>
+                    <p><span th:text="${totalProtein} ?: 0">0</span> g</p>
+                </div>
+
+                <div class="nutrition-card">
+                    <h3>Carbs</h3>
+                    <p><span th:text="${totalCarbs} ?: 0">0</span> g</p>
+                </div>
+
+                <div class="nutrition-card">
+                    <h3>Fat</h3>
+                    <p><span th:text="${totalFat} ?: 0">0</span> g</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Meal -->
+        <section>
+            <h2>Add a Meal</h2>
+
+            <!-- Error Message -->
+            <p th:if="${error}"
+               th:text="${error}"
+               style="color: red; font-weight: bold;">
+            </p>
+
+            <!-- Success Message -->
+            <p th:if="${success}"
+               th:text="${success}"
+               style="color: green; font-weight: bold;">
+            </p>
+
+            <form th:action="@{/meals/add}" method="post">
+
+                <label for="mealDate">Meal Date</label>
+                <input type="date" id="mealDate" name="mealDate"
+                       th:value="${selectedDate}" required>
+
+                <label for="mealType">Meal Type</label>
+                <select id="mealType" name="mealType" required>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                </select>
+
+                <label for="name">Meal Name</label>
+                <input type="text" id="name" name="name"
+                       placeholder="e.g. Chicken Rice" required>
+
+                <div class="nutrition-inputs">
+                    <div>
+                        <label for="calories">Calories</label>
+                        <input type="number" id="calories" name="calories"
+                               min="0" step="any" required>
+                    </div>
+
+                    <div>
+                        <label for="protein">Protein (g)</label>
+                        <input type="number" id="protein" name="protein"
+                               min="0" step="any" required>
+                    </div>
+
+                    <div>
+                        <label for="carbs">Carbs (g)</label>
+                        <input type="number" id="carbs" name="carbs"
+                               min="0" step="any" required>
+                    </div>
+
+                    <div>
+                        <label for="fat">Fat (g)</label>
+                        <input type="number" id="fat" name="fat"
+                               min="0" step="any" required>
+                    </div>
+                </div>
+
+                <button type="submit">Add Meal</button>
+            </form>
+        </section>
+
+        <!-- Meal History -->
+        <section>
+            <h2>Meal History</h2>
+
+            <p>
+                Date:
+                <span th:text="${selectedDate}">2026-10-26</span>
+            </p>
+
+            <p th:if="${#lists.isEmpty(meals)}">
+                No meals logged for this date.
+            </p>
+
+            <div class="meal-card" th:each="meal : ${meals}">
+
+                <h3 th:text="${meal.mealType}">Breakfast</h3>
+
+                <h4 th:text="${meal.name}">Egg Sandwich</h4>
+
+                <p>
+                    Calories:
+                    <span th:text="${meal.calories}">320</span> kcal
+                </p>
+
+                <p>
+                    Protein: <span th:text="${meal.protein}">18</span>g |
+                    Carbs: <span th:text="${meal.carbs}">40</span>g |
+                    Fat: <span th:text="${meal.fat}">12</span>g
+                </p>
+
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>
