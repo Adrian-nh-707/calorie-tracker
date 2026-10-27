@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Tracker Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body>
+
+    <main class="dashboard">
+
+        <h1>My Calorie Dashboard</h1>
+        <p>Track your daily nutrition progress</p>
+
+        <section class="card">
+            <h2>Daily Calories</h2>
+
+            <p>
+                <strong th:text="${caloriesConsumed}">0</strong>
+                /
+                <span th:text="${calorieGoal}">0</span>
+                kcal
+            </p>
+            <p>
+                Remaining:
+                <strong th:text="${caloriesRemaining}">0</strong>
+                kcal
+            </p>
+
+            <progress th:value="${caloriesConsumed}"
+                      th:max="${calorieGoal}">
+            </progress>
+        </section>
+        <section class="card">
+            <h2>Macronutrients</h2>
+
+            <p>Protein: <span th:text="${protein}">0</span> g</p>
+            <p>Carbs: <span th:text="${carbs}">0</span> g</p>
+            <p>Fat: <span th:text="${fat}">0</span> g</p>
+        </section>
+        <section class="card">
+            <h2>Food Recommendations</h2>
+            <p>Personalized recommendations coming soon</p>
+        </section>
+    </main>
+</body>
+</html>
