@@ -17,6 +17,18 @@
 
         <section class="card">
             <h2>Daily Calories</h2>
+            <h3>Update Daily Calorie Goal</h3>
+            <form th:action="@{/dashboard/goal}" method="post">
+            <label for="calorieGoal">New calorie goal:</label>
+            <input type="number"
+            id="calorieGoal"
+            name="calorieGoal"
+            th:value="${calorieGoal}"
+            min="1"
+            max="10000"
+            required>
+        <button type="submit">Update Goal</button>
+        </form>
 
             <p>
                 <strong th:text="${caloriesConsumed}">0</strong>
