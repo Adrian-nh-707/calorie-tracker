@@ -53,13 +53,11 @@
         <section>
             <h2>Add a Meal</h2>
 
-            <!-- Error Message -->
             <p th:if="${error}"
                th:text="${error}"
                style="color: red; font-weight: bold;">
             </p>
 
-            <!-- Success Message -->
             <p th:if="${success}"
                th:text="${success}"
                style="color: green; font-weight: bold;">
@@ -142,6 +140,26 @@
                     Carbs: <span th:text="${meal.carbs}">40</span>g |
                     Fat: <span th:text="${meal.fat}">12</span>g
                 </p>
+
+                <!-- Edit and delete buttons -->
+                <div class="meal-actions">
+
+                    <a class="edit-meal-btn"
+                       th:href="@{/meals/edit/{id}(id=${meal.id})}">
+                        Edit
+                    </a>
+
+                    <form th:action="@{/meals/delete/{id}(id=${meal.id})}"
+                          method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this meal?');">
+
+                        <button class="delete-meal-btn" type="submit">
+                            Delete
+                        </button>
+
+                    </form>
+
+                </div>
 
             </div>
         </section>

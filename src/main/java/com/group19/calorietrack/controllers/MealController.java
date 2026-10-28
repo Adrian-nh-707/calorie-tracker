@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,20 +23,20 @@ public class MealController {
         this.mealRepository = mealRepository;
     }
 
-    // it show meals and daily nutrition
+    // Show meals and daily nutrition
     @GetMapping("/meals")
     public String showMeals(
             @RequestParam(required = false) String date,
             Model model) {
 
-        // Use today's date if no dates are selected
+        // Use today's date if none is selected
         if (date == null || date.isEmpty()) {
             date = LocalDate.now().toString();
         }
 
         LocalDate selectedDate = LocalDate.parse(date);
 
-        // Get all meals for the selected date
+        // Get meals for this date
         List<Meal> meals = mealRepository.findByMealDate(selectedDate);
 
         double totalCalories = 0;
@@ -43,7 +44,7 @@ public class MealController {
         double totalCarbs = 0;
         double totalFat = 0;
 
-        // Calculate daily nutrition totals
+        // Add up the calories and macros
         for (Meal meal : meals) {
             totalCalories += meal.getCalories();
             totalProtein += meal.getProtein();
@@ -51,7 +52,7 @@ public class MealController {
             totalFat += meal.getFat();
         }
 
-        // Send data to HTML
+        // Pass everything to the page
         model.addAttribute("selectedDate", date);
         model.addAttribute("meals", meals);
 
@@ -77,12 +78,16 @@ public class MealController {
 
         LocalDate date = LocalDate.parse(mealDate);
 
-        // Check for invalid input
+        // Check if the input is valid
         if (name.trim().isEmpty()
-                || calories < 0
-                || protein < 0
-                || carbs < 0
-                || fat < 0) {
+                || !Double.isFinite(calories) || calories < 0
+                || !Double.isFinite(protein) || protein < 0
+                || !Double.isFinite(carbs) || carbs < 0
+                || !Double.isFinite(fat) || fat < 0
+                || (!mealType.equals("Breakfast")
+                    && !mealType.equals("Lunch")
+                    && !mealType.equals("Dinner")
+                    && !mealType.equals("Snack"))) {
 
             redirectAttributes.addFlashAttribute(
                 "error",
@@ -92,8 +97,8 @@ public class MealController {
             return "redirect:/meals?date=" + mealDate;
         }
 
-        // Only allow one Breakfast, Lunch, or Dinner per day
-        // Snacks can be added multiple times
+        // Only one breakfast, lunch or dinner per day
+        // Snacks can be added more than once
         if (!mealType.equals("Snack")) {
 
             boolean alreadyExists =
@@ -114,7 +119,7 @@ public class MealController {
             }
         }
 
-        // Create a new meal
+        // Create and save the meal
         Meal meal = new Meal(
             name,
             mealType,
@@ -125,7 +130,6 @@ public class MealController {
             fat
         );
 
-        // Save meal to database
         mealRepository.save(meal);
 
         redirectAttributes.addFlashAttribute(
@@ -134,5 +138,149 @@ public class MealController {
         );
 
         return "redirect:/meals?date=" + mealDate;
+    }
+
+    // Open the edit page
+    @GetMapping("/meals/edit/{id}")
+    public String showEditMeal(
+            @PathVariable Long id,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        Meal meal = mealRepository.findById(id).orElse(null);
+
+        // Make sure the meal exists
+        if (meal == null) {
+
+            redirectAttributes.addFlashAttribute(
+                "error",
+                "Meal not found."
+            );
+
+            return "redirect:/meals";
+        }
+
+        model.addAttribute("meal", meal);
+
+        return "edit-meal";
+    }
+
+    // Save the edited meal
+    @PostMapping("/meals/update/{id}")
+    public String updateMeal(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String mealType,
+            @RequestParam String mealDate,
+            @RequestParam double calories,
+            @RequestParam double protein,
+            @RequestParam double carbs,
+            @RequestParam double fat,
+            RedirectAttributes redirectAttributes) {
+
+        // Find the meal we want to edit
+        Meal meal = mealRepository.findById(id).orElse(null);
+
+        if (meal == null) {
+
+            redirectAttributes.addFlashAttribute(
+                "error",
+                "Meal not found."
+            );
+
+            return "redirect:/meals";
+        }
+
+        LocalDate date = LocalDate.parse(mealDate);
+
+        // Check the new values
+        if (name.trim().isEmpty()
+                || !Double.isFinite(calories) || calories < 0
+                || !Double.isFinite(protein) || protein < 0
+                || !Double.isFinite(carbs) || carbs < 0
+                || !Double.isFinite(fat) || fat < 0
+                || (!mealType.equals("Breakfast")
+                    && !mealType.equals("Lunch")
+                    && !mealType.equals("Dinner")
+                    && !mealType.equals("Snack"))) {
+
+            redirectAttributes.addFlashAttribute(
+                "error",
+                "Please enter valid meal information."
+            );
+
+            return "redirect:/meals/edit/" + id;
+        }
+
+        // Check if another meal already uses this type
+        // Don't count the meal we're editing
+        if (!mealType.equals("Snack")) {
+
+            boolean alreadyExists =
+                    mealRepository.existsByMealDateAndMealTypeAndIdNot(
+                        date,
+                        mealType,
+                        id
+                    );
+
+            if (alreadyExists) {
+
+                redirectAttributes.addFlashAttribute(
+                    "error",
+                    mealType + " already exists on this date."
+                );
+
+                return "redirect:/meals/edit/" + id;
+            }
+        }
+
+        // Update the old meal with the new values
+        meal.setName(name);
+        meal.setMealType(mealType);
+        meal.setMealDate(date);
+        meal.setCalories(calories);
+        meal.setProtein(protein);
+        meal.setCarbs(carbs);
+        meal.setFat(fat);
+
+        mealRepository.save(meal);
+
+        redirectAttributes.addFlashAttribute(
+            "success",
+            "Meal updated successfully!"
+        );
+
+        return "redirect:/meals?date=" + mealDate;
+    }
+
+    // Delete a meal
+    @PostMapping("/meals/delete/{id}")
+    public String deleteMeal(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        Meal meal = mealRepository.findById(id).orElse(null);
+
+        if (meal == null) {
+
+            redirectAttributes.addFlashAttribute(
+                "error",
+                "Meal not found."
+            );
+
+            return "redirect:/meals";
+        }
+
+        // Keep the date so we can go back to it
+        String date = meal.getMealDate().toString();
+
+        mealRepository.delete(meal);
+
+        redirectAttributes.addFlashAttribute(
+            "success",
+            "Meal deleted successfully!"
+        );
+
+        return "redirect:/meals?date=" + date;
     }
 }

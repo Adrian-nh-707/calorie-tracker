@@ -1,4 +1,3 @@
-
 package com.group19.calorietrack.models;
 
 import java.time.LocalDate;
