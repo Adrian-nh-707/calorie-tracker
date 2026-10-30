@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -18,17 +19,20 @@
         <section class="card">
             <h2>Daily Calories</h2>
             <h3>Update Daily Calorie Goal</h3>
+
             <form th:action="@{/dashboard/goal}" method="post">
-            <label for="calorieGoal">New calorie goal:</label>
-            <input type="number"
-            id="calorieGoal"
-            name="calorieGoal"
-            th:value="${calorieGoal}"
-            min="1"
-            max="10000"
-            required>
-        <button type="submit">Update Goal</button>
-        </form>
+                <label for="calorieGoal">New calorie goal:</label>
+
+                <input type="number"
+                       id="calorieGoal"
+                       name="calorieGoal"
+                       th:value="${calorieGoal}"
+                       min="1"
+                       max="10000"
+                       required>
+
+                <button type="submit">Update Goal</button>
+            </form>
 
             <p>
                 <strong th:text="${caloriesConsumed}">0</strong>
@@ -36,6 +40,7 @@
                 <span th:text="${calorieGoal}">0</span>
                 kcal
             </p>
+
             <p>
                 Remaining:
                 <strong th:text="${caloriesRemaining}">0</strong>
@@ -46,6 +51,7 @@
                       th:max="${calorieGoal}">
             </progress>
         </section>
+
         <section class="card">
             <h2>Macronutrients</h2>
 
@@ -53,10 +59,27 @@
             <p>Carbs: <span th:text="${carbs}">0</span> g</p>
             <p>Fat: <span th:text="${fat}">0</span> g</p>
         </section>
+
         <section class="card">
             <h2>Food Recommendations</h2>
-            <p>Personalized recommendations coming soon</p>
+
+            <p>Suggested foods based on your remaining calories and protein.</p>
+
+            <p th:if="${#lists.isEmpty(recommendations)}">
+                No foods fit your remaining calorie goal.
+            </p>
+
+            <ul th:unless="${#lists.isEmpty(recommendations)}">
+                <li th:each="food : ${recommendations}">
+                    <strong th:text="${food.name}">Food Name</strong>
+                    -
+                    <span th:text="${food.calories}">0</span> kcal
+                    -
+                    <span th:text="${food.protein}">0</span> g protein
+                </li>
+            </ul>
         </section>
+
     </main>
 </body>
 </html>
