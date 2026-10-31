@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Calorie Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 4.4%;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #111;
+        }
+
+        h1 {
+            margin: 0 0 24px;
+            color: #2e8b57;
+            font-size: 44px;
+        }
+
+        .subtitle {
+            margin-bottom: 26px;
+            font-size: 22px;
+        }
+
+        .card {
+            margin-bottom: 26px;
+            padding: 32px 34px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #00000012;
+        }
+
+        .card h2 {
+            margin: 0 0 24px;
+            font-size: 32px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .stat h3 {
+            margin: 0 0 16px;
+            font-size: 19px;
+        }
+
+        .stat-value {
+            margin: 0;
+            color: #2e8b57;
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .description {
+            color: #555;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .table-placeholder {
+            padding: 22px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #555;
+            font-size: 17px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            .card h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Admin Dashboard</h1>
+    <p class="subtitle">Manage users and trainer assignments</p>
+
+    <section class="card">
+        <h2>Overview</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <h3>Total Users</h3>
+                <p class="stat-value"
+                   th:text="${totalUsers != null ? totalUsers : '—'}">—</p>
+            </div>
+
+            <div class="stat">
+                <h3>Total Trainers</h3>
+                <p class="stat-value"
+                   th:text="${totalTrainers != null ? totalTrainers : '—'}">—</p>
+            </div>
+
+            <div class="stat">
+                <h3>Unassigned Users</h3>
+                <p class="stat-value"
+                   th:text="${unassignedUsers != null ? unassignedUsers : '—'}">—</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>User Management</h2>
+        <p class="description">
+            View and manage registered accounts and their assigned roles.
+        </p>
+
+        <div class="table-placeholder">
+            User accounts will appear here once connected to the application database.
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Trainer Assignments</h2>
+        <p class="description">
+            Manage which users are assigned to each trainer.
+        </p>
+
+        <div class="table-placeholder">
+            Trainer assignments will appear here once user management is integrated.
+        </div>
+    </section>
+</body>
+</html>
