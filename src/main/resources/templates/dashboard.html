@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Tracker Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+</head>
+
+<body>
+
+    <main class="dashboard">
+
+        <nav class="app-nav" aria-label="Main navigation">
+            <a class="app-brand" th:href="@{/dashboard}">
+                Calorie Tracker
+            </a>
+
+            <div class="app-nav-links">
+                <a class="nav-link active"
+                   th:href="@{/dashboard}"
+                   aria-current="page">
+                    Dashboard
+                </a>
+
+                <a class="nav-link" th:href="@{/meals}">
+                    Meal Logger
+                </a>
+            </div>
+        </nav>
+
+        <div class="page-header">
+            <div>
+                <h1>My Calorie Dashboard</h1>
+                <p>Track your daily nutrition progress</p>
+            </div>
+
+            <a class="primary-link" th:href="@{/meals}">
+                + Log Food
+            </a>
+        </div>
+
+        <section class="card">
+            <div class="section-header">
+                <h2>Daily Calories</h2>
+
+                <span class="date-label" th:text="${selectedDate}">
+                    2026-10-31
+                </span>
+            </div>
+
+            <p class="summary-label">Calories consumed today</p>
+
+            <p class="calorie-summary">
+                <strong th:text="${#numbers.formatDecimal(caloriesConsumed, 1, 1)}">
+                    0.0
+                </strong>
+
+                <span>
+                    /
+                    <span th:text="${calorieGoal}">2500</span>
+                    kcal
+                </span>
+            </p>
+
+            <progress th:value="${caloriesConsumed > calorieGoal ? calorieGoal : caloriesConsumed}"
+                      th:max="${calorieGoal}"
+                      aria-label="Daily calorie goal progress">
+            </progress>
+
+            <p class="remaining-text" th:if="${caloriesRemaining > 0}">
+                <strong th:text="${#numbers.formatDecimal(caloriesRemaining, 1, 1)}">
+                    0.0
+                </strong>
+                kcal remaining
+            </p>
+
+            <p class="warning-text" th:unless="${caloriesRemaining > 0}">
+                You have reached or exceeded your daily calorie goal.
+            </p>
+
+            <p class="helper-text">
+                Meals logged today:
+                <strong th:text="${mealCount}">0</strong>
+            </p>
+
+            <div class="empty-state" th:if="${noMeals}">
+                You haven't logged any meals today.
+                <a th:href="@{/meals}">Log your first meal</a>
+            </div>
+
+            <div class="goal-section">
+                <h3>Update Daily Calorie Goal</h3>
+
+                <form th:action="@{/dashboard/goal}" method="post">
+                    <label for="calorieGoal">New calorie goal:</label>
+
+                    <div class="goal-input-group">
+                        <input type="number"
+                               id="calorieGoal"
+                               name="calorieGoal"
+                               th:value="${calorieGoal}"
+                               min="1"
+                               max="10000"
+                               required>
+
+                        <button type="submit">Update Goal</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Macronutrients</h2>
+
+            <div class="macro-grid">
+                <div class="macro-card">
+                    <h3>Protein</h3>
+                    <p>
+                        <strong th:text="${#numbers.formatDecimal(protein, 1, 1)}">
+                            0.0
+                        </strong>
+                        g
+                    </p>
+                </div>
+
+                <div class="macro-card">
+                    <h3>Carbs</h3>
+                    <p>
+                        <strong th:text="${#numbers.formatDecimal(carbs, 1, 1)}">
+                            0.0
+                        </strong>
+                        g
+                    </p>
+                </div>
+
+                <div class="macro-card">
+                    <h3>Fat</h3>
+                    <p>
+                        <strong th:text="${#numbers.formatDecimal(fat, 1, 1)}">
+                            0.0
+                        </strong>
+                        g
+                    </p>
+                </div>
+            </div>
+
+            <p class="helper-text">
+                Protein target:
+                <span th:text="${proteinGoal}">150</span>
+                g per day
+            </p>
+        </section>
+
+        <section class="card">
+            <div class="section-header">
+                <h2>Food Recommendations</h2>
+                <span class="section-tag">Top 5</span>
+            </div>
+
+            <p class="section-description">
+                Suggested foods based on your remaining calories and protein.
+            </p>
+
+            <div class="empty-state"th:if="${#lists.isEmpty(recommendations)}">
+
+                <p th:if="${caloriesRemaining > 0}">
+                    No sample foods fit your remaining calorie budget.
+                </p>
+
+                <p th:unless="${caloriesRemaining > 0}">
+                    No recommendations available because your
+                    calorie goal has been reached or exceeded.
+                </p>
+            </div>
+
+            <div class="recommendation-grid"
+                 th:unless="${#lists.isEmpty(recommendations)}">
+
+                <article class="recommendation-card"
+                         th:each="recommendation : ${recommendations}">
+
+                    <div class="recommendation-header">
+                        <h3 th:text="${recommendation.food.name}">
+                            Chicken Rice Bowl
+                        </h3>
+
+                        <span class="match-score"
+                              th:text="|${recommendation.matchScore}% match|">
+                            95% match
+                        </span>
+                    </div>
+
+                    <div class="food-details">
+                        <span>
+                            <strong th:text="${recommendation.food.calories}">
+                                600
+                            </strong>
+                            kcal
+                        </span>
+
+                        <span>
+                            <strong th:text="${recommendation.food.protein}">
+                                42
+                            </strong>
+                            g protein
+                        </span>
+                    </div>
+
+                    <p class="recommendation-reason"
+                       th:text="${recommendation.reason}">
+                        Fits your nutrition goals.
+                    </p>
+
+                </article>
+
+            </div>
+
+            <p class="helper-text">
+                Match scores reflect calorie and protein suitability
+                using the current sample food catalog.
+            </p>
+        </section>
+
+    </main>
+
+</body>
+</html>
