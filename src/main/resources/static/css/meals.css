@@ -1,0 +1,209 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, honeydew, whitesmoke);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    color: black;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h1 {
+    color: seagreen;
+    margin-bottom: 5px;
+    font-size: 30px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+h3 {
+    margin-bottom: 8px;
+}
+
+
+/* Sections */
+
+section {
+    background-color: white;
+    padding: 25px;
+    margin-top: 20px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
+}
+
+
+/* Forms */
+
+label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+button {
+    background-color: seagreen;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 18px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: forestgreen;
+}
+
+
+/* Daily Nutrition */
+
+.nutrition-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.nutrition-card {
+    background-color: honeydew;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nutrition-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
+}
+
+.nutrition-card h3 {
+    font-size: 15px;
+}
+
+.nutrition-card p {
+    font-size: 18px;
+    font-weight: bold;
+    color: seagreen;
+}
+
+
+/* Add Meal */
+
+.nutrition-inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+
+/* Meal History */
+
+.meal-card {
+    background-color: honeydew;
+    border: 1px solid lightgray;
+    padding: 15px;
+    margin-top: 12px;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.meal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
+}
+
+.meal-card h3 {
+    color: seagreen;
+    margin-top: 0;
+}
+
+.meal-card h4 {
+    margin: 5px 0;
+}
+
+.meal-card p {
+    margin: 8px 0;
+}
+
+
+/* Meal buttons */
+
+.meal-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.meal-actions form {
+    margin: 0;
+}
+
+.edit-meal-btn {
+    display: inline-block;
+    background-color: seagreen;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.edit-meal-btn:hover {
+    background-color: forestgreen;
+}
+
+.delete-meal-btn {
+    background-color: firebrick;
+    margin-top: 0;
+}
+
+.delete-meal-btn:hover {
+    background-color: darkred;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    .nutrition-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .nutrition-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .meal-actions {
+        flex-wrap: wrap;
+    }
+}
