@@ -2,7 +2,13 @@
 package com.group19.calorietrack.controller;
 
 import com.group19.calorietrack.services.FoodRecommendationService;
+import com.group19.calorietrack.models.Meal;
+import com.group19.calorietrack.repositories.MealRepository;
+
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DashboardController {
 
     private final FoodRecommendationService recommendationService;
+    private final MealRepository mealRepository;
 
-    public DashboardController(FoodRecommendationService recommendationService) {
+    public DashboardController(FoodRecommendationService recommendationService,
+                               MealRepository mealRepository) {
         this.recommendationService = recommendationService;
+        this.mealRepository = mealRepository;
     }
 
     @GetMapping("/dashboard")
@@ -23,25 +32,49 @@ public class DashboardController {
 
         //Get the calorie goal stored in the session
         Integer calorieGoal = (Integer) session.getAttribute("calorieGoal");
+
         //Set a default goal if the user has not chosen one
         if (calorieGoal == null) {
             calorieGoal = 2500;
         }
+
         //Temporary data sample
-        int caloriesConsumed = 1800;
-        int protein = 120;
-        int carbs = 200;
-        int fat = 60;
+        //Replace sample values with totals from today's logged meals
+        double caloriesConsumed = 0;
+        double protein = 0;
+        double carbs = 0;
+        double fat = 0;
+
+        LocalDate today = LocalDate.now();
+
+        //Get meals logged for today
+        List<Meal> meals = mealRepository.findByMealDate(today);
+
+        //Add up the calories and macros from each meal
+        for (Meal meal : meals) {
+            caloriesConsumed += meal.getCalories();
+            protein += meal.getProtein();
+            carbs += meal.getCarbs();
+            fat += meal.getFat();
+        }
 
         int proteinGoal = 150;
 
         // Calculate remaining calories and protein
-        int caloriesRemaining = calorieGoal - caloriesConsumed;
-        int proteinRemaining = proteinGoal - protein;
+        double caloriesRemaining = calorieGoal - caloriesConsumed;
+        double proteinRemaining = proteinGoal - protein;
+
+        //Convert remaining values for the recommendation service
+        int remainingCaloriesForRecommendations =
+                (int) Math.max(0, Math.floor(caloriesRemaining));
+
+        int remainingProteinForRecommendations =
+                (int) Math.max(0, Math.ceil(proteinRemaining));
 
         // Get food recommendations
         var recommendations = recommendationService.getRecommendations(
-                caloriesRemaining, proteinRemaining);
+                remainingCaloriesForRecommendations,
+                remainingProteinForRecommendations);
 
         // Send data to the dashboard
         model.addAttribute("calorieGoal", calorieGoal);
@@ -55,6 +88,7 @@ public class DashboardController {
         model.addAttribute("proteinGoal", proteinGoal);
         model.addAttribute("proteinRemaining", proteinRemaining);
         model.addAttribute("recommendations", recommendations);
+        model.addAttribute("selectedDate", today);
 
         return "dashboard";
     }

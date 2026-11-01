@@ -1,0 +1,72 @@
+
+.app-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    background-color: white;
+    padding: 15px 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px lightgray;
+    margin-bottom: 25px;
+}
+
+.app-brand {
+    color: seagreen;
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.app-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.nav-link {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid seagreen;
+    border-radius: 6px;
+    color: seagreen;
+    background-color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    background-color: honeydew;
+}
+
+.nav-link.active {
+    background-color: seagreen;
+    color: white;
+}
+
+.nav-link.active:hover {
+    background-color: forestgreen;
+}
+
+.nav-link:focus-visible {
+    outline: 2px solid forestgreen;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .app-nav {
+        align-items: stretch;
+    }
+
+    .app-nav-links {
+        width: 100%;
+    }
+
+    .nav-link {
+        flex: 1;
+        text-align: center;
+    }
+}

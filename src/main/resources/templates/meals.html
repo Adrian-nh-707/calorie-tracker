@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -6,11 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Logger</title>
     <link rel="stylesheet" th:href="@{/css/meals.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 
 <body>
 
     <div class="container">
+
+        <nav class="app-nav" aria-label="Main navigation">
+            <a class="app-brand" th:href="@{/dashboard}">
+                Calorie Tracker
+            </a>
+
+            <div class="app-nav-links">
+                <a class="nav-link" th:href="@{/dashboard}">
+                    Dashboard
+                </a>
+
+                <a class="nav-link active"
+                   th:href="@{/meals}"
+                   aria-current="page">
+                    Meal Logger
+                </a>
+            </div>
+        </nav>
 
         <h1>Meal Logger</h1>
         <p>Track your daily meals and nutrition.</p>

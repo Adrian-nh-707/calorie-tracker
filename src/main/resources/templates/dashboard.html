@@ -7,17 +7,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calorie Tracker Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 
 <body>
 
     <main class="dashboard">
 
+        <nav class="app-nav" aria-label="Main navigation">
+            <a class="app-brand" th:href="@{/dashboard}">
+                Calorie Tracker
+            </a>
+
+            <div class="app-nav-links">
+                <a class="nav-link active"
+                   th:href="@{/dashboard}"
+                   aria-current="page">
+                    Dashboard
+                </a>
+
+                <a class="nav-link" th:href="@{/meals}">
+                    Meal Logger
+                </a>
+            </div>
+        </nav>
+
         <h1>My Calorie Dashboard</h1>
         <p>Track your daily nutrition progress</p>
 
         <section class="card">
             <h2>Daily Calories</h2>
+
+            <p>
+                Date:
+                <span th:text="${selectedDate}">2026-10-31</span>
+            </p>
+
             <h3>Update Daily Calorie Goal</h3>
 
             <form th:action="@{/dashboard/goal}" method="post">
