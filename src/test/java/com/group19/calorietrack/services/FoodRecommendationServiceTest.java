@@ -78,4 +78,44 @@ class FoodRecommendationServiceTest {
         assertFalse(results.isEmpty());
         assertEquals("Pizza", results.get(0).name());
     }
+
+    @Test
+    void testMatchScoreCalculation() {
+        var results = recommendationService.getRecommendationDetails(200, 20);
+
+        assertEquals(1, results.size());
+        assertEquals("Greek Yogurt", results.get(0).food().name());
+        assertEquals(96, results.get(0).matchScore());
+        assertEquals("Meets your remaining protein target.",
+                     results.get(0).reason());
+    }
+
+    @Test
+    void testRecommendationDetailsStaySorted() {
+        var foods = recommendationService.getRecommendations(700, 30);
+        var details = recommendationService.getRecommendationDetails(700, 30);
+
+        assertEquals(foods.size(), details.size());
+
+        for (int i = 0; i < details.size(); i++) {
+            assertEquals(foods.get(i), details.get(i).food());
+
+            assertTrue(details.get(i).matchScore() >= 0);
+            assertTrue(details.get(i).matchScore() <= 100);
+        }
+
+        for (int i = 1; i < details.size(); i++) {
+            assertTrue(details.get(i - 1).matchScore()
+                    >= details.get(i).matchScore());
+        }
+    }
+
+    @Test
+    void testRecommendationReasonWithoutProteinGoal() {
+        var results = recommendationService.getRecommendationDetails(700, 0);
+
+        assertFalse(results.isEmpty());
+        assertEquals("Fits your remaining calorie budget.",
+                     results.get(0).reason());
+    }
 }

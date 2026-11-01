@@ -72,7 +72,7 @@ public class DashboardController {
                 (int) Math.max(0, Math.ceil(proteinRemaining));
 
         // Get food recommendations
-        var recommendations = recommendationService.getRecommendations(
+        var recommendations = recommendationService.getRecommendationDetails(
                 remainingCaloriesForRecommendations,
                 remainingProteinForRecommendations);
 
@@ -89,6 +89,9 @@ public class DashboardController {
         model.addAttribute("proteinRemaining", proteinRemaining);
         model.addAttribute("recommendations", recommendations);
         model.addAttribute("selectedDate", today);
+
+        model.addAttribute("mealCount", meals.size());
+        model.addAttribute("noMeals", meals.isEmpty());
 
         return "dashboard";
     }

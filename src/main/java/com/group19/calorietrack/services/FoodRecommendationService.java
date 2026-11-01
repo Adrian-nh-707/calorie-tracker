@@ -11,6 +11,8 @@ public class FoodRecommendationService {
     // Temporary food data until database integration
     public record Food(String name, int calories, int protein) {}
 
+    public record Recommendation(Food food, int matchScore, String reason) {}
+
     private final List<Food> foods = List.of(
         new Food("Chicken Rice Bowl", 600, 42),
         new Food("Turkey Sandwich", 450, 30),
@@ -35,8 +37,8 @@ public class FoodRecommendationService {
         // Find foods that fit the calorie limit
         for (Food food : foods) {
             if (food.calories() > 0 && food.calories() <= remainingCalories) {
-        recommendations.add(food);
-}
+                recommendations.add(food);
+            }
         }
 
         // Sort foods by their recommendation scores
@@ -53,6 +55,30 @@ public class FoodRecommendationService {
         return recommendations.stream()
                 .limit(5)
                 .toList();
+    }
+
+    // Add match scores and explanations to the recommended foods
+    public List<Recommendation> getRecommendationDetails(int remainingCalories,int remainingProtein) {
+
+        List<Food> recommendedFoods = getRecommendations(
+                remainingCalories, remainingProtein);
+
+        List<Recommendation> details = new ArrayList<>();
+
+        for (Food food : recommendedFoods) {
+            double score = calculateScore(
+                    food, remainingCalories, remainingProtein);
+
+            int matchScore = (int) Math.round(score * 100);
+            matchScore = Math.max(0, Math.min(100, matchScore));
+
+            String reason = getRecommendationReason(
+                    food, remainingProtein);
+
+            details.add(new Recommendation(food, matchScore, reason));
+        }
+
+        return details;
     }
 
     // Calculate how well a food matches the user's remaining goals
@@ -74,5 +100,27 @@ public class FoodRecommendationService {
 
         // Calories have 40% weight, protein has 60%
         return 0.4 * calorieScore + 0.6 * proteinScore;
+    }
+
+    //Explain why th food was recommended
+    private String getRecommendationReason(Food food, int remainingProtein) {
+
+        if (remainingProtein <= 0) {
+            return "Fits your remaining calorie budget.";
+        }
+
+        if (food.protein() >= remainingProtein) {
+            return "Meets your remaining protein target.";
+        }
+
+        if (food.protein() >= remainingProtein * 0.75) {
+            return "Provides most of your remaining protein.";
+        }
+
+        if (food.protein() > 0) {
+            return "Adds protein while staying within your calorie budget.";
+        }
+
+        return "Fits your remaining calorie budget.";
     }
 }

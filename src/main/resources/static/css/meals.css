@@ -1,9 +1,11 @@
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, honeydew, whitesmoke);
+    min-height: 100vh;
     margin: 0;
     padding: 20px;
-    color: #333;
+    color: black;
 }
 
 .container {
@@ -12,8 +14,9 @@ body {
 }
 
 h1 {
-    color: #2e7d32;
+    color: seagreen;
     margin-bottom: 5px;
+    font-size: 30px;
 }
 
 h2 {
@@ -29,10 +32,17 @@ h3 {
 
 section {
     background-color: white;
-    padding: 20px;
+    padding: 25px;
     margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
 }
 
 
@@ -50,23 +60,24 @@ select {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid gray;
     border-radius: 5px;
     font-size: 14px;
 }
 
 button {
-    background-color: #2e7d32;
+    background-color: seagreen;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px 18px;
     margin-top: 15px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #256628;
+    background-color: forestgreen;
 }
 
 
@@ -80,11 +91,17 @@ button:hover {
 }
 
 .nutrition-card {
-    background-color: #f1f8f2;
+    background-color: honeydew;
     padding: 15px;
     text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nutrition-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
 }
 
 .nutrition-card h3 {
@@ -94,7 +111,7 @@ button:hover {
 .nutrition-card p {
     font-size: 18px;
     font-weight: bold;
-    color: #2e7d32;
+    color: seagreen;
 }
 
 
@@ -110,15 +127,21 @@ button:hover {
 /* Meal History */
 
 .meal-card {
-    background-color: #fafafa;
-    border: 1px solid #ddd;
+    background-color: honeydew;
+    border: 1px solid lightgray;
     padding: 15px;
     margin-top: 12px;
-    border-radius: 5px;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.meal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
 }
 
 .meal-card h3 {
-    color: #2e7d32;
+    color: seagreen;
     margin-top: 0;
 }
 
@@ -146,25 +169,26 @@ button:hover {
 
 .edit-meal-btn {
     display: inline-block;
-    background-color: #2e7d32;
+    background-color: seagreen;
     color: white;
     padding: 10px 18px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 14px;
+    transition: background-color 0.2s;
 }
 
 .edit-meal-btn:hover {
-    background-color: #256628;
+    background-color: forestgreen;
 }
 
 .delete-meal-btn {
-    background-color: #c62828;
+    background-color: firebrick;
     margin-top: 0;
 }
 
 .delete-meal-btn:hover {
-    background-color: #a11d1d;
+    background-color: darkred;
 }
 
 
