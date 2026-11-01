@@ -29,7 +29,7 @@ public class UserController {
 
     @PostMapping
     public String registerUser(
-            @Valid @ModelAttribute("registrationForm")
+            @Valid @ModelAttribute
             RegistrationForm registrationForm,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -43,7 +43,8 @@ public class UserController {
                     registrationForm.getFirstName(),
                     registrationForm.getLastName(),
                     registrationForm.getEmail(),
-                    registrationForm.getPassword()
+                    registrationForm.getPassword(),
+                    registrationForm.getRole()
             );
         } catch (IllegalArgumentException exception) {
             bindingResult.rejectValue(

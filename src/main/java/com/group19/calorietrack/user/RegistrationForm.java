@@ -3,6 +3,7 @@ package com.group19.calorietrack.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 public class RegistrationForm {
 
@@ -22,6 +23,9 @@ public class RegistrationForm {
     @NotBlank(message = "A password is required.")
     @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters.")
     private String password;
+
+    @NotNull(message = "Please select your account type.")
+    private UserRole role = UserRole.USER;
 
     public String getFirstName() {
         return firstName;
@@ -53,5 +57,13 @@ public class RegistrationForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

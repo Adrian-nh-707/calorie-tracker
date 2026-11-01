@@ -10,9 +10,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -22,13 +20,13 @@ public class UserService {
             String firstName,
             String lastName,
             String email,
-            String rawPassword) {
+            String rawPassword,
+            UserRole role) {
 
         String normalizedEmail = email.trim().toLowerCase();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new IllegalArgumentException(
-                    "An account with this email already exists.");
+            throw new IllegalArgumentException("An account with this email already exists.");
         }
 
         AppUser user = new AppUser();
@@ -39,7 +37,11 @@ public class UserService {
         // store encoded password
         user.setPassword(passwordEncoder.encode(rawPassword));
 
-        user.setRole(UserRole.USER);
+        if (role != UserRole.USER && role != UserRole.TRAINER) {
+            throw new IllegalArgumentException("Please select a valid account type.");
+        }
+
+        user.setRole(role);
 
         return userRepository.save(user);
     }
