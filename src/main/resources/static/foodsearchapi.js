@@ -1,17 +1,7 @@
 /*
 Food database, API integration, and food search
 
-@BigPatty im working on the food recommendation algorithm. 
-I'm planning to retrieve foods from the database and rank them based on the user's 
-remaining calories and protein goals.Are you implementing a Food entity and FoodRepository, or 
-are you only retrieving results directly from the API? I want to make sure my recommendation service 
-can use your food data without duplicating anything
 */
-
-// /api/v1/public/search/foods?q="{search val here}"&limit=5&skip=0&match_mode=any&verified_only=false&max_calories=3000
-// api key: fn_3fym0wP5EEQxNhW93pxiPB9Rx3QhoLdvEPWHwBdLQAk
-
-// base url https://calorieapiadmin.com/api/v1
 
     function parseRecipe(recipe_arr){
         let recipe = "";
