@@ -29,6 +29,12 @@
                    aria-current="page">
                     Meal Logger
                 </a>
+
+                <form th:action="@{/logout}" method="post">
+                    <button class="nav-link" type="submit">
+                        Log Out
+                    </button>
+                </form>
             </div>
         </nav>
 
