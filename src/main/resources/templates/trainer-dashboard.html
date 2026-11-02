@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Dashboard | Calorie Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 4.4%;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #26352d;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            color: #2e8b57;
+            font-size: 40px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #555;
+            font-size: 18px;
+        }
+
+        .logout-button {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 7px;
+            background: #2e8b57;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #246b45;
+        }
+
+        .card {
+            margin-bottom: 26px;
+            padding: 28px 30px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #00000012;
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            font-size: 27px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+
+        .stat h3 {
+            margin: 0 0 12px;
+            color: #555;
+            font-size: 17px;
+        }
+
+        .stat-value {
+            margin: 0;
+            color: #2e8b57;
+            font-size: 34px;
+            font-weight: bold;
+        }
+
+        .description {
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: #edf5ef;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        th {
+            color: #315b41;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        tbody tr:hover {
+            background: #f8fbf8;
+        }
+
+        .empty-message {
+            padding: 22px;
+            color: #666;
+            text-align: center;
+        }
+
+        .status-label {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #e5f3e9;
+            color: #246b45;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .placeholder {
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .card h2 {
+                font-size: 24px;
+            }
+
+            th,
+            td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>Trainer Dashboard</h1>
+        <p class="subtitle">Monitor your assigned users' progress</p>
+    </div>
+
+    <form th:action="@{/logout}" method="post">
+        <button class="logout-button" type="submit">Log Out</button>
+    </form>
+</header>
+
+<main>
+    <!-- Overview -->
+    <section class="card">
+        <h2>Overview</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <h3>Assigned Users</h3>
+                <p class="stat-value"
+                   th:text="${assignedUserCount != null ? assignedUserCount : 'N/A'}">
+                    0
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Assigned users -->
+    <section class="card">
+        <h2>My Users</h2>
+
+        <p class="description">
+            View the regular users assigned to your trainer account.
+        </p>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email Address</th>
+                        <th>Account Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="user : ${assignedUsers}">
+                        <td th:text="${user.firstName + ' ' + user.lastName}">
+                            Example User
+                        </td>
+
+                        <td th:text="${user.email}">
+                            example@email.com
+                        </td>
+
+                        <td>
+                            <span class="status-label">Assigned</span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(assignedUsers)}">
+                        <td colspan="3" class="empty-message">
+                            No users are currently assigned to you.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Nutrition progress -->
+    <section class="card">
+        <h2>Nutrition Progress</h2>
+
+        <p class="description">
+            Review calorie and macronutrient information for your assigned users.
+        </p>
+
+        <div class="placeholder">
+            Nutrition progress will appear here when meal tracking and
+            nutrition data are integrated with the trainer dashboard.
+        </div>
+    </section>
+
+    <!-- Goal recommendations -->
+    <section class="card">
+        <h2>Goal Recommendations</h2>
+
+        <p class="description">
+            Review user goals and provide recommendations when this
+            functionality becomes available.
+        </p>
+
+        <div class="placeholder">
+            Goal recommendations are not yet connected to user nutrition goals.
+        </div>
+    </section>
+</main>
+
+</body>
+</html>
