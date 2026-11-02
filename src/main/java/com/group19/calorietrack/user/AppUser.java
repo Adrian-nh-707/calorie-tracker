@@ -8,6 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 @Table(name = "app_users")
@@ -32,6 +35,10 @@ public class AppUser {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private UserRole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
+    private AppUser assignedTrainer;
 
     public AppUser() {
     }
@@ -78,5 +85,13 @@ public class AppUser {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public AppUser getAssignedTrainer() {
+        return assignedTrainer;
+    }
+
+    public void setAssignedTrainer(AppUser assignedTrainer) {
+        this.assignedTrainer = assignedTrainer;
     }
 }
