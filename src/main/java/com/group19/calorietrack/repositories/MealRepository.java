@@ -1,8 +1,8 @@
-
 package com.group19.calorietrack.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,17 +10,28 @@ import com.group19.calorietrack.models.Meal;
 
 public interface MealRepository extends JpaRepository<Meal, Long> {
 
-    // Find meals from a specific date
-    List<Meal> findByMealDate(LocalDate mealDate);
+    // Find only the current user's meals
+    List<Meal> findByUser_IdAndMealDate(
+        Long userId,
+        LocalDate mealDate
+    );
 
-    // Check if this meal type already exists
-    boolean existsByMealDateAndMealType(
+    // Find a meal only if it belongs to the user
+    Optional<Meal> findByIdAndUser_Id(
+        Long id,
+        Long userId
+    );
+
+    // Check duplicate meal types for this user
+    boolean existsByUser_IdAndMealDateAndMealType(
+        Long userId,
         LocalDate mealDate,
         String mealType
     );
 
-    // Same check, but ignore the meal we're editing
-    boolean existsByMealDateAndMealTypeAndIdNot(
+    // Ignore the meal currently being edited
+    boolean existsByUser_IdAndMealDateAndMealTypeAndIdNot(
+        Long userId,
         LocalDate mealDate,
         String mealType,
         Long id

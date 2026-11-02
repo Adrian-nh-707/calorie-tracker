@@ -6,191 +6,270 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Logger</title>
+
     <link rel="stylesheet" th:href="@{/css/meals.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+
+    <style>
+        /* Keep navbar buttons the same size */
+
+        .app-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-nav-links form {
+            margin: 0;
+        }
+
+        .app-nav-links .nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 115px;
+            height: 42px;
+            box-sizing: border-box;
+            padding: 0 10px;
+            margin: 0;
+            border: 1px solid seagreen;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .app-nav-links a.nav-link,
+        .app-nav-links button.nav-link {
+            background-color: white;
+            color: seagreen;
+        }
+
+        .app-nav-links .nav-link:hover {
+            background-color: honeydew;
+        }
+
+        .app-nav-links a.nav-link.active {
+            background-color: seagreen;
+            color: white;
+        }
+
+        .app-nav-links a.nav-link.active:hover {
+            background-color: forestgreen;
+        }
+
+        @media (max-width: 600px) {
+            .app-nav-links {
+                width: 100%;
+                gap: 6px;
+            }
+
+            .app-nav-links > a,
+            .app-nav-links > form {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .app-nav-links .nav-link {
+                width: 100%;
+                padding: 0 5px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
+<div class="container">
 
-    <div class="container">
+    <!-- Navbar -->
+    <nav class="app-nav" aria-label="Main navigation">
+        <a class="app-brand" th:href="@{/dashboard}">
+            Calorie Tracker
+        </a>
 
-        <nav class="app-nav" aria-label="Main navigation">
-            <a class="app-brand" th:href="@{/dashboard}">
-                Calorie Tracker
+        <div class="app-nav-links">
+            <a class="nav-link" th:href="@{/dashboard}">
+                Dashboard
             </a>
 
-            <div class="app-nav-links">
-                <a class="nav-link" th:href="@{/dashboard}">
-                    Dashboard
+            <a class="nav-link active"
+               th:href="@{/meals}"
+               aria-current="page">
+                Meal Logger
+            </a>
+
+            <form th:action="@{/logout}" method="post">
+                <button class="nav-link" type="submit">
+                    Log Out
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <h1>Meal Logger</h1>
+    <p>Track your daily meals and nutrition.</p>
+
+    <!-- Daily Nutrition -->
+    <section>
+        <h2>Daily Nutrition</h2>
+
+        <form th:action="@{/meals}" method="get">
+            <label for="date">Select Date</label>
+            <input type="date" id="date" name="date"
+                   th:value="${selectedDate}" required>
+            <button type="submit">View Date</button>
+        </form>
+
+        <div class="nutrition-summary">
+            <div class="nutrition-card">
+                <h3>Calories</h3>
+                <p><span th:text="${totalCalories} ?: 0">0</span> kcal</p>
+            </div>
+
+            <div class="nutrition-card">
+                <h3>Protein</h3>
+                <p><span th:text="${totalProtein} ?: 0">0</span> g</p>
+            </div>
+
+            <div class="nutrition-card">
+                <h3>Carbs</h3>
+                <p><span th:text="${totalCarbs} ?: 0">0</span> g</p>
+            </div>
+
+            <div class="nutrition-card">
+                <h3>Fat</h3>
+                <p><span th:text="${totalFat} ?: 0">0</span> g</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Meal -->
+    <section>
+        <h2>Add a Meal</h2>
+
+        <p th:if="${error}" th:text="${error}"
+           style="color: red; font-weight: bold;"></p>
+
+        <p th:if="${success}" th:text="${success}"
+           style="color: green; font-weight: bold;"></p>
+
+        <form th:action="@{/meals/add}" method="post">
+
+            <label for="mealDate">Meal Date</label>
+            <input type="date" id="mealDate" name="mealDate"
+                   th:value="${selectedDate}" required>
+
+            <label for="mealType">Meal Type</label>
+            <select id="mealType" name="mealType" required>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+            </select>
+
+            <label for="name">Meal Name</label>
+            <input type="text" id="name" name="name"
+                   placeholder="e.g. Chicken Rice" required>
+
+            <div class="nutrition-inputs">
+                <div>
+                    <label for="calories">Calories</label>
+                    <input type="number" id="calories" name="calories"
+                           min="0" step="any" required>
+                </div>
+
+                <div>
+                    <label for="protein">Protein (g)</label>
+                    <input type="number" id="protein" name="protein"
+                           min="0" step="any" required>
+                </div>
+
+                <div>
+                    <label for="carbs">Carbs (g)</label>
+                    <input type="number" id="carbs" name="carbs"
+                           min="0" step="any" required>
+                </div>
+
+                <div>
+                    <label for="fat">Fat (g)</label>
+                    <input type="number" id="fat" name="fat"
+                           min="0" step="any" required>
+                </div>
+            </div>
+
+            <button type="submit">Add Meal</button>
+        </form>
+    </section>
+
+    <!-- Meal History -->
+    <section>
+        <div class="history-header">
+            <h2>Meal History</h2>
+            <span class="history-date"
+                  th:text="${selectedDate}">2026-11-02</span>
+        </div>
+
+        <!-- No Meals -->
+        <div class="empty-history"
+             th:if="${#lists.isEmpty(meals)}">
+            <div class="empty-icon">🍽️</div>
+            <h3>No meals recorded yet</h3>
+            <p>Add your first meal above to start tracking.</p>
+        </div>
+
+        <!-- Saved Meals -->
+        <div class="meal-card" th:each="meal : ${meals}">
+
+            <div class="meal-header">
+                <div>
+                    <h3 th:text="${meal.mealType}">Breakfast</h3>
+                    <h4 th:text="${meal.name}">Chicken Rice</h4>
+                </div>
+
+                <div class="meal-calories">
+                    <strong th:text="${meal.calories}">500</strong>
+                    <span>kcal</span>
+                </div>
+            </div>
+
+            <div class="meal-macros">
+                <span>
+                    Protein:
+                    <b th:text="${meal.protein}">35</b> g
+                </span>
+                <span>
+                    Carbs:
+                    <b th:text="${meal.carbs}">60</b> g
+                </span>
+                <span>
+                    Fat:
+                    <b th:text="${meal.fat}">12</b> g
+                </span>
+            </div>
+
+            <div class="meal-actions">
+                <a class="edit-meal-btn"
+                   th:href="@{/meals/edit/{id}(id=${meal.id})}">
+                    Edit
                 </a>
 
-                <a class="nav-link active"
-                   th:href="@{/meals}"
-                   aria-current="page">
-                    Meal Logger
-                </a>
+                <form th:action="@{/meals/delete/{id}(id=${meal.id})}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this meal?');">
 
-                <form th:action="@{/logout}" method="post">
-                    <button class="nav-link" type="submit">
-                        Log Out
+                    <button class="delete-meal-btn" type="submit">
+                        Delete
                     </button>
                 </form>
             </div>
-        </nav>
 
-        <h1>Meal Logger</h1>
-        <p>Track your daily meals and nutrition.</p>
+        </div>
+    </section>
 
-        <!-- Daily Nutrition -->
-        <section>
-            <h2>Daily Nutrition</h2>
-
-            <form th:action="@{/meals}" method="get">
-                <label for="date">Select Date</label>
-                <input type="date" id="date" name="date"
-                       th:value="${selectedDate}" required>
-                <button type="submit">View Date</button>
-            </form>
-
-            <div class="nutrition-summary">
-                <div class="nutrition-card">
-                    <h3>Calories</h3>
-                    <p><span th:text="${totalCalories} ?: 0">0</span> kcal</p>
-                </div>
-
-                <div class="nutrition-card">
-                    <h3>Protein</h3>
-                    <p><span th:text="${totalProtein} ?: 0">0</span> g</p>
-                </div>
-
-                <div class="nutrition-card">
-                    <h3>Carbs</h3>
-                    <p><span th:text="${totalCarbs} ?: 0">0</span> g</p>
-                </div>
-
-                <div class="nutrition-card">
-                    <h3>Fat</h3>
-                    <p><span th:text="${totalFat} ?: 0">0</span> g</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Add Meal -->
-        <section>
-            <h2>Add a Meal</h2>
-
-            <p th:if="${error}"
-               th:text="${error}"
-               style="color: red; font-weight: bold;">
-            </p>
-
-            <p th:if="${success}"
-               th:text="${success}"
-               style="color: green; font-weight: bold;">
-            </p>
-
-            <form th:action="@{/meals/add}" method="post">
-
-                <label for="mealDate">Meal Date</label>
-                <input type="date" id="mealDate" name="mealDate"
-                       th:value="${selectedDate}" required>
-
-                <label for="mealType">Meal Type</label>
-                <select id="mealType" name="mealType" required>
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Snack">Snack</option>
-                </select>
-
-                <label for="name">Meal Name</label>
-                <input type="text" id="name" name="name"
-                       placeholder="e.g. Chicken Rice" required>
-
-                <div class="nutrition-inputs">
-                    <div>
-                        <label for="calories">Calories</label>
-                        <input type="number" id="calories" name="calories"
-                               min="0" step="any" required>
-                    </div>
-
-                    <div>
-                        <label for="protein">Protein (g)</label>
-                        <input type="number" id="protein" name="protein"
-                               min="0" step="any" required>
-                    </div>
-
-                    <div>
-                        <label for="carbs">Carbs (g)</label>
-                        <input type="number" id="carbs" name="carbs"
-                               min="0" step="any" required>
-                    </div>
-
-                    <div>
-                        <label for="fat">Fat (g)</label>
-                        <input type="number" id="fat" name="fat"
-                               min="0" step="any" required>
-                    </div>
-                </div>
-
-                <button type="submit">Add Meal</button>
-            </form>
-        </section>
-
-        <!-- Meal History -->
-        <section>
-            <h2>Meal History</h2>
-
-            <p>
-                Date:
-                <span th:text="${selectedDate}">2026-10-26</span>
-            </p>
-
-            <p th:if="${#lists.isEmpty(meals)}">
-                No meals logged for this date.
-            </p>
-
-            <div class="meal-card" th:each="meal : ${meals}">
-
-                <h3 th:text="${meal.mealType}">Breakfast</h3>
-
-                <h4 th:text="${meal.name}">Egg Sandwich</h4>
-
-                <p>
-                    Calories:
-                    <span th:text="${meal.calories}">320</span> kcal
-                </p>
-
-                <p>
-                    Protein: <span th:text="${meal.protein}">18</span>g |
-                    Carbs: <span th:text="${meal.carbs}">40</span>g |
-                    Fat: <span th:text="${meal.fat}">12</span>g
-                </p>
-
-                <!-- Edit and delete buttons -->
-                <div class="meal-actions">
-
-                    <a class="edit-meal-btn"
-                       th:href="@{/meals/edit/{id}(id=${meal.id})}">
-                        Edit
-                    </a>
-
-                    <form th:action="@{/meals/delete/{id}(id=${meal.id})}"
-                          method="post"
-                          onsubmit="return confirm('Are you sure you want to delete this meal?');">
-
-                        <button class="delete-meal-btn" type="submit">
-                            Delete
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </div>
-        </section>
-
-    </div>
-
+</div>
 </body>
 </html>

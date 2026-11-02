@@ -1,45 +1,72 @@
 
 package com.group19.calorietrack.controller;
 
-import com.group19.calorietrack.services.FoodRecommendationService;
-import com.group19.calorietrack.models.Meal;
-import com.group19.calorietrack.repositories.MealRepository;
-
-import jakarta.servlet.http.HttpSession;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.group19.calorietrack.models.Meal;
+import com.group19.calorietrack.repositories.MealRepository;
+import com.group19.calorietrack.services.FoodRecommendationService;
+import com.group19.calorietrack.user.AppUser;
+import com.group19.calorietrack.user.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class DashboardController {
 
     private final FoodRecommendationService recommendationService;
     private final MealRepository mealRepository;
+    private final UserRepository userRepository;
 
-    public DashboardController(FoodRecommendationService recommendationService,
-                               MealRepository mealRepository) {
+    public DashboardController(
+            FoodRecommendationService recommendationService,
+            MealRepository mealRepository,
+            UserRepository userRepository) {
+
         this.recommendationService = recommendationService;
         this.mealRepository = mealRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/dashboard")
-    public String showDashboard(Model model, HttpSession session) {
+    public String showDashboard(
+            Model model,
+            HttpSession session,
+            Principal principal) {
 
-        //Get the calorie goal stored in the session
-        Integer calorieGoal = (Integer) session.getAttribute("calorieGoal");
+        if (principal == null) {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Please log in."
+            );
+        }
 
-        //Set a default goal if the user has not chosen one
+        // Get logged-in user
+        AppUser user = userRepository
+            .findByEmail(principal.getName())
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "User not found."
+            ));
+
+        // Get calorie goal from session
+        Integer calorieGoal =
+            (Integer) session.getAttribute("calorieGoal");
+
         if (calorieGoal == null) {
             calorieGoal = 2500;
         }
 
-        //Temporary data sample
-        //Replace sample values with totals from today's logged meals
         double caloriesConsumed = 0;
         double protein = 0;
         double carbs = 0;
@@ -47,10 +74,14 @@ public class DashboardController {
 
         LocalDate today = LocalDate.now();
 
-        //Get meals logged for today
-        List<Meal> meals = mealRepository.findByMealDate(today);
+        // Get only this user's meals
+        List<Meal> meals =
+            mealRepository.findByUser_IdAndMealDate(
+                user.getId(),
+                today
+            );
 
-        //Add up the calories and macros from each meal
+        // Calculate this user's nutrition totals
         for (Meal meal : meals) {
             caloriesConsumed += meal.getCalories();
             protein += meal.getProtein();
@@ -60,23 +91,24 @@ public class DashboardController {
 
         int proteinGoal = 150;
 
-        // Calculate remaining calories and protein
-        double caloriesRemaining = calorieGoal - caloriesConsumed;
-        double proteinRemaining = proteinGoal - protein;
+        double caloriesRemaining =
+            calorieGoal - caloriesConsumed;
 
-        //Convert remaining values for the recommendation service
+        double proteinRemaining =
+            proteinGoal - protein;
+
         int remainingCaloriesForRecommendations =
-                (int) Math.max(0, Math.floor(caloriesRemaining));
+            (int) Math.max(0, Math.floor(caloriesRemaining));
 
         int remainingProteinForRecommendations =
-                (int) Math.max(0, Math.ceil(proteinRemaining));
+            (int) Math.max(0, Math.ceil(proteinRemaining));
 
-        // Get food recommendations
-        var recommendations = recommendationService.getRecommendationDetails(
+        var recommendations =
+            recommendationService.getRecommendationDetails(
                 remainingCaloriesForRecommendations,
-                remainingProteinForRecommendations);
+                remainingProteinForRecommendations
+            );
 
-        // Send data to the dashboard
         model.addAttribute("calorieGoal", calorieGoal);
         model.addAttribute("caloriesConsumed", caloriesConsumed);
         model.addAttribute("caloriesRemaining", caloriesRemaining);
@@ -97,10 +129,11 @@ public class DashboardController {
     }
 
     @PostMapping("/dashboard/goal")
-    public String updateGoal(@RequestParam("calorieGoal") int calorieGoal, HttpSession session) {
+    public String updateGoal(
+            @RequestParam("calorieGoal") int calorieGoal,
+            HttpSession session) {
 
-            //Only accept positive calorie goals
-         if (calorieGoal >= 1 && calorieGoal <= 10000) { //Reject unrealistic goals
+        if (calorieGoal >= 1 && calorieGoal <= 10000) {
             session.setAttribute("calorieGoal", calorieGoal);
         }
 
