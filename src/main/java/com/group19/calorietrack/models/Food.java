@@ -1,8 +1,5 @@
 package com.group19.calorietrack.models;
 
-import java.security.DEREncodable;
-import java.time.LocalDate;
-
 import jakarta.persistence.*;
 
 @Entity 
