@@ -1,4 +1,4 @@
-package com.group19.calorietrack.controllers;
+package com.group19.calorietrack.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

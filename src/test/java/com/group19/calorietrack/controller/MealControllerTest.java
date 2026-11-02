@@ -1,4 +1,4 @@
-package com.group19.calorietrack.controllers;
+package com.group19.calorietrack.controller;
 
 import java.time.LocalDate;
 import java.util.List;
