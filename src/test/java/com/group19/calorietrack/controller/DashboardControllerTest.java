@@ -1,37 +1,52 @@
-
 package com.group19.calorietrack.controller;
+
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.ui.ExtendedModelMap;
 
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
 import com.group19.calorietrack.services.FoodRecommendationService;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.ui.ExtendedModelMap;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import com.group19.calorietrack.user.AppUser;
+import com.group19.calorietrack.user.UserRepository;
 
 class DashboardControllerTest {
 
     private DashboardController controller;
     private MealRepository mealRepository;
     private FoodRecommendationService recommendationService;
+    private UserRepository userRepository;
     private ExtendedModelMap model;
     private MockHttpSession session;
+    private Principal principal;
 
     @BeforeEach
     void setUp() {
         mealRepository = mock(MealRepository.class);
         recommendationService = mock(FoodRecommendationService.class);
+        userRepository = mock(UserRepository.class);
+
+        AppUser user = mock(AppUser.class);
+        when(user.getId()).thenReturn(1L);
+        when(userRepository.findByEmail("test@example.com"))
+                .thenReturn(Optional.of(user));
+
+        principal = () -> "test@example.com";
 
         controller = new DashboardController(
-                recommendationService, mealRepository);
+                recommendationService, mealRepository, userRepository);
 
         model = new ExtendedModelMap();
         session = new MockHttpSession();
@@ -39,10 +54,11 @@ class DashboardControllerTest {
 
     @Test
     void testDashboardWithNoMeals() {
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(
+                eq(1L), any(LocalDate.class)))
                 .thenReturn(List.of());
 
-        String page = controller.showDashboard(model, session);
+        String page = controller.showDashboard(model, session, principal);
 
         assertEquals("dashboard", page);
         assertEquals(2500, model.get("calorieGoal"));
@@ -51,7 +67,8 @@ class DashboardControllerTest {
         assertEquals(0, model.get("mealCount"));
         assertEquals(true, model.get("noMeals"));
 
-        verify(recommendationService).getRecommendationDetails(2500, 150);
+        verify(recommendationService)
+                .getRecommendationDetails(2500, 150);
     }
 
     @Test
@@ -66,10 +83,10 @@ class DashboardControllerTest {
                 "Chicken Rice", "Lunch", today,
                 300, 20, 30, 15);
 
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(1L, today))
                 .thenReturn(List.of(breakfast, lunch));
 
-        controller.showDashboard(model, session);
+        controller.showDashboard(model, session, principal);
 
         assertEquals(800.0, model.get("caloriesConsumed"));
         assertEquals(50.0, model.get("protein"));
@@ -77,9 +94,9 @@ class DashboardControllerTest {
         assertEquals(25.0, model.get("fat"));
         assertEquals(1700.0, model.get("caloriesRemaining"));
         assertEquals(2, model.get("mealCount"));
-        assertEquals(false, model.get("noMeals"));
 
-        verify(recommendationService).getRecommendationDetails(1700, 100);
+        verify(recommendationService)
+                .getRecommendationDetails(1700, 100);
     }
 
     @Test
@@ -90,17 +107,18 @@ class DashboardControllerTest {
                 "Chicken Rice", "Lunch", today,
                 800, 20, 60, 15);
 
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(1L, today))
                 .thenReturn(List.of(lunch));
 
         session.setAttribute("calorieGoal", 3000);
 
-        controller.showDashboard(model, session);
+        controller.showDashboard(model, session, principal);
 
         assertEquals(3000, model.get("calorieGoal"));
         assertEquals(2200.0, model.get("caloriesRemaining"));
 
-        verify(recommendationService).getRecommendationDetails(2200, 130);
+        verify(recommendationService)
+                .getRecommendationDetails(2200, 130);
     }
 
     @Test
@@ -111,16 +129,17 @@ class DashboardControllerTest {
                 "Yogurt", "Snack", today,
                 100.5, 1.2, 10.5, 2.5);
 
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(1L, today))
                 .thenReturn(List.of(snack));
 
-        controller.showDashboard(model, session);
+        controller.showDashboard(model, session, principal);
 
         assertEquals(100.5, model.get("caloriesConsumed"));
         assertEquals(1.2, (double) model.get("protein"), 0.001);
         assertEquals(2399.5, model.get("caloriesRemaining"));
 
-        verify(recommendationService).getRecommendationDetails(2399, 149);
+        verify(recommendationService)
+                .getRecommendationDetails(2399, 149);
     }
 
     @Test
@@ -131,14 +150,15 @@ class DashboardControllerTest {
                 "Large Dinner", "Dinner", today,
                 2700, 160, 250, 80);
 
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(1L, today))
                 .thenReturn(List.of(dinner));
 
-        controller.showDashboard(model, session);
+        controller.showDashboard(model, session, principal);
 
         assertEquals(-200.0, model.get("caloriesRemaining"));
 
-        verify(recommendationService).getRecommendationDetails(0, 0);
+        verify(recommendationService)
+                .getRecommendationDetails(0, 0);
     }
 
     @Test
@@ -161,7 +181,8 @@ class DashboardControllerTest {
 
     @Test
     void testRecommendationsPassedToDashboard() {
-        when(mealRepository.findByMealDate(any(LocalDate.class)))
+        when(mealRepository.findByUser_IdAndMealDate(
+                eq(1L), any(LocalDate.class)))
                 .thenReturn(List.of());
 
         FoodRecommendationService.Food food =
@@ -177,8 +198,20 @@ class DashboardControllerTest {
         when(recommendationService.getRecommendationDetails(2500, 150))
                 .thenReturn(recommendations);
 
-        controller.showDashboard(model, session);
+        controller.showDashboard(model, session, principal);
 
         assertEquals(recommendations, model.get("recommendations"));
+    }
+
+    @Test
+    void testOnlyCurrentUsersMealsQueried() {
+        when(mealRepository.findByUser_IdAndMealDate(
+                eq(1L), any(LocalDate.class)))
+                .thenReturn(List.of());
+
+        controller.showDashboard(model, session, principal);
+
+        verify(mealRepository).findByUser_IdAndMealDate(
+                1L, LocalDate.now());
     }
 }

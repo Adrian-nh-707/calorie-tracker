@@ -1,11 +1,17 @@
+
 package com.group19.calorietrack.models;
 
 import java.time.LocalDate;
 
+import com.group19.calorietrack.user.AppUser;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Meal {
@@ -22,6 +28,11 @@ public class Meal {
     private double protein;
     private double carbs;
     private double fat;
+
+    // Each meal belongs to one user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     public Meal() {
     }
@@ -95,5 +106,13 @@ public class Meal {
 
     public void setFat(double fat) {
         this.fat = fat;
+    }
+
+    public AppUser getUser() {
+        return user;
+    }
+
+    public void setUser(AppUser user) {
+        this.user = user;
     }
 }
