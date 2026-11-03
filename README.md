@@ -53,6 +53,6 @@ Trainers will be able to connect with regular users through the application and 
 
 Admin manages user accounts (trainers or regular users). able to insert / delete data. Connects users to trainers or vice versa. modify user/trainer dashboards. Deals with maintenance.  Admin dashboard will contain user/trainer list of info, which is basically an overseer for its users.
 
-**API:** Calorie API
+**API:** Ninja Recipe Api
 
-**Documentation:** https://calorieapi.com/docs
+**Documentation:** https://api-ninjas.com/api/recipe#recipe-endpoint
