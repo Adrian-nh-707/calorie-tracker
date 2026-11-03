@@ -33,6 +33,11 @@ public class FoodController {
         return "food/viewFood";
     }
 
+    @GetMapping("/foodsearch")
+    public String foodSearchPage() {
+        return "foodSearch"; // returns templates/foodsearch.html
+    }
+
     @PostMapping("/food/add")
     public String addFood(@RequestParam Map<String, String> newfood, HttpServletResponse response){
         System.out.println("Add Food");
@@ -52,10 +57,10 @@ public class FoodController {
         String ingredients = newfood.get("ingredients");
 
         foodRepo.save(new Food(title, serving, calories, total_fat, saturated_fat, protein, sodium, potassium, dietary_fiber, cholesterol, sugars, total_carbohydrate, recipe, ingredients));
-
+        System.out.println("something");
         response.setStatus(201); // just created new object;
-
-        return "food/addedFood"; //just leads to success page will most likely change later
+        System.out.println("something2");
+        return "redirect:/foodsearch"; //just leads to success page will most likely change later
     }
     
 }
