@@ -141,14 +141,16 @@ Food database, API integration, and food search
 
             let item_container = document.createElement("div");
             //item_container.innerHTML = "hello";
-            item_container.classList.add("col-md-6","mb-4");
-            //console.log(item_container.className);
+            item_container.classList.add("col-md-12","mb-4");
+            item_container.id = "meal-card";
+            //console.log(item_container.id);
 
             let item_container_main = document.createElement("div"); //meal content page
-            item_container_main.classList.add("p-3","bg-light","border");
+            item_container_main.classList.add("p-3","bg-light","border", "rounded-4");
+            //item_container_main.id = "meal-content";
 
             let item_container_add = document.createElement("div"); //where the add/submit button is
-            item_container_main.classList.add("p-3","bg-light","border");
+            //item_container_add.id = "meal-add";
 
             let item_ingredients = document.createElement("div"); // list of ingredients;
             item_ingredients.style.display = "none";
@@ -195,8 +197,9 @@ Food database, API integration, and food search
 
             let title = document.createElement("h3");
             title.innerHTML = data[i]["title"];
-            title.style.border = "solid green";
-            title.style.textAlign = "center";
+
+            title.style.color = "green";
+            //title.style.textAlign = "center";
 
 
             let recipe_str = parseRecipe(data[i]["instructions"]);
@@ -205,8 +208,20 @@ Food database, API integration, and food search
             
             let form = document.createElement("form");
             form.style.float = "right";
+            form.style.padding = "0px";
+            form.style.margin = "0px";
             form.method = "post";
             form.action = "food/add";
+
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+            if (csrfToken) {
+                let csrfInput = document.createElement("input");
+                csrfInput.type = "hidden";
+                csrfInput.name = "_csrf"; // Default parameter name Spring Security monitors
+                csrfInput.value = csrfToken;
+                form.appendChild(csrfInput);
+            }
+
 
             let form_title = document.createElement("input");
             form_title.value = data[i]["title"];
@@ -281,6 +296,7 @@ Food database, API integration, and food search
             ingredients.style.display = "none";
             
             let submit = document.createElement("button");
+            //submit.id = "submitbutton";
             submit.type = "submit";
             submit.innerHTML = "+";
             
@@ -358,6 +374,11 @@ Food database, API integration, and food search
 }
 
 
+
+window.addEventListener('load', (event) => {
+    console.log('The page and all resources are fully loaded.');
+    getFoodList("apple");
+});
 
 
 
