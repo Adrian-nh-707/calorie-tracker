@@ -61,3 +61,11 @@
         text-align: center;
     }
 }
+.app-nav-links form {
+    margin: 0;
+}
+
+.app-nav-links button.nav-link {
+    cursor: pointer;
+    font-family: inherit;
+}
