@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<section class="card trainer-goal-section"
+         th:fragment="userGoals">
+
+    <div class="section-header">
+        <div>
+            <h2>My Trainer's Recommendations</h2>
+
+            <p class="section-description">
+                Nutrition goals suggested by your trainer.
+            </p>
+        </div>
+
+        <span class="section-tag">
+            Trainer Goals
+        </span>
+    </div>
+
+    <!-- No recommendations -->
+    <div class="trainer-goal-empty"
+         th:if="${trainerGoalRecommendations == null or #lists.isEmpty(trainerGoalRecommendations)}">
+
+        <h3>No recommendations yet</h3>
+
+        <p>
+            Your trainer hasn't recommended any nutrition
+            goals yet. New recommendations will appear here.
+        </p>
+
+    </div>
+
+    <!-- Recommendations from the logged-in user's trainer -->
+    <div class="trainer-goal-list"
+         th:if="${trainerGoalRecommendations != null and !#lists.isEmpty(trainerGoalRecommendations)}">
+
+        <article class="trainer-goal-item"
+                 th:each="recommendation : ${trainerGoalRecommendations}">
+
+            <div class="trainer-goal-header">
+
+                <div>
+                    <h3>Nutrition Goal Recommendation</h3>
+
+                    <p class="trainer-goal-from">
+                        From
+                        <strong th:text="${recommendation.trainerName}">
+                            Your Trainer
+                        </strong>
+                    </p>
+                </div>
+
+                <span class="trainer-goal-date"
+                      th:text="${recommendation.createdAtLabel}">
+                    Nov 14, 2026
+                </span>
+
+            </div>
+
+            <!-- Recommended daily targets -->
+            <div class="trainer-goal-values">
+
+                <div class="trainer-goal-value">
+                    <span class="trainer-goal-label">
+                        Recommended Calories
+                    </span>
+
+                    <p>
+                        <strong th:text="${recommendation.calorieGoal}">
+                            2200
+                        </strong>
+
+                        <span>kcal/day</span>
+                    </p>
+                </div>
+
+                <div class="trainer-goal-value">
+                    <span class="trainer-goal-label">
+                        Recommended Protein
+                    </span>
+
+                    <p>
+                        <strong th:text="${recommendation.proteinGoal}">
+                            140
+                        </strong>
+
+                        <span>g/day</span>
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Trainer's additional note -->
+            <div class="trainer-goal-note"
+                 th:if="${recommendation.note != null and !#strings.isEmpty(recommendation.note)}">
+
+                <h4>Trainer's Note</h4>
+
+                <p th:text="${recommendation.note}">
+                    Try to increase your daily protein intake.
+                </p>
+
+            </div>
+
+            <p class="trainer-goal-info">
+                These are recommendations from your trainer.
+                Your current nutrition goals will not change automatically.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+</body>
+</html>
