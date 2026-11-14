@@ -1,0 +1,448 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, honeydew, whitesmoke);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    color: black;
+}
+
+.inbox-container,
+.message-details-container,
+.send-message-container {
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.inbox-header,
+.message-details-header,
+.send-message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.inbox-header h1,
+.message-details-header h1,
+.send-message-header h1 {
+    color: seagreen;
+    font-size: 30px;
+    margin: 0 0 8px;
+}
+
+.inbox-header p,
+.message-details-header p,
+.send-message-header p {
+    color: dimgray;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.compose-button,
+.primary-button {
+    display: inline-block;
+    padding: 12px 18px;
+    background-color: seagreen;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.compose-button:hover,
+.primary-button:hover {
+    background-color: forestgreen;
+}
+
+.secondary-button {
+    display: inline-block;
+    padding: 12px 18px;
+    background-color: white;
+    color: seagreen;
+    border: 1px solid seagreen;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.secondary-button:hover {
+    background-color: honeydew;
+}
+
+.inbox-summary {
+    margin: 20px 0;
+}
+
+.summary-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 20px 25px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+}
+
+.summary-card span {
+    color: dimgray;
+    font-weight: bold;
+}
+
+.summary-card strong {
+    color: seagreen;
+    font-size: 26px;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.message-card {
+    display: block;
+    background-color: white;
+    padding: 22px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+    text-decoration: none;
+    color: black;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.message-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
+}
+
+.message-card.unread {
+    border-left: 5px solid seagreen;
+}
+
+.message-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.message-card-header h2 {
+    color: seagreen;
+    font-size: 19px;
+    margin: 0;
+}
+
+.unread-badge,
+.read-badge {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.unread-badge {
+    background-color: honeydew;
+    color: seagreen;
+}
+
+.read-badge {
+    background-color: whitesmoke;
+    color: dimgray;
+}
+
+.message-sender {
+    margin: 13px 0 8px;
+    color: dimgray;
+    font-size: 14px;
+}
+
+.message-sender strong {
+    color: black;
+}
+
+.message-preview {
+    color: dimgray;
+    line-height: 1.5;
+    margin: 10px 0 15px;
+    overflow-wrap: anywhere;
+}
+
+.message-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid lightgray;
+    color: dimgray;
+    font-size: 13px;
+}
+
+.view-message {
+    color: seagreen;
+    font-weight: bold;
+}
+
+.empty-inbox {
+    background-color: white;
+    padding: 40px 25px;
+    margin-top: 20px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+    text-align: center;
+}
+
+.empty-inbox h2 {
+    color: seagreen;
+    margin-top: 0;
+}
+
+.empty-inbox p {
+    color: dimgray;
+    line-height: 1.5;
+}
+
+.message-details-card {
+    background-color: white;
+    padding: 30px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+}
+
+.message-details-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.message-date {
+    color: dimgray;
+    font-size: 13px;
+}
+
+.message-details-card h2 {
+    color: seagreen;
+    font-size: 24px;
+    margin: 0 0 20px;
+}
+
+.message-participants {
+    background-color: honeydew;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.message-participants p {
+    margin: 7px 0;
+    font-size: 14px;
+}
+
+.message-divider {
+    border-top: 1px solid lightgray;
+    margin: 22px 0;
+}
+
+.message-content {
+    min-height: 120px;
+    color: black;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.message-content p {
+    white-space: pre-wrap;
+}
+
+.message-details-actions,
+.send-message-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.send-message-card {
+    background-color: white;
+    padding: 30px;
+    border: 1px solid lightgray;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px lightgray;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid gray;
+    border-radius: 6px;
+    background-color: white;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 160px;
+    line-height: 1.5;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: seagreen;
+    box-shadow: 0 0 0 3px honeydew;
+}
+
+.form-group small {
+    display: block;
+    color: dimgray;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.success-message,
+.error-message {
+    padding: 13px 16px;
+    margin: 15px 0;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.success-message {
+    background-color: honeydew;
+    color: seagreen;
+    border: 1px solid seagreen;
+}
+
+.error-message {
+    background-color: #fff0f0;
+    color: firebrick;
+    border: 1px solid firebrick;
+}
+
+.inbox-footer {
+    margin-top: 25px;
+}
+
+.inbox-footer a {
+    color: seagreen;
+    text-decoration: none;
+}
+
+.inbox-footer a:hover {
+    color: forestgreen;
+}
+
+.dashboard-link {
+    display: inline-block;
+    margin: 10px 0 20px;
+    color: forestgreen;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.dashboard-link:hover {
+    text-decoration: underline;
+}
+
+.message-navigation {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.message-navigation a {
+    color: forestgreen;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.message-navigation a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .inbox-container,
+    .message-details-container,
+    .send-message-container {
+        margin: 15px auto;
+    }
+
+    .inbox-header h1,
+    .message-details-header h1,
+    .send-message-header h1 {
+        font-size: 26px;
+    }
+
+    .message-card,
+    .message-details-card,
+    .send-message-card {
+        padding: 20px;
+    }
+
+    .message-details-actions,
+    .send-message-actions {
+        flex-direction: column;
+    }
+
+    .message-details-actions a,
+    .send-message-actions a,
+    .send-message-actions button,
+    .compose-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .message-card-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

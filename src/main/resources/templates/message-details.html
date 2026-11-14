@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Details | Calorie Tracker</title>
+
+    <link rel="stylesheet" th:href="@{/css/messaging.css}">
+</head>
+<body>
+
+<main class="message-details-container">
+
+    <header class="message-details-header">
+        <h1>Message Details</h1>
+        <p>Read the full message below.</p>
+    </header>
+
+    <section class="message-details-card">
+
+        <div class="message-details-top">
+            <span class="read-badge">Read</span>
+            <span class="message-date"
+                  th:text="${message.createdAt}">
+                Message Date
+            </span>
+        </div>
+
+        <h2 th:text="${message.subject}">
+            Message Subject
+        </h2>
+
+        <div class="message-participants">
+            <p>
+                <strong>From:</strong>
+                <span th:text="${message.sender.firstName + ' ' + message.sender.lastName}">
+                    Sender Name
+                </span>
+            </p>
+
+            <p>
+                <strong>To:</strong>
+                <span th:text="${message.recipient.firstName + ' ' + message.recipient.lastName}">
+                    Recipient Name
+                </span>
+            </p>
+        </div>
+
+        <div class="message-divider"></div>
+
+        <div class="message-content">
+            <p th:text="${message.content}">
+                Message content will appear here.
+            </p>
+        </div>
+
+        <div class="message-details-actions">
+            <a th:href="@{/inbox}" class="secondary-button">
+                Back to Inbox
+            </a>
+
+            <a th:href="@{/messages/new}" class="primary-button">
+                Send Message
+            </a>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>

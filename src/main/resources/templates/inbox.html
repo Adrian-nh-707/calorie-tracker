@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox | Calorie Tracker</title>
+
+    <link rel="stylesheet" th:href="@{/css/messaging.css}">
+</head>
+<body>
+
+<main class="inbox-container">
+
+    <header class="inbox-header">
+        <div>
+            <h1>My Inbox</h1>
+            <p>View messages</p>
+        </div>
+
+        <a th:href="@{/messages/new}" class="compose-button">
+            New Message
+        </a>
+
+        <a th:href="@{/home}" class="dashboard-link">
+            ← Back to Dashboard
+        </a>
+    </header>
+
+    <div th:if="${successMessage}"
+         class="success-message"
+         th:text="${successMessage}">
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="error-message"
+         th:text="${errorMessage}">
+    </div>
+
+    <section class="inbox-summary">
+        <div class="summary-card">
+            <span>Unread Messages</span>
+            <strong th:text="${unreadCount}">0</strong>
+        </div>
+    </section>
+
+    <section th:if="${#lists.isEmpty(messages)}"
+             class="empty-inbox">
+        <h2>Your inbox is empty</h2>
+        <p>You don't have any messages yet.</p>
+    </section>
+
+    <section th:unless="${#lists.isEmpty(messages)}"
+             class="message-list">
+
+        <a th:each="message : ${messages}"
+           th:href="@{/inbox/{id}(id=${message.id})}"
+           class="message-card"
+           th:classappend="${message.readAt == null} ? ' unread' : ''">
+
+            <div class="message-card-header">
+                <h2 th:text="${message.subject}">Message Subject</h2>
+
+                <span th:if="${message.readAt == null}"
+                      class="unread-badge">
+                    Unread
+                </span>
+
+                <span th:unless="${message.readAt == null}"
+                      class="read-badge">
+                    Read
+                </span>
+            </div>
+
+            <p class="message-sender">
+                From:
+                <strong th:text="${message.sender.firstName + ' ' + message.sender.lastName}">
+                    Sender Name
+                </strong>
+            </p>
+
+            <p class="message-preview"
+               th:text="${message.content}">
+                Message preview...
+            </p>
+
+            <div class="message-card-footer">
+                <span th:text="${message.createdAt}">
+                    Message Date
+                </span>
+
+                <span class="view-message">View Message →</span>
+            </div>
+
+        </a>
+
+    </section>
+
+    <footer class="inbox-footer">
+        <a href="javascript:history.back()">Back</a>
+    </footer>
+
+</main>
+</body>
+</html>

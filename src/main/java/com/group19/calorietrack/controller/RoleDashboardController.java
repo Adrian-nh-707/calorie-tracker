@@ -14,13 +14,18 @@ import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
 
+import com.group19.calorietrack.messaging.MessageService;
+
 @Controller
 public class RoleDashboardController {
 
     private final UserRepository userRepository;
 
-    public RoleDashboardController(UserRepository userRepository) {
+    private final MessageService messageService;
+
+    public RoleDashboardController(UserRepository userRepository, MessageService messageService) {
         this.userRepository = userRepository;
+        this.messageService = messageService;
     }
 
     @GetMapping("/admin/dashboard")
@@ -99,7 +104,28 @@ public class RoleDashboardController {
 
         model.addAttribute("assignedUserCount", assignedUsers.size());
         model.addAttribute("assignedUsers", assignedUsers);
+        model.addAttribute("unreadCount", messageService.getUnreadCount(email));
 
         return "trainer-dashboard";
+    }
+
+    @GetMapping("/home")
+    public String redirectToDashboard(Authentication authentication) {
+
+        boolean isTrainer = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TRAINER"));
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isTrainer) {
+                return "redirect:/trainer/dashboard";
+        }
+
+        if (isAdmin) {
+                return "redirect:/admin/dashboard";
+        }
+
+        return "redirect:/dashboard";
     }
 }

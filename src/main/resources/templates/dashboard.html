@@ -34,6 +34,14 @@
                     Food Search
                 </a>
 
+                <a class="nav-link" th:href="@{/inbox}">
+                    Inbox
+                    <span class="unread-count"
+                        th:if="${unreadCount > 0}"
+                        th:text="${unreadCount}">
+                    </span>
+                </a>
+
                 <form th:action="@{/logout}" method="post">
                     <button class="nav-link" type="submit">
                         Log Out

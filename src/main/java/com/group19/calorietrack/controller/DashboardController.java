@@ -1,4 +1,3 @@
-
 package com.group19.calorietrack.controller;
 
 import java.security.Principal;
@@ -19,6 +18,8 @@ import com.group19.calorietrack.services.FoodRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 
+import com.group19.calorietrack.messaging.MessageService;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -28,14 +29,18 @@ public class DashboardController {
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
 
+    private final MessageService messageService;
+
     public DashboardController(
             FoodRecommendationService recommendationService,
             MealRepository mealRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            MessageService messageService) {
 
         this.recommendationService = recommendationService;
         this.mealRepository = mealRepository;
         this.userRepository = userRepository;
+        this.messageService = messageService;
     }
 
     @GetMapping("/dashboard")
@@ -58,6 +63,10 @@ public class DashboardController {
                 HttpStatus.UNAUTHORIZED,
                 "User not found."
             ));
+            model.addAttribute(
+                "unreadCount",
+                messageService.getUnreadCount(principal.getName())
+            );
 
         // Get calorie goal from session
         Integer calorieGoal =
