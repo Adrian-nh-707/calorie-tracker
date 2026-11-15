@@ -8,6 +8,7 @@
     <title>Calorie Tracker Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/trainer-goal-recommendations.css}">
 </head>
 
 <body>
@@ -165,6 +166,10 @@
             </p>
         </section>
 
+        <!-- Trainer goal recommendations -->
+        <section th:replace="~{fragments/trainer-goal-recommendations :: userGoals}">
+        </section>
+
         <section class="card">
             <div class="section-header">
                 <h2>Food Recommendations</h2>
@@ -175,7 +180,8 @@
                 Suggested foods based on your remaining calories and protein.
             </p>
 
-            <div class="empty-state"th:if="${#lists.isEmpty(recommendations)}">
+            <div class="empty-state"
+                 th:if="${#lists.isEmpty(recommendations)}">
 
                 <p th:if="${caloriesRemaining > 0}">
                     No sample foods fit your remaining calorie budget.
