@@ -14,14 +14,22 @@ import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
 
+import com.group19.calorietrack.services.TrainerGoalRecommendationService;
+import org.springframework.security.access.AccessDeniedException;
+
 @Controller
 public class RoleDashboardController {
 
     private final UserRepository userRepository;
+    private final TrainerGoalRecommendationService recommendationService;
 
-    public RoleDashboardController(UserRepository userRepository) {
+    public RoleDashboardController(
+        UserRepository userRepository,
+        TrainerGoalRecommendationService recommendationService) {
+
         this.userRepository = userRepository;
-    }
+        this.recommendationService = recommendationService;
+        }
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard(Model model) {
@@ -102,4 +110,38 @@ public class RoleDashboardController {
 
         return "trainer-dashboard";
     }
+
+    @PostMapping("/trainer/recommendations")
+        public String createGoalRecommendation(
+                Authentication authentication,
+                @RequestParam Long userId,
+                @RequestParam Integer calorieGoal,
+                @RequestParam Integer proteinGoal,
+                @RequestParam(required = false) String note,
+                RedirectAttributes redirectAttributes) {
+
+        try {
+                recommendationService.createRecommendation(
+                        authentication.getName(),
+                        userId,
+                        calorieGoal,
+                        proteinGoal,
+                        note
+                );
+
+                redirectAttributes.addFlashAttribute(
+                        "successMessage",
+                        "Goal recommendation sent successfully."
+                );
+
+        } catch (IllegalArgumentException | AccessDeniedException ex) {
+
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        ex.getMessage()
+                );
+        }
+
+        return "redirect:/trainer/dashboard";
+        }
 }

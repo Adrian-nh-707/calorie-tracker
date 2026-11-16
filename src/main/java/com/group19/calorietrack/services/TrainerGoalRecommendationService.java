@@ -1,4 +1,3 @@
-
 package com.group19.calorietrack.services;
 
 import java.time.format.DateTimeFormatter;
@@ -161,6 +160,7 @@ public class TrainerGoalRecommendationService {
 
         
         return recommendations.stream() // Prepare the values used by the dashboard
+                .limit(1)
                 .map(this::toRecommendationView)
                 .toList();
     }
