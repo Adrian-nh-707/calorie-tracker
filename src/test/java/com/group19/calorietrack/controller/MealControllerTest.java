@@ -1,3 +1,4 @@
+
 package com.group19.calorietrack.controller;
 
 import java.security.Principal;
@@ -6,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,8 +56,7 @@ class MealControllerTest {
         when(userRepository.findByEmail("test@example.com"))
                 .thenReturn(Optional.of(user));
 
-        controller = new MealController(
-                mealRepository, userRepository);
+        controller = new MealController(mealRepository, userRepository);
     }
 
     private Meal sampleMeal() {
@@ -70,49 +71,40 @@ class MealControllerTest {
                            double calories, double protein,
                            double carbs, double fat) {
         return controller.addMeal(
-                name, type, dateText,
-                calories, protein, carbs, fat,
-                principal, redirectAttributes);
+                name, type, dateText, calories, protein,
+                carbs, fat, null, principal, redirectAttributes);
     }
 
-    private String updateMeal(Long id, String type,
-                              double calories) {
+    private String updateMeal(Long id, String type, double calories) {
         return controller.updateMeal(
                 id, "Egg Sandwich", type, dateText,
-                calories, 18, 40, 12,
-                principal, redirectAttributes);
+                calories, 18, 40, 12, principal, redirectAttributes);
     }
 
     @Test
     void testAddMeal() {
         String result = addMeal(
-                "Egg Sandwich", "Breakfast",
-                320, 18, 40, 12);
+                "Egg Sandwich", "Breakfast", 320, 18, 40, 12);
 
-        ArgumentCaptor<Meal> saved =
-                ArgumentCaptor.forClass(Meal.class);
-
+        ArgumentCaptor<Meal> saved = ArgumentCaptor.forClass(Meal.class);
         verify(mealRepository).save(saved.capture());
 
         assertEquals(user, saved.getValue().getUser());
         assertEquals("Egg Sandwich", saved.getValue().getName());
+        assertNull(saved.getValue().getRecipeId());
         assertEquals("redirect:/meals?date=" + dateText, result);
     }
 
     @Test
     void testDuplicateBreakfast() {
-        when(mealRepository
-                .existsByUser_IdAndMealDateAndMealType(
-                        1L, date, "Breakfast"))
-                .thenReturn(true);
+        when(mealRepository.existsByUser_IdAndMealDateAndMealType(
+                1L, date, "Breakfast")).thenReturn(true);
 
         String result = addMeal(
-                "Toast", "Breakfast",
-                200, 5, 30, 6);
+                "Toast", "Breakfast", 200, 5, 30, 6);
 
         verify(mealRepository, never()).save(any(Meal.class));
-        verify(redirectAttributes).addFlashAttribute(
-                eq("error"), anyString());
+        verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
 
         assertEquals("redirect:/meals?date=" + dateText, result);
     }
@@ -122,19 +114,16 @@ class MealControllerTest {
         addMeal("Banana", "Snack", 100, 1, 27, 0);
         addMeal("Apple", "Snack", 95, 0, 25, 0);
 
-        verify(mealRepository, times(2))
-                .save(any(Meal.class));
+        verify(mealRepository, times(2)).save(any(Meal.class));
     }
 
     @Test
     void testInvalidMeal() {
         String result = addMeal(
-                "Chicken Rice", "Lunch",
-                -100, 30, 50, 10);
+                "Chicken Rice", "Lunch", -100, 30, 50, 10);
 
         verify(mealRepository, never()).save(any(Meal.class));
-        verify(redirectAttributes).addFlashAttribute(
-                eq("error"), anyString());
+        verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
 
         assertEquals("redirect:/meals?date=" + dateText, result);
     }
@@ -144,14 +133,12 @@ class MealControllerTest {
         addMeal("   ", "Breakfast", 320, 18, 40, 12);
 
         verify(mealRepository, never()).save(any(Meal.class));
-        verify(redirectAttributes).addFlashAttribute(
-                eq("error"), anyString());
+        verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
     }
 
     @Test
     void testInvalidNutrition() {
         addMeal("Chicken Rice", "Lunch", 550, -10, 65, 15);
-
         verify(mealRepository, never()).save(any(Meal.class));
     }
 
@@ -159,17 +146,14 @@ class MealControllerTest {
     void testDailyNutrition() {
         Meal breakfast = sampleMeal();
         Meal lunch = new Meal(
-                "Chicken Rice", "Lunch", date,
-                550, 35, 65, 15);
+                "Chicken Rice", "Lunch", date, 550, 35, 65, 15);
         lunch.setUser(user);
 
         when(mealRepository.findByUser_IdAndMealDate(1L, date))
                 .thenReturn(List.of(breakfast, lunch));
 
         Model model = mock(Model.class);
-
-        String result = controller.showMeals(
-                dateText, model, principal);
+        String result = controller.showMeals(dateText, model, principal);
 
         verify(model).addAttribute("totalCalories", 870.0);
         verify(model).addAttribute("totalProtein", 53.0);
@@ -185,9 +169,7 @@ class MealControllerTest {
                 .thenReturn(List.of());
 
         Model model = mock(Model.class);
-
-        String result = controller.showMeals(
-                dateText, model, principal);
+        String result = controller.showMeals(dateText, model, principal);
 
         verify(model).addAttribute("totalCalories", 0.0);
         verify(model).addAttribute("totalProtein", 0.0);
@@ -204,9 +186,7 @@ class MealControllerTest {
                 .thenReturn(Optional.of(meal));
 
         Model model = mock(Model.class);
-
-        String result = controller.showEditMeal(
-                1L, model, principal);
+        String result = controller.showEditMeal(1L, model, principal);
 
         verify(model).addAttribute("meal", meal);
         assertEquals("edit-meal", result);
@@ -223,7 +203,6 @@ class MealControllerTest {
 
         assertEquals(400, meal.getCalories());
         verify(mealRepository).save(meal);
-
         assertEquals("redirect:/meals?date=" + dateText, result);
     }
 
@@ -234,16 +213,13 @@ class MealControllerTest {
         when(mealRepository.findByIdAndUser_Id(1L, 1L))
                 .thenReturn(Optional.of(meal));
 
-        when(mealRepository
-                .existsByUser_IdAndMealDateAndMealTypeAndIdNot(
-                        1L, date, "Lunch", 1L))
-                .thenReturn(true);
+        when(mealRepository.existsByUser_IdAndMealDateAndMealTypeAndIdNot(
+                1L, date, "Lunch", 1L)).thenReturn(true);
 
         String result = updateMeal(1L, "Lunch", 400);
 
         verify(mealRepository, never()).save(any(Meal.class));
-        verify(redirectAttributes).addFlashAttribute(
-                eq("error"), anyString());
+        verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
 
         assertEquals("redirect:/meals/edit/1", result);
     }
@@ -273,8 +249,7 @@ class MealControllerTest {
         when(mealRepository.findByIdAndUser_Id(1L, 1L))
                 .thenReturn(Optional.of(meal));
 
-        String result = controller.deleteMeal(
-                1L, principal, redirectAttributes);
+        String result = controller.deleteMeal(1L, principal, redirectAttributes);
 
         verify(mealRepository).delete(meal);
         assertEquals("redirect:/meals?date=" + dateText, result);
@@ -287,8 +262,7 @@ class MealControllerTest {
 
         ResponseStatusException error = assertThrows(
                 ResponseStatusException.class,
-                () -> controller.deleteMeal(
-                        99L, principal, redirectAttributes));
+                () -> controller.deleteMeal(99L, principal, redirectAttributes));
 
         assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
         verify(mealRepository, never()).delete(any(Meal.class));
@@ -315,15 +289,12 @@ class MealControllerTest {
         Model model = mock(Model.class);
         controller.showMeals(dateText, model, principal);
 
-        verify(mealRepository)
-                .findByUser_IdAndMealDate(1L, date);
-
+        verify(mealRepository).findByUser_IdAndMealDate(1L, date);
         verify(model).addAttribute("meals", List.of());
     }
 
     @Test
     void testCannotEditOtherUsersMeal() {
-        // Meal 55 belongs to another user
         when(mealRepository.findByIdAndUser_Id(55L, 1L))
                 .thenReturn(Optional.empty());
 
@@ -337,14 +308,12 @@ class MealControllerTest {
 
     @Test
     void testCannotDeleteOtherUsersMeal() {
-        // Meal 55 belongs to another user
         when(mealRepository.findByIdAndUser_Id(55L, 1L))
                 .thenReturn(Optional.empty());
 
         ResponseStatusException error = assertThrows(
                 ResponseStatusException.class,
-                () -> controller.deleteMeal(
-                        55L, principal, redirectAttributes));
+                () -> controller.deleteMeal(55L, principal, redirectAttributes));
 
         assertEquals(HttpStatus.NOT_FOUND, error.getStatusCode());
         verify(mealRepository, never()).delete(any(Meal.class));
@@ -356,10 +325,82 @@ class MealControllerTest {
                 ResponseStatusException.class,
                 () -> controller.addMeal(
                         "Egg Sandwich", "Breakfast", dateText,
-                        320, 18, 40, 12,
-                        null, redirectAttributes));
+                        320, 18, 40, 12, null, null, redirectAttributes));
 
         assertEquals(HttpStatus.UNAUTHORIZED, error.getStatusCode());
         verify(mealRepository, never()).save(any(Meal.class));
+    }
+
+    // FatSecret recipe integration tests
+
+    @Test
+    void testAddMealWithRecipeId() {
+        String result = controller.addMeal(
+                "Chicken Pasta", "Lunch", dateText,
+                420, 32, 45, 13, "123456", principal, redirectAttributes);
+
+        ArgumentCaptor<Meal> saved = ArgumentCaptor.forClass(Meal.class);
+        verify(mealRepository).save(saved.capture());
+
+        Meal meal = saved.getValue();
+
+        assertEquals("Chicken Pasta", meal.getName());
+        assertEquals("123456", meal.getRecipeId());
+        assertEquals(420.0, meal.getCalories());
+        assertEquals(32.0, meal.getProtein());
+        assertEquals(45.0, meal.getCarbs());
+        assertEquals(13.0, meal.getFat());
+        assertEquals(user, meal.getUser());
+
+        assertEquals("redirect:/meals?date=" + dateText, result);
+    }
+
+    @Test
+    void testInvalidRecipeId() {
+        ResponseStatusException error = assertThrows(
+                ResponseStatusException.class,
+                () -> controller.addMeal(
+                        "Chicken Pasta", "Lunch", dateText,
+                        420, 32, 45, 13, "invalid-recipe-id",
+                        principal, redirectAttributes));
+
+        assertEquals(HttpStatus.BAD_REQUEST, error.getStatusCode());
+        verify(mealRepository, never()).save(any(Meal.class));
+    }
+
+    @Test
+    void testEditMealKeepsRecipeId() {
+        Meal meal = sampleMeal();
+        meal.setRecipeId("123456");
+
+        when(mealRepository.findByIdAndUser_Id(1L, 1L))
+                .thenReturn(Optional.of(meal));
+
+        String result = updateMeal(1L, "Breakfast", 400);
+
+        assertEquals(400.0, meal.getCalories());
+        assertEquals("123456", meal.getRecipeId());
+
+        verify(mealRepository).save(meal);
+        assertEquals("redirect:/meals?date=" + dateText, result);
+    }
+
+    @Test
+    void testChangingMealNameClearsRecipeId() {
+        Meal meal = sampleMeal();
+        meal.setRecipeId("123456");
+
+        when(mealRepository.findByIdAndUser_Id(1L, 1L))
+                .thenReturn(Optional.of(meal));
+
+        String result = controller.updateMeal(
+                1L, "Chicken Rice", "Lunch", dateText,
+                550, 35, 65, 15, principal, redirectAttributes);
+
+        assertEquals("Chicken Rice", meal.getName());
+        assertNull(meal.getRecipeId());
+
+        verify(mealRepository).save(meal);
+        assertEquals("redirect:/meals?date=" + dateText, result);
     }
 }

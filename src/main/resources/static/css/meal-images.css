@@ -1,0 +1,462 @@
+
+/* Header */
+
+.meal-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.meal-page-header h1 {
+    margin-bottom: 8px;
+    color: #226b45;
+}
+
+.meal-page-header p {
+    margin: 0;
+    color: #718077;
+}
+
+.food-search-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: seagreen;
+    color: white;
+    border: 1px solid seagreen;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.food-search-link:hover {
+    background: #216a42;
+    color: white;
+}
+
+/* Images */
+
+.meal-photo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    background: #e6f1e8;
+    border: 1px solid #d7e7da;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.meal-photo .meal-image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.meal-photo-placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    color: #8ca797;
+    font-size: 42px;
+}
+
+.preview-photo {
+    width: 160px;
+    aspect-ratio: 1 / 1;
+}
+
+.history-photo {
+    align-self: flex-start;
+    width: 144px;
+    aspect-ratio: 1 / 1;
+}
+
+/* Meal preview */
+
+.meal-preview {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin: 0 0 18px;
+    padding: 20px;
+    background: #f1f8f3;
+    border: 1px solid #dceadf;
+    border-radius: 16px;
+}
+
+.meal-preview-info,
+.meal-history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.meal-source-label,
+.meal-type-label {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    background: #e0f0e4;
+    color: #267449;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.meal-preview-info h3 {
+    margin: 0 0 12px;
+    color: #245d3c;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.preview-calories {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: #267449;
+    font-size: 15px;
+}
+
+.preview-calories strong {
+    font-size: 30px;
+    font-variant-numeric: tabular-nums;
+}
+
+.clear-import-button {
+    display: inline-flex;
+    min-height: 34px;
+    margin-top: 12px;
+    padding: 7px 12px;
+    background: transparent;
+    color: #52735e;
+    border: 1px solid #b9d2bf;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.clear-import-button:hover {
+    background: #e4f1e7;
+    border-color: seagreen;
+    color: seagreen;
+}
+
+/* Messages */
+
+.food-import-message,
+.meal-success-message,
+.meal-error-message {
+    padding: 13px 16px;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.food-import-message,
+.meal-success-message {
+    background: #edf8ef;
+    color: #276840;
+    border: 1px solid #d5e9da;
+}
+
+.meal-error-message {
+    background: #fff3f3;
+    color: #ad3939;
+    border: 1px solid #f0d4d4;
+}
+
+/* Meal form and servings */
+
+.meal-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.meal-form-grid > div {
+    min-width: 0;
+}
+
+#mealForm input[type="hidden"] {
+    display: none;
+}
+
+.portion-controls {
+    padding: 18px;
+    margin: 18px 0;
+    background: #f5faf6;
+    border: 1px solid #dceadf;
+    border-radius: 12px;
+}
+
+.portion-controls label {
+    margin-top: 0;
+    color: #345e41;
+}
+
+.portion-controls input {
+    max-width: 180px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.portion-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.portion-buttons button {
+    min-width: 65px;
+    min-height: 36px;
+    padding: 7px 14px;
+    margin: 0;
+    background: white;
+    color: seagreen;
+    border: 1px solid #b8d6bf;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.portion-buttons button:hover {
+    background: #eaf5ed;
+    color: #226b45;
+}
+
+.portion-buttons button.portion-active {
+    background: seagreen;
+    color: white;
+    border-color: seagreen;
+}
+
+.portion-description {
+    margin: 14px 0 0;
+    color: #6b7d70;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.save-meal-button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 24px;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+/* Meal history */
+
+.meal-history-card {
+    display: flex;
+    align-items: stretch;
+    gap: 22px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #dce8df;
+    border-radius: 16px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+}
+
+.meal-history-card:hover {
+    border-color: #b6d4be;
+    box-shadow: 0 6px 18px rgba(46, 139, 87, 0.08);
+}
+
+.meal-history-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.meal-history-card .meal-header {
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.meal-type-label {
+    background: #eaf5ec;
+    margin-bottom: 8px;
+}
+
+.meal-card .history-meal-name {
+    margin: 0;
+    color: #294b35;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.meal-history-card .meal-calories {
+    flex-shrink: 0;
+}
+
+.meal-history-card .meal-calories strong {
+    color: #267449;
+    font-size: 25px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.meal-history-card .meal-calories span {
+    color: #718077;
+    font-size: 12px;
+}
+
+.meal-history-card .meal-macros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid #e5ece6;
+}
+
+.meal-history-card .meal-macros span {
+    padding: 6px 10px;
+    background: #f2f7f3;
+    color: #5d7063;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.meal-history-card .meal-macros b {
+    color: #294b35;
+}
+
+.meal-history-card .meal-actions {
+    margin-top: 16px;
+}
+
+.meal-history-card .edit-meal-btn {
+    background: white;
+    color: seagreen;
+    border: 1px solid seagreen;
+}
+
+.meal-history-card .edit-meal-btn:hover {
+    background: #edf7ef;
+    color: #216a42;
+}
+
+.meal-history-card .delete-meal-btn {
+    background: white;
+    color: #b34040;
+    border: 1px solid #dcb0b0;
+}
+
+.meal-history-card .delete-meal-btn:hover {
+    background: #fff0f0;
+    color: #a32d2d;
+}
+
+.empty-history .food-search-link {
+    margin-top: 18px;
+}
+
+.meal-attribution {
+    margin: 30px 0 10px;
+    text-align: center;
+    color: #829087;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.meal-attribution a {
+    color: seagreen;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.meal-attribution a:hover {
+    text-decoration: underline;
+}
+
+#mealPreview[hidden],
+#portionControls[hidden],
+#foodImportMessage[hidden],
+.meal-photo img[hidden],
+.meal-photo-placeholder[hidden] {
+    display: none !important;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .preview-photo { width: 140px; }
+    .history-photo { width: 120px; }
+    .meal-history-card { gap: 18px; }
+}
+
+@media (max-width: 600px) {
+    .meal-page-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .meal-page-header .food-search-link { width: 100%; }
+
+    .app-nav-links { flex-wrap: wrap; }
+
+    .app-nav-links > a,
+    .app-nav-links > form {
+        flex: 1 1 calc(50% - 6px);
+    }
+
+    .meal-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .meal-preview { gap: 14px; padding: 14px; }
+    .preview-photo { width: 104px; border-radius: 10px; }
+    .meal-preview-info h3 { font-size: 17px; }
+    .meal-source-label { font-size: 10px; padding: 4px 7px; }
+    .preview-calories strong { font-size: 24px; }
+
+    .meal-history-card {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .history-photo {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+    }
+
+    .meal-history-card .meal-header { gap: 10px; }
+    .meal-card .history-meal-name { font-size: 17px; }
+    .meal-history-card .meal-calories strong { font-size: 22px; }
+    .meal-history-card .meal-macros { gap: 7px; }
+    .meal-history-card .meal-macros span { font-size: 12px; }
+
+    .meal-history-card .meal-actions {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .meal-history-card .meal-actions > a,
+    .meal-history-card .meal-actions > form {
+        flex: 1;
+    }
+
+    .meal-history-card .meal-actions button {
+        width: 100%;
+    }
+}

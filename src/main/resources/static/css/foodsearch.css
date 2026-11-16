@@ -1,53 +1,681 @@
-body{
-    height: 100%;
-    background-color: honeydew;
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #eff8f1, #f8faf8);
+    min-height: 100vh;
+    margin: 0;
+    color: #24392c;
 }
 
-#foodlist{
+main.dashboard {
+    width: calc(100% - 48px);
+    max-width: 1200px;
+    margin: 32px auto;
+    padding: 0;
+}
 
-button {
-    background-color: seagreen;
+.app-nav {
+    margin-bottom: 28px;
+    padding: 16px 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.app-brand {
+    color: #267449;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.app-nav-links {
+    align-items: center;
+    gap: 10px;
+}
+
+.app-nav-links .nav-link {
+    font-weight: 600;
+}
+
+#foodsearchtitle {
+    float: none;
+    margin: 0;
     color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 18px;
-    margin-left: 5px;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+}
 
+.dashboard > section.bg-success {
+    padding: 38px 24px !important;
+    background: linear-gradient(120deg, #226b45, #3b9363) !important;
+}
+
+.dashboard > section.bg-success p {
+    max-width: 650px;
+    margin: 12px auto 0;
+    color: #e8f5ec;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* Search */
+
+#searchform {
+    margin: 0;
+    padding: 0;
+}
+
+#searchform .input-group {
+    display: flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+}
+
+#search {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    height: 52px;
+    padding: 12px 16px;
+    border: 1px solid #d2ded6;
+    border-radius: 10px 0 0 10px;
+    background: white;
+    color: #24392c;
+    font-size: 16px;
+}
+
+#search:focus {
+    border-color: seagreen;
+    box-shadow: none;
+}
+
+#searchbutton {
+    flex-shrink: 0;
+    min-width: 112px;
+    height: 52px;
+    margin: 0 !important;
+    border: 1px solid seagreen;
+    border-radius: 0 10px 10px 0;
+    background: seagreen;
+    color: white;
+    font-weight: 600;
+}
+
+#searchbutton:hover {
+    background: #216a42;
+}
+
+#foodlist {
+    margin-top: 30px;
+    background: transparent;
+}
+
+#foodlist > h4 {
+    margin-bottom: 12px;
+    font-size: 25px;
+    font-weight: 700;
+    color: #246a43;
+}
+
+.search-status {
+    margin: 0 0 20px;
+    color: #68796e;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Food cards */
+
+.dish-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+.dish-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 100%;
+    background: white;
+    border: 1px solid #dce6df;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dish-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+}
+
+.dish-image,
+.recipe-modal-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background: #eaf3ec;
+}
+
+.image-placeholder {
+    display: grid;
+    place-items: center;
+    background: #edf4ee;
+    color: #728579;
+    font-size: 14px;
+}
+
+.dish-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+.dish-title,
+.dish-description {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.dish-title {
+    height: 48px;
+    font-size: 19px;
+    line-height: 24px;
+    font-weight: 700;
+    color: #226b45;
+}
+
+.dish-description {
+    height: 42px;
+    font-size: 13px;
+    line-height: 21px;
+    color: #738077;
+}
+
+/* Nutrition */
+
+.dish-nutrition {
+    padding: 16px;
+    background: #f4f9f5;
+    border: 1px solid #e0ebe2;
+    border-radius: 12px;
+}
+
+.dish-calories {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #dce8df;
+}
+
+.nutrition-caption {
+    color: #718077;
+    font-size: 12px;
+}
+
+.dish-calories strong {
+    color: #267449;
+    font-size: 23px;
+    white-space: nowrap;
+}
+
+.dish-macros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding-top: 14px;
+}
+
+.dish-macro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    gap: 4px;
+    padding: 0 4px;
+    text-align: center;
+}
+
+.dish-macro + .dish-macro {
+    border-left: 1px solid #dce8df;
+}
+
+.dish-macro strong {
+    color: #294b35;
+    font-size: 17px;
+    font-variant-numeric: tabular-nums;
+}
+
+.dish-macro span {
+    color: #75847a;
+    font-size: 12px;
+}
+
+/* Buttons */
+
+.dish-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.dish-add-button,
+.dish-view-button,
+.recipe-secondary-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 16px;
+    border: 1px solid seagreen;
+    border-radius: 9px;
+    font: 600 14px Arial, sans-serif;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: forestgreen;
+.dish-add-button {
+    background: seagreen;
+    color: white;
 }
 
-background-color: honeydew
-
-
-
+.dish-add-button:hover {
+    background: #216a42;
 }
 
-#foodsearchtitle{
-    color:honeydew;
-    float:left;
-    margin: 20px;
+.dish-view-button,
+.recipe-secondary-button,
+.load-more-button {
+    background: white;
+    color: seagreen;
 }
 
-#searchform{
- padding: 1px;
-
+.dish-view-button:hover,
+.recipe-secondary-button:hover {
+    background: #edf7ef;
+    color: #216a42;
 }
 
-#searchbutton{
-    margin-bottom: 20px;
+.load-more-button {
+    display: block;
+    min-width: 180px;
+    margin: 30px auto 0;
+    padding: 12px 24px;
+    border: 1px solid seagreen;
+    border-radius: 10px;
+    font-weight: 600;
 }
 
-#submitbutton{
-
+.load-more-button:hover {
+    background: seagreen;
+    color: white;
 }
 
-#meal-card:hover{
-    transform: translateY(-3px);
-
+.load-more-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
+[hidden] {
+    display: none !important;
+}
+
+/* Recipe modal */
+
+.recipe-dialog {
+    width: min(760px, calc(100% - 32px));
+    max-width: 760px;
+    max-height: 90vh;
+    max-height: 90dvh;
+    margin: auto;
+    padding: 0;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: #24392c;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.recipe-dialog[open] {
+    display: flex;
+    flex-direction: column;
+    animation: modal-appear 0.2s ease-out;
+}
+
+.recipe-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+body:has(.recipe-dialog[open]) {
+    overflow: hidden;
+}
+
+@keyframes modal-appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.recipe-modal-header,
+.recipe-modal-footer {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 16px 24px;
+    background: white;
+}
+
+.recipe-modal-header {
+    justify-content: space-between;
+    border-bottom: 1px solid #e2ebe4;
+}
+
+.recipe-modal-header h2 {
+    margin: 0;
+    color: #267449;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.recipe-close {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #eef4ef;
+    color: #52665a;
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.recipe-close:hover {
+    background: #dcebe0;
+}
+
+.recipe-modal-content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+    color: #34483b;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.recipe-modal-image {
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+}
+
+.recipe-title {
+    margin: 22px 0 8px;
+    color: #226b45;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.recipe-description {
+    margin: 0 0 20px;
+    color: #718077;
+}
+
+.recipe-modal-content .dish-nutrition {
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.recipe-modal-content .dish-calories strong {
+    font-size: 28px;
+}
+
+.recipe-modal-content .dish-macro strong {
+    font-size: 22px;
+}
+
+.recipe-modal-content .dish-macro span {
+    font-size: 13px;
+}
+
+.recipe-full-details {
+    margin-top: 24px;
+}
+
+.recipe-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.recipe-info span {
+    padding: 7px 13px;
+    background: #eaf6ed;
+    color: #267449;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.recipe-full-details h3 {
+    margin: 28px 0 14px;
+    color: #267449;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+/* Ingredients and cooking instructions */
+
+.ingredient-list,
+.recipe-steps li {
+    background: #f7faf7;
+    border: 1px solid #e2ebe4;
+    border-radius: 12px;
+}
+
+.ingredient-list {
+    padding: 4px 16px;
+}
+
+.recipe-ingredient {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
+    margin: 0;
+    border-bottom: 1px solid #e2ebe4;
+    font-size: 15px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.recipe-ingredient:last-child {
+    border-bottom: none;
+}
+
+.recipe-ingredient input {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin: 4px 0 0;
+    accent-color: seagreen;
+    cursor: pointer;
+}
+
+.recipe-ingredient span,
+.recipe-steps li {
+    overflow-wrap: anywhere;
+}
+
+.recipe-ingredient input:checked + span {
+    color: #8b948d;
+    text-decoration: line-through;
+}
+
+.recipe-steps {
+    counter-reset: recipe-step;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.recipe-steps li {
+    position: relative;
+    counter-increment: recipe-step;
+    min-height: 56px;
+    margin: 0 0 12px;
+    padding: 16px 16px 16px 60px;
+}
+
+.recipe-steps li::before {
+    content: counter(recipe-step);
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: seagreen;
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.recipe-error {
+    color: #b34040;
+}
+
+.recipe-modal-footer {
+    gap: 12px;
+    border-top: 1px solid #e2ebe4;
+}
+
+.recipe-modal-footer .recipe-secondary-button {
+    flex: 1;
+    width: auto;
+}
+
+.recipe-modal-footer .dish-add-button {
+    flex: 2;
+    width: auto;
+}
+
+.dashboard > footer {
+    margin-top: 40px;
+    color: #718077 !important;
+    line-height: 1.7;
+}
+
+.dashboard > footer a {
+    color: seagreen;
+    font-weight: 600;
+}
+
+.dish-add-button:focus-visible,
+.dish-view-button:focus-visible,
+.recipe-close:focus-visible,
+.recipe-secondary-button:focus-visible,
+.load-more-button:focus-visible {
+    outline: 3px solid #7fc99c;
+    outline-offset: 3px;
+}
+
+/* Responsive layout */
+
+@media (max-width: 1024px) {
+    .dish-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    main.dashboard {
+        width: calc(100% - 24px);
+        margin: 16px auto;
+    }
+
+    .app-nav { padding: 14px; }
+    .app-nav-links { width: 100%; gap: 6px; }
+
+    .app-nav-links .nav-link {
+        flex: 1;
+        padding: 10px 6px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .dashboard > section.bg-success {
+        padding: 28px 18px !important;
+    }
+
+    #search { font-size: 14px; }
+
+    #searchbutton {
+        min-width: 85px;
+        padding: 0 12px !important;
+    }
+
+    .dish-grid { grid-template-columns: minmax(0, 1fr); }
+    .dish-body { padding: 18px; }
+
+    .recipe-dialog {
+        width: calc(100% - 20px);
+        max-height: 94vh;
+        max-height: 94dvh;
+        border-radius: 16px;
+    }
+
+    .recipe-modal-content { padding: 16px; }
+
+    .recipe-modal-header,
+    .recipe-modal-footer {
+        padding: 12px 16px;
+    }
+
+    .recipe-title { font-size: 23px; }
+    .recipe-modal-content .dish-macro strong { font-size: 18px; }
+    .recipe-modal-footer { gap: 8px; }
+
+    .recipe-modal-footer button {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dish-card,
+    .recipe-dialog[open] {
+        animation: none;
+        transition: none;
+    }
+
+    .dish-card:hover {
+        transform: none;
+    }
+}
