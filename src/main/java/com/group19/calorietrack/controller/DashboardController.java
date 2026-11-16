@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
 import com.group19.calorietrack.services.FoodRecommendationService;
+import com.group19.calorietrack.services.WeeklyNutritionService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 
@@ -27,15 +28,18 @@ public class DashboardController {
     private final FoodRecommendationService recommendationService;
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
+    private final WeeklyNutritionService weeklyNutritionService;
 
     public DashboardController(
             FoodRecommendationService recommendationService,
             MealRepository mealRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            WeeklyNutritionService weeklyNutritionService) {
 
         this.recommendationService = recommendationService;
         this.mealRepository = mealRepository;
         this.userRepository = userRepository;
+        this.weeklyNutritionService = weeklyNutritionService;
     }
 
     @GetMapping("/dashboard")
@@ -109,6 +113,13 @@ public class DashboardController {
                 remainingProteinForRecommendations
             );
 
+        // Get the last seven days of nutrition data
+        var weeklySummary = weeklyNutritionService.getWeeklySummary(
+                user.getId(),
+                today,
+                calorieGoal
+        );
+
         model.addAttribute("calorieGoal", calorieGoal);
         model.addAttribute("caloriesConsumed", caloriesConsumed);
         model.addAttribute("caloriesRemaining", caloriesRemaining);
@@ -124,6 +135,9 @@ public class DashboardController {
 
         model.addAttribute("mealCount", meals.size());
         model.addAttribute("noMeals", meals.isEmpty());
+
+        // Send weekly nutrition information to the dashboard
+        model.addAttribute("weeklySummary", weeklySummary);
 
         return "dashboard";
     }
