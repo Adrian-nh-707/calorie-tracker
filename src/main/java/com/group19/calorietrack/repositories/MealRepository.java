@@ -36,4 +36,11 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
         String mealType,
         Long id
     );
+
+    // Get meals for the weekly chart
+    List<Meal> findByUser_IdAndMealDateBetween(
+        Long userId,
+        LocalDate startDate,
+        LocalDate endDate
+    );
 }

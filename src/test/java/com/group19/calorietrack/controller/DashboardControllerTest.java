@@ -1,3 +1,4 @@
+
 package com.group19.calorietrack.controller;
 
 import java.security.Principal;
@@ -6,32 +7,37 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ExtendedModelMap;
 
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
 import com.group19.calorietrack.services.FoodRecommendationService;
+import com.group19.calorietrack.services.WeeklyNutritionService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 
 import com.group19.calorietrack.messaging.MessageService;
-import org.mockito.Mockito;
 
 class DashboardControllerTest {
 
     private DashboardController controller;
     private MealRepository mealRepository;
     private FoodRecommendationService recommendationService;
+    private WeeklyNutritionService weeklyNutritionService;
     private UserRepository userRepository;
     private ExtendedModelMap model;
     private MockHttpSession session;
@@ -44,6 +50,7 @@ class DashboardControllerTest {
     void setUp() {
         mealRepository = mock(MealRepository.class);
         recommendationService = mock(FoodRecommendationService.class);
+        weeklyNutritionService = mock(WeeklyNutritionService.class);
         userRepository = mock(UserRepository.class);
         messageService = Mockito.mock(MessageService.class);
 
@@ -55,7 +62,12 @@ class DashboardControllerTest {
         principal = () -> "test@example.com";
 
         controller = new DashboardController(
-                recommendationService, mealRepository, userRepository, messageService);
+                recommendationService,
+                mealRepository,
+                userRepository,
+                messageService,
+                weeklyNutritionService
+        );
 
         model = new ExtendedModelMap();
         session = new MockHttpSession();
@@ -222,5 +234,56 @@ class DashboardControllerTest {
 
         verify(mealRepository).findByUser_IdAndMealDate(
                 1L, LocalDate.now());
+    }
+
+    @Test
+    void testWeeklySummaryPassedToDashboard() {
+        LocalDate today = LocalDate.now();
+
+        var weeklySummary = new WeeklyNutritionService.WeeklySummary(
+                List.of(),
+                5400.0,
+                5400.0 / 7,
+                3,
+                89,
+                today.minusDays(6),
+                today
+        );
+
+        when(weeklyNutritionService.getWeeklySummary(
+                1L, today, 2500
+        )).thenReturn(weeklySummary);
+
+        controller.showDashboard(model, session, principal);
+
+        assertSame(weeklySummary, model.get("weeklySummary"));
+
+        verify(weeklyNutritionService).getWeeklySummary(
+                1L, today, 2500
+        );
+    }
+
+    @Test
+    void testWeeklySummaryUsesUpdatedCalorieGoal() {
+        LocalDate today = LocalDate.now();
+
+        session.setAttribute("calorieGoal", 1800);
+
+        controller.showDashboard(model, session, principal);
+
+        verify(weeklyNutritionService).getWeeklySummary(
+                1L, today, 1800
+        );
+    }
+
+    @Test
+    void testWeeklySummaryUsesLoggedInUser() {
+        LocalDate today = LocalDate.now();
+
+        controller.showDashboard(model, session, principal);
+
+        verify(weeklyNutritionService).getWeeklySummary(
+                1L, today, 2500
+        );
     }
 }

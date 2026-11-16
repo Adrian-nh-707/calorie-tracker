@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<section class="card weekly-card" th:fragment="weeklyChart">
+
+    <div class="section-header">
+        <div>
+            <h2>Weekly Nutrition Progress</h2>
+            <p class="section-description">
+                Your calorie intake over the last seven days.
+            </p>
+        </div>
+
+        <span class="section-tag">Last 7 Days</span>
+    </div>
+
+    <!-- Weekly nutrition summary -->
+    <div class="weekly-summary">
+
+        <div class="weekly-summary-card">
+            <p>Weekly Total</p>
+
+            <strong th:text="${#numbers.formatDecimal(weeklySummary.totalCalories, 1, 1)}">
+                0.0
+            </strong>
+
+            <span>kcal</span>
+        </div>
+
+        <div class="weekly-summary-card">
+            <p>Daily Average</p>
+
+            <strong th:text="${#numbers.formatDecimal(weeklySummary.averageCalories, 1, 1)}">
+                0.0
+            </strong>
+
+            <span>kcal</span>
+        </div>
+
+        <div class="weekly-summary-card">
+            <p>Days Logged</p>
+
+            <strong th:text="${weeklySummary.daysLogged}">
+                0
+            </strong>
+
+            <span>/ 7 days</span>
+        </div>
+
+    </div>
+
+    <!-- Weekly calorie chart -->
+    <div class="weekly-chart-container">
+
+        <div class="weekly-chart-area">
+
+            <!-- Daily calorie goal line -->
+            <div class="weekly-goal-line"
+                 th:style="|bottom: ${weeklySummary.goalLinePercent}%;|"
+                 aria-hidden="true">
+            </div>
+
+            <!-- Daily calorie bars -->
+            <div class="weekly-bar-grid"
+                 role="group"
+                 aria-label="Calorie intake for the last seven days">
+
+                <div class="weekly-bar-column"
+                     th:each="day : ${weeklySummary.days}">
+
+                    <div class="weekly-bar"
+                         th:classappend="${day.aboveGoal} ? 'weekly-over-goal' : ''"
+                         th:style="|height: ${day.barHeightPercent}%;|"
+                         th:attr="aria-label=${day.dateLabel + ': ' + day.calories + ' calories'}"
+                         th:title="${day.dateLabel + ': ' + day.calories + ' kcal'}"
+                         role="img">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Day labels and calorie values -->
+        <div class="weekly-chart-labels">
+
+            <div class="weekly-day"
+                 th:each="day : ${weeklySummary.days}">
+
+                <strong th:text="${day.dayLabel}">
+                    Mon
+                </strong>
+
+                <span th:text="${day.dateLabel}">
+                    Nov 9
+                </span>
+
+                <small th:text="|${#numbers.formatDecimal(day.calories, 1, 0)} kcal|">
+                    0 kcal
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- Chart legend -->
+    <div class="weekly-legend">
+
+        <span>
+            <i class="weekly-legend-green"></i>
+            Within Goal
+        </span>
+
+        <span>
+            <i class="weekly-legend-orange"></i>
+            Above Goal
+        </span>
+
+        <span>
+            <i class="weekly-legend-dashed"></i>
+            Daily Goal
+            (<strong th:text="${calorieGoal}">2500</strong> kcal)
+        </span>
+
+    </div>
+
+    <!-- Empty state-->
+    <div class="empty-state"
+         th:if="${weeklySummary.daysLogged == 0}">
+
+        You haven't logged any meals in the last seven days.
+        <a th:href="@{/meals}">Start logging meals</a>
+        to see your progress.
+
+    </div>
+
+</section>
+
+</body>
+</html>

@@ -16,16 +16,24 @@ import com.group19.calorietrack.user.UserRole;
 
 import com.group19.calorietrack.messaging.MessageService;
 
+import com.group19.calorietrack.services.TrainerGoalRecommendationService;
+
+import org.springframework.security.access.AccessDeniedException;
+
 @Controller
 public class RoleDashboardController {
 
     private final UserRepository userRepository;
-
+    private final TrainerGoalRecommendationService recommendationService;
     private final MessageService messageService;
 
-    public RoleDashboardController(UserRepository userRepository, MessageService messageService) {
-        this.userRepository = userRepository;
-        this.messageService = messageService;
+    public RoleDashboardController(
+        UserRepository userRepository,
+        MessageService messageService,
+        TrainerGoalRecommendationService recommendationService) {
+                this.userRepository = userRepository;
+                this.messageService = messageService;
+                this.recommendationService = recommendationService;
     }
 
     @GetMapping("/admin/dashboard")
@@ -108,9 +116,8 @@ public class RoleDashboardController {
 
         return "trainer-dashboard";
     }
-
     @GetMapping("/home")
-    public String redirectToDashboard(Authentication authentication) {
+        public String redirectToDashboard(Authentication authentication) {
 
         boolean isTrainer = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_TRAINER"));
@@ -127,5 +134,39 @@ public class RoleDashboardController {
         }
 
         return "redirect:/dashboard";
-    }
+        }
+
+        @PostMapping("/trainer/recommendations")
+        public String createGoalRecommendation(
+                Authentication authentication,
+                @RequestParam Long userId,
+                @RequestParam Integer calorieGoal,
+                @RequestParam Integer proteinGoal,
+                @RequestParam(required = false) String note,
+                RedirectAttributes redirectAttributes) {
+
+        try {
+                recommendationService.createRecommendation(
+                        authentication.getName(),
+                        userId,
+                        calorieGoal,
+                        proteinGoal,
+                        note
+                );
+
+                redirectAttributes.addFlashAttribute(
+                        "successMessage",
+                        "Goal recommendation sent successfully."
+                );
+
+        } catch (IllegalArgumentException | AccessDeniedException ex) {
+                redirectAttributes.addFlashAttribute(
+                        "errorMessage",
+                        ex.getMessage()
+                );
+        }
+
+        return "redirect:/trainer/dashboard";
+        }
+
 }
