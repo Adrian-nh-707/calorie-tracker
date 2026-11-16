@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calorie Tracker Dashboard</title>
+
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/weekly-nutrition-chart.css}">
     <link rel="stylesheet" th:href="@{/css/trainer-goal-recommendations.css}">
 </head>
 
@@ -166,10 +168,12 @@
             </p>
         </section>
 
-        <!-- Trainer goal recommendations -->
+        <!-- Weekly nutrition chart -->
+        <section th:replace="~{fragments/weekly-nutrition-chart :: weeklyChart}">
+        </section>
+        <!-- Trainer recommendations -->
         <section th:replace="~{fragments/trainer-goal-recommendations :: userGoals}">
         </section>
-
         <section class="card">
             <div class="section-header">
                 <h2>Food Recommendations</h2>
