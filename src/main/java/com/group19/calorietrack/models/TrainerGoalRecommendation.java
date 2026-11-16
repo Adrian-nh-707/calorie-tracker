@@ -29,7 +29,7 @@ public class TrainerGoalRecommendation {
     @JoinColumn(name = "trainer_id", nullable = false)
     private AppUser trainer;
 
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false) // User receiving the recommendation
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;

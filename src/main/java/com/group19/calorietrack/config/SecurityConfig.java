@@ -25,6 +25,10 @@ public class SecurityConfig {
                 .requestMatchers("/dashboard/**").hasRole("USER")
                 .requestMatchers("/trainer/**").hasRole("TRAINER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                .requestMatchers("/inbox/**", "/messages/**")
+                .hasAnyRole("USER", "TRAINER")
+
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

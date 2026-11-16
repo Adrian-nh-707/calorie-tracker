@@ -14,7 +14,10 @@ import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
 
+import com.group19.calorietrack.messaging.MessageService;
+
 import com.group19.calorietrack.services.TrainerGoalRecommendationService;
+
 import org.springframework.security.access.AccessDeniedException;
 
 @Controller
@@ -22,14 +25,16 @@ public class RoleDashboardController {
 
     private final UserRepository userRepository;
     private final TrainerGoalRecommendationService recommendationService;
+    private final MessageService messageService;
 
     public RoleDashboardController(
         UserRepository userRepository,
+        MessageService messageService,
         TrainerGoalRecommendationService recommendationService) {
-
-        this.userRepository = userRepository;
-        this.recommendationService = recommendationService;
-        }
+                this.userRepository = userRepository;
+                this.messageService = messageService;
+                this.recommendationService = recommendationService;
+    }
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard(Model model) {
@@ -107,11 +112,31 @@ public class RoleDashboardController {
 
         model.addAttribute("assignedUserCount", assignedUsers.size());
         model.addAttribute("assignedUsers", assignedUsers);
+        model.addAttribute("unreadCount", messageService.getUnreadCount(email));
 
         return "trainer-dashboard";
     }
+    @GetMapping("/home")
+        public String redirectToDashboard(Authentication authentication) {
 
-    @PostMapping("/trainer/recommendations")
+        boolean isTrainer = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TRAINER"));
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isTrainer) {
+                return "redirect:/trainer/dashboard";
+        }
+
+        if (isAdmin) {
+                return "redirect:/admin/dashboard";
+        }
+
+        return "redirect:/dashboard";
+        }
+
+        @PostMapping("/trainer/recommendations")
         public String createGoalRecommendation(
                 Authentication authentication,
                 @RequestParam Long userId,
@@ -135,7 +160,6 @@ public class RoleDashboardController {
                 );
 
         } catch (IllegalArgumentException | AccessDeniedException ex) {
-
                 redirectAttributes.addFlashAttribute(
                         "errorMessage",
                         ex.getMessage()
@@ -144,4 +168,5 @@ public class RoleDashboardController {
 
         return "redirect:/trainer/dashboard";
         }
+
 }

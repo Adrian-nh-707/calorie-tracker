@@ -150,6 +150,29 @@
             line-height: 1.6;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .inbox-button {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 7px;
+            background: white;
+            border: 1px solid #2e8b57;
+            color: #2e8b57;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .inbox-button:hover {
+            background: #edf5ef;
+        }
+
         .recommendation-form {
             display: flex;
             flex-direction: column;
@@ -201,6 +224,11 @@
         }
 
         @media (max-width: 600px) {
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
             body {
                 padding: 20px;
             }
@@ -233,9 +261,19 @@
         <p class="subtitle">Monitor your assigned users' progress</p>
     </div>
 
-    <form th:action="@{/logout}" method="post">
-        <button class="logout-button" type="submit">Log Out</button>
-    </form>
+    <div class="header-actions">
+        <a th:href="@{/inbox}" class="inbox-button">
+            Inbox
+            <span class="unread-count"
+                th:if="${unreadCount > 0}"
+                th:text="${unreadCount}">
+            </span>
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Log Out</button>
+        </form>
+     </div>
 </header>
 
 <main>

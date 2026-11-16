@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,6 +30,8 @@ import com.group19.calorietrack.services.WeeklyNutritionService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 
+import com.group19.calorietrack.messaging.MessageService;
+
 class DashboardControllerTest {
 
     private DashboardController controller;
@@ -39,12 +43,16 @@ class DashboardControllerTest {
     private MockHttpSession session;
     private Principal principal;
 
+    @Mock
+        private MessageService messageService;
+
     @BeforeEach
     void setUp() {
         mealRepository = mock(MealRepository.class);
         recommendationService = mock(FoodRecommendationService.class);
         weeklyNutritionService = mock(WeeklyNutritionService.class);
         userRepository = mock(UserRepository.class);
+        messageService = Mockito.mock(MessageService.class);
 
         AppUser user = mock(AppUser.class);
         when(user.getId()).thenReturn(1L);
@@ -57,6 +65,7 @@ class DashboardControllerTest {
                 recommendationService,
                 mealRepository,
                 userRepository,
+                messageService,
                 weeklyNutritionService
         );
 

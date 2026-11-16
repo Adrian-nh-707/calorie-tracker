@@ -17,12 +17,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.models.TrainerGoalRecommendation;
 import com.group19.calorietrack.repositories.TrainerGoalRecommendationRepository;
 import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
+
+import com.group19.calorietrack.messaging.MessageService;
 
 import org.mockito.ArgumentCaptor;
 
@@ -41,6 +44,8 @@ class RoleDashboardControllerTest {
 
     private Authentication authentication;
 
+    private MessageService messageService;
+
     @BeforeEach
     void setUp() {
 
@@ -52,6 +57,8 @@ class RoleDashboardControllerTest {
         user = mock(AppUser.class);
 
         authentication = mock(Authentication.class);
+
+        messageService = mock(MessageService.class);
 
         when(authentication.getName()).thenReturn(TRAINER_EMAIL);
 
@@ -80,6 +87,7 @@ class RoleDashboardControllerTest {
 
         controller = new RoleDashboardController(
                 userRepository,
+                messageService,
                 recommendationService
         );
     }

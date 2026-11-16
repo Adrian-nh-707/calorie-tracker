@@ -117,7 +117,7 @@ public class TrainerGoalRecommendationService {
             );
         }
 
-        
+
         TrainerGoalRecommendation recommendation = // Save the recommendation
                 new TrainerGoalRecommendation(
                         trainer,
@@ -158,14 +158,12 @@ public class TrainerGoalRecommendationService {
                         user.getId()
                 );
 
-        
         return recommendations.stream() // Prepare the values used by the dashboard
                 .limit(1)
                 .map(this::toRecommendationView)
                 .toList();
     }
 
-    
     private RecommendationView toRecommendationView( //Convert a database record into dashboard information
             TrainerGoalRecommendation recommendation) {
 
