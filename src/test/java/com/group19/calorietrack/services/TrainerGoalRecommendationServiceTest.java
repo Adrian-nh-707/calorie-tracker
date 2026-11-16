@@ -382,6 +382,38 @@ class TrainerGoalRecommendationServiceTest {
     }
 
     @Test
+    void testUserOnlySeesLatestRecommendation() {
+
+        TrainerGoalRecommendation older =
+                new TrainerGoalRecommendation(
+                        trainer, regularUser, 2200, 140, "Older recommendation"
+                );
+
+        older.setCreatedAt(
+                LocalDateTime.of(2026, 11, 14, 10, 0)
+        );
+
+        TrainerGoalRecommendation latest =
+                new TrainerGoalRecommendation(
+                        trainer, regularUser, 1000, 120, "Latest recommendation"
+                );
+
+        latest.setCreatedAt(
+                LocalDateTime.of(2026, 11, 15, 10, 0)
+        );
+
+        when(recommendationRepository.findByUser_IdOrderByCreatedAtDesc(20L))
+                .thenReturn(List.of(latest, older));
+
+        var results = service.getRecommendationsForUser("user@example.com");
+
+        assertEquals(1, results.size());
+        assertEquals(1000, results.get(0).calorieGoal());
+        assertEquals(120, results.get(0).proteinGoal());
+        assertEquals("Latest recommendation", results.get(0).note());
+    }
+
+    @Test
     void testUserWithNoRecommendationsGetsEmptyList() {
 
         when(recommendationRepository.findByUser_IdOrderByCreatedAtDesc(
