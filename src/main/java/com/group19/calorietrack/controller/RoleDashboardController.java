@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.group19.calorietrack.dto.NutritionProgress;
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
+import com.group19.calorietrack.messaging.MessageService;
+import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
@@ -28,20 +31,27 @@ public class RoleDashboardController {
 
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
+    private final TrainerGoalRecommendationService recommendationService;
+    private final MessageService messageService;
 
     public RoleDashboardController(
             UserRepository userRepository,
-            MealRepository mealRepository) {
+            MealRepository mealRepository,
+            MessageService messageService,
+            TrainerGoalRecommendationService recommendationService) {
+
         this.userRepository = userRepository;
         this.mealRepository = mealRepository;
+        this.messageService = messageService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard(Model model) {
         long totalUsers = userRepository.countByRole(UserRole.USER);
         long totalTrainers = userRepository.countByRole(UserRole.TRAINER);
-        long unassignedUsers
-                = userRepository.countByRoleAndAssignedTrainerIsNull(UserRole.USER);
+        long unassignedUsers =
+                userRepository.countByRoleAndAssignedTrainerIsNull(UserRole.USER);
 
         List<AppUser> users = userRepository.findAll();
         List<AppUser> trainers = userRepository.findByRole(UserRole.TRAINER);
@@ -62,12 +72,12 @@ public class RoleDashboardController {
             RedirectAttributes redirectAttributes) {
 
         AppUser user = userRepository.findById(userId)
-                .orElseThrow(()
-                        -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User account not found."));
 
         AppUser trainer = userRepository.findById(trainerId)
-                .orElseThrow(()
-                        -> new IllegalArgumentException("Trainer account not found."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Trainer account not found."));
 
         if (user.getRole() != UserRole.USER) {
             redirectAttributes.addFlashAttribute(
@@ -97,12 +107,10 @@ public class RoleDashboardController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        // Use today's date if no date was selected
         if (date == null) {
             date = LocalDate.now();
         }
 
-        // Find the currently logged-in trainer
         String email = authentication.getName();
 
         AppUser trainer = userRepository.findByEmail(email)
@@ -114,19 +122,16 @@ public class RoleDashboardController {
                     "The logged-in account does not have the trainer role.");
         }
 
-        // Retrieve users assigned to this trainer
         List<AppUser> assignedUsers =
                 userRepository.findByAssignedTrainer_IdAndRole(
                         trainer.getId(), UserRole.USER);
 
-        // Create an empty nutrition summary for every assigned user
         Map<Long, NutritionProgress> progressMap = new HashMap<>();
 
         for (AppUser user : assignedUsers) {
             progressMap.put(user.getId(), new NutritionProgress(user));
         }
 
-        // Retrieve meals for assigned users on the selected date
         if (!assignedUsers.isEmpty()) {
 
             List<Long> userIds = assignedUsers.stream()
@@ -136,7 +141,6 @@ public class RoleDashboardController {
             List<Meal> meals =
                     mealRepository.findByUserIdsAndMealDate(userIds, date);
 
-            // Add each meal to the corresponding user's nutrition totals
             for (Meal meal : meals) {
                 Long userId = meal.getUser().getId();
 
@@ -153,7 +157,6 @@ public class RoleDashboardController {
             }
         }
 
-        // Convert the nutrition summaries into a list for the dashboard
         List<NutritionProgress> nutritionProgress =
                 new ArrayList<>(progressMap.values());
 
@@ -161,7 +164,61 @@ public class RoleDashboardController {
         model.addAttribute("assignedUsers", assignedUsers);
         model.addAttribute("nutritionProgress", nutritionProgress);
         model.addAttribute("selectedDate", date);
+        model.addAttribute("unreadCount", messageService.getUnreadCount(email));
 
         return "trainer-dashboard";
+    }
+
+    @GetMapping("/home")
+    public String redirectToDashboard(Authentication authentication) {
+
+        boolean isTrainer = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TRAINER"));
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (isTrainer) {
+            return "redirect:/trainer/dashboard";
+        }
+
+        if (isAdmin) {
+            return "redirect:/admin/dashboard";
+        }
+
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/trainer/recommendations")
+    public String createGoalRecommendation(
+            Authentication authentication,
+            @RequestParam Long userId,
+            @RequestParam Integer calorieGoal,
+            @RequestParam Integer proteinGoal,
+            @RequestParam(required = false) String note,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            recommendationService.createRecommendation(
+                    authentication.getName(),
+                    userId,
+                    calorieGoal,
+                    proteinGoal,
+                    note
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Goal recommendation sent successfully."
+            );
+
+        } catch (IllegalArgumentException | AccessDeniedException ex) {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    ex.getMessage()
+            );
+        }
+
+        return "redirect:/trainer/dashboard";
     }
 }

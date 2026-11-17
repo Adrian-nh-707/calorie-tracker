@@ -150,7 +150,85 @@
             line-height: 1.6;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .inbox-button {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 7px;
+            background: white;
+            border: 1px solid #2e8b57;
+            color: #2e8b57;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .inbox-button:hover {
+            background: #edf5ef;
+        }
+
+        .recommendation-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 650px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #315b41;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .feedback {
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 7px;
+            font-weight: 600;
+        }
+
+        .feedback-success {
+            background: #e5f3e9;
+            color: #246b45;
+        }
+
+        .feedback-error {
+            background: #fde8e7;
+            color: #a32924;
+        }
+
         @media (max-width: 600px) {
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
             body {
                 padding: 20px;
             }
@@ -183,9 +261,19 @@
         <p class="subtitle">Monitor your assigned users' progress</p>
     </div>
 
-    <form th:action="@{/logout}" method="post">
-        <button class="logout-button" type="submit">Log Out</button>
-    </form>
+    <div class="header-actions">
+        <a th:href="@{/inbox}" class="inbox-button">
+            Inbox
+            <span class="unread-count"
+                th:if="${unreadCount > 0}"
+                th:text="${unreadCount}">
+            </span>
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="logout-button" type="submit">Log Out</button>
+        </form>
+     </div>
 </header>
 
 <main>
@@ -328,12 +416,91 @@
         <h2>Goal Recommendations</h2>
 
         <p class="description">
-            Review user goals and provide recommendations when this
-            functionality becomes available.
+            Recommend daily calorie and protein goals
+            to users assigned to your trainer account.
         </p>
 
-        <div class="placeholder">
-            Goal recommendations are not yet connected to user nutrition goals.
+        <!-- Success feedback -->
+        <div class="feedback feedback-success"
+            th:if="${successMessage}"
+            th:text="${successMessage}">
+        </div>
+
+        <!-- Error feedback -->
+        <div class="feedback feedback-error"
+            th:if="${errorMessage}"
+            th:text="${errorMessage}">
+        </div>
+
+        <!-- Show form when assigned users exist -->
+        <form th:if="${!#lists.isEmpty(assignedUsers)}"
+            th:action="@{/trainer/recommendations}"
+            method="post"
+            class="recommendation-form">
+
+            <div class="form-group">
+                <label for="userId">Select User</label>
+
+                <select id="userId" name="userId" required>
+                    <option value="" disabled selected>
+                        Choose an assigned user
+                    </option>
+
+                    <option th:each="user : ${assignedUsers}"
+                            th:value="${user.id}"
+                            th:text="${user.firstName + ' ' + user.lastName}">
+                        Example User
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="calorieGoal">
+                    Recommended Daily Calories (kcal)
+                </label>
+
+                <input type="number"
+                    id="calorieGoal"
+                    name="calorieGoal"
+                    min="1"
+                    max="10000"
+                    placeholder="e.g. 2200"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="proteinGoal">
+                    Recommended Daily Protein (g)
+                </label>
+
+                <input type="number"
+                    id="proteinGoal"
+                    name="proteinGoal"
+                    min="0"
+                    max="500"
+                    placeholder="e.g. 140"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="note">Additional Note (Optional)</label>
+                <textarea id="note"
+                        name="note"
+                        maxlength="1000"
+                        rows="4"
+                        placeholder="Add advice or information for your user..."></textarea>
+            </div>
+
+            <button type="submit" class="logout-button">
+                Send Recommendation
+            </button>
+        </form>
+
+        <!-- Empty state -->
+        <div class="placeholder"
+            th:if="${#lists.isEmpty(assignedUsers)}">
+            You currently have no assigned users...
+            Assign users to your trainer account before sending recommendations...
         </div>
     </section>
 </main>

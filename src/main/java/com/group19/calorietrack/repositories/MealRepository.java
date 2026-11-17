@@ -42,7 +42,14 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     // Find meals for a group of users on a specific date
     @Query("SELECT m FROM Meal m WHERE m.user.id IN :userIds AND m.mealDate = :mealDate")
     List<Meal> findByUserIdsAndMealDate(
-            @Param("userIds") List<Long> userIds,
-            @Param("mealDate") LocalDate mealDate
+        @Param("userIds") List<Long> userIds,
+        @Param("mealDate") LocalDate mealDate
+    );
+
+    // Get meals for the weekly chart
+    List<Meal> findByUser_IdAndMealDateBetween(
+        Long userId,
+        LocalDate startDate,
+        LocalDate endDate
     );
 }

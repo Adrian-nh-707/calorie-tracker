@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Message | Calorie Tracker</title>
+
+    <link rel="stylesheet" th:href="@{/css/messaging.css}">
+</head>
+<body>
+
+<main class="send-message-container">
+
+    <header class="send-message-header">
+        <h1>Send a Message</h1>
+        <p>Send message</p>
+    </header>
+
+    <div th:if="${errorMessage}"
+         class="error-message"
+         th:text="${errorMessage}">
+    </div>
+
+    <section th:if="${#lists.isEmpty(recipients)}"
+             class="empty-inbox">
+
+        <h2>No Available Recipients</h2>
+
+        <p>
+            You currently don't have an assigned trainer or users
+            available to message.
+        </p>
+
+        <a th:href="@{/inbox}" class="secondary-button">
+            Back to Inbox
+        </a>
+
+    </section>
+
+    <section th:unless="${#lists.isEmpty(recipients)}"
+             class="send-message-card">
+
+        <form th:action="@{/messages}" method="post">
+
+            <div class="form-group">
+                <label for="recipientId">Send To</label>
+
+                <select id="recipientId"
+                        name="recipientId"
+                        required>
+
+                    <option value="" disabled selected>
+                        Select a recipient
+                    </option>
+
+                    <option th:each="recipient : ${recipients}"
+                            th:value="${recipient.id}"
+                            th:text="${recipient.firstName + ' ' +
+                                      recipient.lastName + ' (' +
+                                      recipient.role + ')'}">
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Subject</label>
+
+                <input type="text"
+                       id="subject"
+                       name="subject"
+                       maxlength="150"
+                       placeholder="Enter message subject"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Message</label>
+
+                <textarea id="content"
+                          name="content"
+                          rows="8"
+                          maxlength="5000"
+                          placeholder="Write your message here..."
+                          required></textarea>
+
+                <small>Maximum 5000 characters.</small>
+            </div>
+
+            <div class="send-message-actions">
+
+                <a th:href="@{/inbox}"
+                   class="secondary-button">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="primary-button">
+                    Send Message
+                </button>
+
+            </div>
+
+        </form>
+
+        <div class="message-navigation">
+            <a th:href="@{/inbox}">← Back to Inbox</a>
+
+            <a th:href="@{/home}">Back to Dashboard</a>
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
