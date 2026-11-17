@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.group19.calorietrack.models.Meal;
 
@@ -35,6 +37,13 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
         LocalDate mealDate,
         String mealType,
         Long id
+    );
+
+    // Find meals for a group of users on a specific date
+    @Query("SELECT m FROM Meal m WHERE m.user.id IN :userIds AND m.mealDate = :mealDate")
+    List<Meal> findByUserIdsAndMealDate(
+        @Param("userIds") List<Long> userIds,
+        @Param("mealDate") LocalDate mealDate
     );
 
     // Get meals for the weekly chart

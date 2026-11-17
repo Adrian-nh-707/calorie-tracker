@@ -340,12 +340,74 @@
         <h2>Nutrition Progress</h2>
 
         <p class="description">
-            Review calorie and macronutrient information for your assigned users.
+            Review daily calorie and macronutrient information for your assigned users.
         </p>
 
-        <div class="placeholder">
-            Nutrition progress will appear here when meal tracking and
-            nutrition data are integrated with the trainer dashboard.
+        <!-- Date selector -->
+        <form th:action="@{/trainer/dashboard}" method="get"
+            style="margin-bottom: 24px;">
+
+            <label for="date"><strong>Select Date:</strong></label>
+
+            <input type="date"
+                id="date"
+                name="date"
+                th:value="${selectedDate}"
+                required>
+
+            <button type="submit" class="logout-button">
+                View Progress
+            </button>
+        </form>
+
+        <!-- Nutrition table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Calories (kcal)</th>
+                        <th>Protein (g)</th>
+                        <th>Carbs (g)</th>
+                        <th>Fat (g)</th>
+                        <th>Meals</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="progress : ${nutritionProgress}">
+                        <td th:text="${progress.user.firstName + ' ' + progress.user.lastName}">
+                            Example User
+                        </td>
+
+                        <td th:text="${#numbers.formatDecimal(progress.calories, 1, 2)}">
+                            0
+                        </td>
+
+                        <td th:text="${#numbers.formatDecimal(progress.protein, 1, 2)}">
+                            0
+                        </td>
+
+                        <td th:text="${#numbers.formatDecimal(progress.carbs, 1, 2)}">
+                            0
+                        </td>
+
+                        <td th:text="${#numbers.formatDecimal(progress.fat, 1, 2)}">
+                            0
+                        </td>
+
+                        <td th:text="${progress.mealCount}">
+                            0
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(nutritionProgress)}">
+                        <td colspan="6" class="empty-message">
+                            No users are currently assigned to you.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 

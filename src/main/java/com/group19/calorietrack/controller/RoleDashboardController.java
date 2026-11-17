@@ -1,7 +1,14 @@
 package com.group19.calorietrack.controller;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,30 +17,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.group19.calorietrack.dto.NutritionProgress;
+import com.group19.calorietrack.models.Meal;
+import com.group19.calorietrack.repositories.MealRepository;
+import com.group19.calorietrack.messaging.MessageService;
+import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
-
-import com.group19.calorietrack.messaging.MessageService;
-
-import com.group19.calorietrack.services.TrainerGoalRecommendationService;
-
-import org.springframework.security.access.AccessDeniedException;
 
 @Controller
 public class RoleDashboardController {
 
     private final UserRepository userRepository;
+    private final MealRepository mealRepository;
     private final TrainerGoalRecommendationService recommendationService;
     private final MessageService messageService;
 
     public RoleDashboardController(
-        UserRepository userRepository,
-        MessageService messageService,
-        TrainerGoalRecommendationService recommendationService) {
-                this.userRepository = userRepository;
-                this.messageService = messageService;
-                this.recommendationService = recommendationService;
+            UserRepository userRepository,
+            MealRepository mealRepository,
+            MessageService messageService,
+            TrainerGoalRecommendationService recommendationService) {
+
+        this.userRepository = userRepository;
+        this.mealRepository = mealRepository;
+        this.messageService = messageService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/admin/dashboard")
@@ -93,7 +103,13 @@ public class RoleDashboardController {
     @GetMapping("/trainer/dashboard")
     public String trainerDashboard(
             Authentication authentication,
-            Model model) {
+            Model model,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        if (date == null) {
+            date = LocalDate.now();
+        }
 
         String email = authentication.getName();
 
@@ -110,14 +126,51 @@ public class RoleDashboardController {
                 userRepository.findByAssignedTrainer_IdAndRole(
                         trainer.getId(), UserRole.USER);
 
+        Map<Long, NutritionProgress> progressMap = new HashMap<>();
+
+        for (AppUser user : assignedUsers) {
+            progressMap.put(user.getId(), new NutritionProgress(user));
+        }
+
+        if (!assignedUsers.isEmpty()) {
+
+            List<Long> userIds = assignedUsers.stream()
+                    .map(AppUser::getId)
+                    .collect(Collectors.toList());
+
+            List<Meal> meals =
+                    mealRepository.findByUserIdsAndMealDate(userIds, date);
+
+            for (Meal meal : meals) {
+                Long userId = meal.getUser().getId();
+
+                NutritionProgress progress = progressMap.get(userId);
+
+                if (progress != null) {
+                    progress.addMeal(
+                            meal.getCalories(),
+                            meal.getProtein(),
+                            meal.getCarbs(),
+                            meal.getFat()
+                    );
+                }
+            }
+        }
+
+        List<NutritionProgress> nutritionProgress =
+                new ArrayList<>(progressMap.values());
+
         model.addAttribute("assignedUserCount", assignedUsers.size());
         model.addAttribute("assignedUsers", assignedUsers);
+        model.addAttribute("nutritionProgress", nutritionProgress);
+        model.addAttribute("selectedDate", date);
         model.addAttribute("unreadCount", messageService.getUnreadCount(email));
 
         return "trainer-dashboard";
     }
+
     @GetMapping("/home")
-        public String redirectToDashboard(Authentication authentication) {
+    public String redirectToDashboard(Authentication authentication) {
 
         boolean isTrainer = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_TRAINER"));
@@ -126,47 +179,46 @@ public class RoleDashboardController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (isTrainer) {
-                return "redirect:/trainer/dashboard";
+            return "redirect:/trainer/dashboard";
         }
 
         if (isAdmin) {
-                return "redirect:/admin/dashboard";
+            return "redirect:/admin/dashboard";
         }
 
         return "redirect:/dashboard";
-        }
+    }
 
-        @PostMapping("/trainer/recommendations")
-        public String createGoalRecommendation(
-                Authentication authentication,
-                @RequestParam Long userId,
-                @RequestParam Integer calorieGoal,
-                @RequestParam Integer proteinGoal,
-                @RequestParam(required = false) String note,
-                RedirectAttributes redirectAttributes) {
+    @PostMapping("/trainer/recommendations")
+    public String createGoalRecommendation(
+            Authentication authentication,
+            @RequestParam Long userId,
+            @RequestParam Integer calorieGoal,
+            @RequestParam Integer proteinGoal,
+            @RequestParam(required = false) String note,
+            RedirectAttributes redirectAttributes) {
 
         try {
-                recommendationService.createRecommendation(
-                        authentication.getName(),
-                        userId,
-                        calorieGoal,
-                        proteinGoal,
-                        note
-                );
+            recommendationService.createRecommendation(
+                    authentication.getName(),
+                    userId,
+                    calorieGoal,
+                    proteinGoal,
+                    note
+            );
 
-                redirectAttributes.addFlashAttribute(
-                        "successMessage",
-                        "Goal recommendation sent successfully."
-                );
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Goal recommendation sent successfully."
+            );
 
         } catch (IllegalArgumentException | AccessDeniedException ex) {
-                redirectAttributes.addFlashAttribute(
-                        "errorMessage",
-                        ex.getMessage()
-                );
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    ex.getMessage()
+            );
         }
 
         return "redirect:/trainer/dashboard";
-        }
-
+    }
 }
