@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import com.group19.calorietrack.user.AppUser;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +30,9 @@ public class Meal {
     private double carbs;
     private double fat;
 
-    // Each meal belongs to one user
+    @Column(name = "recipe_id", length = 30)
+    private String recipeId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private AppUser user;
@@ -106,6 +109,14 @@ public class Meal {
 
     public void setFat(double fat) {
         this.fat = fat;
+    }
+
+    public String getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
     }
 
     public AppUser getUser() {

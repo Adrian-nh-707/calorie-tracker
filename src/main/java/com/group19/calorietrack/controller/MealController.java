@@ -1,3 +1,4 @@
+
 package com.group19.calorietrack.controller;
 
 import java.security.Principal;
@@ -31,37 +32,59 @@ public class MealController {
         this.userRepository = userRepository;
     }
 
-    // Get the logged-in user
     private AppUser getCurrentUser(Principal principal) {
         if (principal == null) {
             throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Please log in."
-            );
+                HttpStatus.UNAUTHORIZED, "Please log in.");
         }
 
         return userRepository.findByEmail(principal.getName())
             .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "User not found."
-            ));
+                HttpStatus.UNAUTHORIZED, "User not found."));
     }
 
-    // Get a meal belonging to the logged-in user
     private Meal getOwnedMeal(Long id, Long userId) {
         return mealRepository.findByIdAndUser_Id(id, userId)
             .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Meal not found."
-            ));
+                HttpStatus.NOT_FOUND, "Meal not found."));
     }
 
-    // Show meals and daily nutrition
+    private boolean validMeal(String name, String mealType,
+                              double calories, double protein,
+                              double carbs, double fat) {
+
+        return !name.trim().isEmpty()
+            && Double.isFinite(calories) && calories >= 0
+            && Double.isFinite(protein) && protein >= 0
+            && Double.isFinite(carbs) && carbs >= 0
+            && Double.isFinite(fat) && fat >= 0
+            && List.of("Breakfast", "Lunch", "Dinner", "Snack")
+                   .contains(mealType);
+    }
+
+    private String normalizeRecipeId(String recipeId) {
+        if (recipeId == null || recipeId.isBlank()) {
+            return null;
+        }
+
+        String id = recipeId.trim();
+
+        try {
+            if (!id.matches("[0-9]{1,19}")
+                    || Long.parseLong(id) <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Invalid recipe ID.");
+        }
+
+        return id;
+    }
+
     @GetMapping("/meals")
-    public String showMeals(
-            @RequestParam(required = false) String date,
-            Model model,
-            Principal principal) {
+    public String showMeals(@RequestParam(required = false) String date,
+                            Model model, Principal principal) {
 
         AppUser user = getCurrentUser(principal);
 
@@ -71,11 +94,8 @@ public class MealController {
 
         LocalDate selectedDate = LocalDate.parse(date);
 
-        // Only show this user's meals
         List<Meal> meals = mealRepository.findByUser_IdAndMealDate(
-            user.getId(),
-            selectedDate
-        );
+            user.getId(), selectedDate);
 
         double totalCalories = 0;
         double totalProtein = 0;
@@ -99,7 +119,6 @@ public class MealController {
         return "meals";
     }
 
-    // Add a new meal
     @PostMapping("/meals/add")
     public String addMeal(
             @RequestParam String name,
@@ -109,84 +128,60 @@ public class MealController {
             @RequestParam double protein,
             @RequestParam double carbs,
             @RequestParam double fat,
+            @RequestParam(required = false) String recipeId,
             Principal principal,
             RedirectAttributes redirectAttributes) {
 
         AppUser user = getCurrentUser(principal);
         LocalDate date = LocalDate.parse(mealDate);
 
-        if (name.trim().isEmpty()
-                || !Double.isFinite(calories) || calories < 0
-                || !Double.isFinite(protein) || protein < 0
-                || !Double.isFinite(carbs) || carbs < 0
-                || !Double.isFinite(fat) || fat < 0
-                || (!mealType.equals("Breakfast")
-                    && !mealType.equals("Lunch")
-                    && !mealType.equals("Dinner")
-                    && !mealType.equals("Snack"))) {
-
+        if (!validMeal(name, mealType, calories, protein, carbs, fat)) {
             redirectAttributes.addFlashAttribute(
-                "error",
-                "Please enter valid meal information."
-            );
+                "error", "Please enter valid meal information.");
 
             return "redirect:/meals?date=" + mealDate;
         }
 
-        // Check duplicates for this user only
         if (!mealType.equals("Snack")) {
             boolean alreadyExists =
                 mealRepository.existsByUser_IdAndMealDateAndMealType(
-                    user.getId(),
-                    date,
-                    mealType
-                );
+                    user.getId(), date, mealType);
 
             if (alreadyExists) {
                 redirectAttributes.addFlashAttribute(
-                    "error",
-                    mealType + " has already been logged for this date. "
-                    + "Please edit the existing meal instead."
-                );
+                    "error", mealType
+                    + " has already been logged for this date. "
+                    + "Please edit the existing meal instead.");
 
                 return "redirect:/meals?date=" + mealDate;
             }
         }
 
-        Meal meal = new Meal(
-            name, mealType, date,
-            calories, protein, carbs, fat
-        );
+        Meal meal = new Meal(name, mealType, date,
+            calories, protein, carbs, fat);
 
-        // Assign ownership before saving
+        meal.setRecipeId(normalizeRecipeId(recipeId));
         meal.setUser(user);
+
         mealRepository.save(meal);
 
         redirectAttributes.addFlashAttribute(
-            "success",
-            "Meal added successfully!"
-        );
+            "success", "Meal added successfully!");
 
         return "redirect:/meals?date=" + mealDate;
     }
 
-    // Open the edit page
     @GetMapping("/meals/edit/{id}")
-    public String showEditMeal(
-            @PathVariable Long id,
-            Model model,
-            Principal principal) {
+    public String showEditMeal(@PathVariable Long id,
+                               Model model, Principal principal) {
 
         AppUser user = getCurrentUser(principal);
-
         Meal meal = getOwnedMeal(id, user.getId());
 
         model.addAttribute("meal", meal);
-
         return "edit-meal";
     }
 
-    // Update an existing meal
     @PostMapping("/meals/update/{id}")
     public String updateMeal(
             @PathVariable Long id,
@@ -201,49 +196,32 @@ public class MealController {
             RedirectAttributes redirectAttributes) {
 
         AppUser user = getCurrentUser(principal);
-
-        // Only the owner can update this meal
         Meal meal = getOwnedMeal(id, user.getId());
-
         LocalDate date = LocalDate.parse(mealDate);
 
-        if (name.trim().isEmpty()
-                || !Double.isFinite(calories) || calories < 0
-                || !Double.isFinite(protein) || protein < 0
-                || !Double.isFinite(carbs) || carbs < 0
-                || !Double.isFinite(fat) || fat < 0
-                || (!mealType.equals("Breakfast")
-                    && !mealType.equals("Lunch")
-                    && !mealType.equals("Dinner")
-                    && !mealType.equals("Snack"))) {
-
+        if (!validMeal(name, mealType, calories, protein, carbs, fat)) {
             redirectAttributes.addFlashAttribute(
-                "error",
-                "Please enter valid meal information."
-            );
+                "error", "Please enter valid meal information.");
 
             return "redirect:/meals/edit/" + id;
         }
 
-        // Check duplicates for this user only
         if (!mealType.equals("Snack")) {
-            boolean alreadyExists =
-                mealRepository
-                    .existsByUser_IdAndMealDateAndMealTypeAndIdNot(
-                        user.getId(),
-                        date,
-                        mealType,
-                        id
-                    );
+            boolean alreadyExists = mealRepository
+                .existsByUser_IdAndMealDateAndMealTypeAndIdNot(
+                    user.getId(), date, mealType, id);
 
             if (alreadyExists) {
                 redirectAttributes.addFlashAttribute(
-                    "error",
-                    mealType + " already exists on this date."
-                );
+                    "error", mealType + " already exists on this date.");
 
                 return "redirect:/meals/edit/" + id;
             }
+        }
+
+        // Remove the old image association if the name changes.
+        if (!meal.getName().equals(name)) {
+            meal.setRecipeId(null);
         }
 
         meal.setName(name);
@@ -257,23 +235,17 @@ public class MealController {
         mealRepository.save(meal);
 
         redirectAttributes.addFlashAttribute(
-            "success",
-            "Meal updated successfully!"
-        );
+            "success", "Meal updated successfully!");
 
         return "redirect:/meals?date=" + mealDate;
     }
 
-    // Delete a meal
     @PostMapping("/meals/delete/{id}")
-    public String deleteMeal(
-            @PathVariable Long id,
-            Principal principal,
-            RedirectAttributes redirectAttributes) {
+    public String deleteMeal(@PathVariable Long id,
+                             Principal principal,
+                             RedirectAttributes redirectAttributes) {
 
         AppUser user = getCurrentUser(principal);
-
-        // Only the owner can delete this meal
         Meal meal = getOwnedMeal(id, user.getId());
 
         String date = meal.getMealDate().toString();
@@ -281,9 +253,7 @@ public class MealController {
         mealRepository.delete(meal);
 
         redirectAttributes.addFlashAttribute(
-            "success",
-            "Meal deleted successfully!"
-        );
+            "success", "Meal deleted successfully!");
 
         return "redirect:/meals?date=" + date;
     }

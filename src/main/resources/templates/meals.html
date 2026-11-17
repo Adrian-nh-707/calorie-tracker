@@ -1,275 +1,717 @@
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Meal Logger</title>
 
-    <link rel="stylesheet" th:href="@{/css/meals.css}">
-    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/meals.css}">
 
-    <style>
-        /* Keep navbar buttons the same size */
+    <link rel="stylesheet"
+          th:href="@{/css/navigation.css}">
 
-        .app-nav-links {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    <link rel="stylesheet"
+          th:href="@{/css/meal-images.css}">
 
-        .app-nav-links form {
-            margin: 0;
-        }
+    <script th:src="@{/js/meals.js}"
+            defer></script>
 
-        .app-nav-links .nav-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 115px;
-            height: 42px;
-            box-sizing: border-box;
-            padding: 0 10px;
-            margin: 0;
-            border: 1px solid seagreen;
-            border-radius: 8px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .app-nav-links a.nav-link,
-        .app-nav-links button.nav-link {
-            background-color: white;
-            color: seagreen;
-        }
-
-        .app-nav-links .nav-link:hover {
-            background-color: honeydew;
-        }
-
-        .app-nav-links a.nav-link.active {
-            background-color: seagreen;
-            color: white;
-        }
-
-        .app-nav-links a.nav-link.active:hover {
-            background-color: forestgreen;
-        }
-
-        @media (max-width: 600px) {
-            .app-nav-links {
-                width: 100%;
-                gap: 6px;
-            }
-
-            .app-nav-links > a,
-            .app-nav-links > form {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .app-nav-links .nav-link {
-                width: 100%;
-                padding: 0 5px;
-                font-size: 12px;
-            }
-        }
-    </style>
 </head>
 
 <body>
+
 <div class="container">
 
-    <!-- Navbar -->
-    <nav class="app-nav" aria-label="Main navigation">
-        <a class="app-brand" th:href="@{/dashboard}">
+    <!-- ==================================
+         Navigation
+    =================================== -->
+
+    <nav class="app-nav"
+         aria-label="Main navigation">
+
+        <a class="app-brand"
+           th:href="@{/dashboard}">
+
             Calorie Tracker
+
         </a>
 
         <div class="app-nav-links">
-            <a class="nav-link" th:href="@{/dashboard}">
+
+            <a class="nav-link"
+               th:href="@{/dashboard}">
+
                 Dashboard
+
             </a>
 
             <a class="nav-link active"
                th:href="@{/meals}"
                aria-current="page">
+
                 Meal Logger
+
             </a>
 
-            <form th:action="@{/logout}" method="post">
-                <button class="nav-link" type="submit">
+            <a class="nav-link"
+               th:href="@{/foodsearch}">
+
+                Food Search
+
+            </a>
+
+            <form th:action="@{/logout}"
+                  method="post">
+
+                <button class="nav-link"
+                        type="submit">
+
                     Log Out
+
                 </button>
+
             </form>
+
         </div>
+
     </nav>
 
-    <h1>Meal Logger</h1>
-    <p>Track your daily meals and nutrition.</p>
 
-    <!-- Daily Nutrition -->
+    <!-- ==================================
+         Page Header
+    =================================== -->
+
+    <header class="meal-page-header">
+
+        <div>
+
+            <h1>Meal Logger</h1>
+
+            <p>
+                Track your daily meals and nutrition.
+            </p>
+
+        </div>
+
+        <a class="food-search-link"
+           th:href="@{/foodsearch}">
+
+            + Find a Meal
+
+        </a>
+
+    </header>
+
+
+    <!-- ==================================
+         Daily Nutrition
+    =================================== -->
+
     <section>
+
         <h2>Daily Nutrition</h2>
 
-        <form th:action="@{/meals}" method="get">
-            <label for="date">Select Date</label>
-            <input type="date" id="date" name="date"
-                   th:value="${selectedDate}" required>
-            <button type="submit">View Date</button>
+        <form th:action="@{/meals}"
+              method="get">
+
+            <label for="date">
+                Select Date
+            </label>
+
+            <input type="date"
+                   id="date"
+                   name="date"
+                   th:value="${selectedDate}"
+                   required>
+
+            <button type="submit">
+                View Date
+            </button>
+
         </form>
 
         <div class="nutrition-summary">
+
             <div class="nutrition-card">
+
                 <h3>Calories</h3>
-                <p><span th:text="${totalCalories} ?: 0">0</span> kcal</p>
+
+                <p>
+                    <span th:text="${totalCalories} ?: 0">
+                        0
+                    </span>
+                    kcal
+                </p>
+
             </div>
 
             <div class="nutrition-card">
+
                 <h3>Protein</h3>
-                <p><span th:text="${totalProtein} ?: 0">0</span> g</p>
+
+                <p>
+                    <span th:text="${totalProtein} ?: 0">
+                        0
+                    </span>
+                    g
+                </p>
+
             </div>
 
             <div class="nutrition-card">
+
                 <h3>Carbs</h3>
-                <p><span th:text="${totalCarbs} ?: 0">0</span> g</p>
+
+                <p>
+                    <span th:text="${totalCarbs} ?: 0">
+                        0
+                    </span>
+                    g
+                </p>
+
             </div>
 
             <div class="nutrition-card">
+
                 <h3>Fat</h3>
-                <p><span th:text="${totalFat} ?: 0">0</span> g</p>
+
+                <p>
+                    <span th:text="${totalFat} ?: 0">
+                        0
+                    </span>
+                    g
+                </p>
+
             </div>
+
         </div>
+
     </section>
 
-    <!-- Add Meal -->
+
+    <!-- ==================================
+         Add Meal
+    =================================== -->
+
     <section>
+
         <h2>Add a Meal</h2>
 
-        <p th:if="${error}" th:text="${error}"
-           style="color: red; font-weight: bold;"></p>
+        <p th:if="${error}"
+           th:text="${error}"
+           class="meal-error-message"
+           role="alert">
+        </p>
 
-        <p th:if="${success}" th:text="${success}"
-           style="color: green; font-weight: bold;"></p>
+        <p th:if="${success}"
+           th:text="${success}"
+           class="meal-success-message"
+           role="status">
+        </p>
 
-        <form th:action="@{/meals/add}" method="post">
 
-            <label for="mealDate">Meal Date</label>
-            <input type="date" id="mealDate" name="mealDate"
-                   th:value="${selectedDate}" required>
+        <!-- Meal Image Preview -->
 
-            <label for="mealType">Meal Type</label>
-            <select id="mealType" name="mealType" required>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Lunch">Lunch</option>
-                <option value="Dinner">Dinner</option>
-                <option value="Snack">Snack</option>
-            </select>
+        <div id="mealPreview"
+             class="meal-preview"
+             hidden>
 
-            <label for="name">Meal Name</label>
-            <input type="text" id="name" name="name"
-                   placeholder="e.g. Chicken Rice" required>
+            <div id="previewPhoto"
+                 class="meal-photo preview-photo">
+
+                <span class="meal-photo-placeholder"
+                      aria-hidden="true">
+
+                    🍽️
+
+                </span>
+
+                <img alt=""
+                     class="meal-image"
+                     hidden>
+
+            </div>
+
+            <div class="meal-preview-info">
+
+                <span class="meal-source-label">
+                    Imported from FatSecret
+                </span>
+
+                <h3 id="previewName">
+                    Meal Name
+                </h3>
+
+                <div class="preview-calories">
+
+                    <strong id="previewCalories">
+                        0
+                    </strong>
+
+                    kcal
+
+                </div>
+
+                <button id="clearImport"
+                        class="clear-import-button"
+                        type="button">
+
+                    Use manual entry
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Import Message -->
+
+        <p id="foodImportMessage"
+           class="food-import-message"
+           role="status"
+           hidden>
+        </p>
+
+
+        <!-- Add Meal Form -->
+
+        <form id="mealForm"
+              th:action="@{/meals/add}"
+              method="post">
+
+            <!-- FatSecret Recipe ID -->
+
+            <input type="hidden"
+                   id="recipeId"
+                   name="recipeId"
+                   value="">
+
+
+            <div class="meal-form-grid">
+
+                <div>
+
+                    <label for="mealDate">
+                        Meal Date
+                    </label>
+
+                    <input type="date"
+                           id="mealDate"
+                           name="mealDate"
+                           th:value="${selectedDate}"
+                           required>
+
+                </div>
+
+                <div>
+
+                    <label for="mealType">
+                        Meal Type
+                    </label>
+
+                    <select id="mealType"
+                            name="mealType"
+                            required>
+
+                        <option value="Breakfast">
+                            Breakfast
+                        </option>
+
+                        <option value="Lunch">
+                            Lunch
+                        </option>
+
+                        <option value="Dinner">
+                            Dinner
+                        </option>
+
+                        <option value="Snack">
+                            Snack
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <label for="name">
+                Meal Name
+            </label>
+
+            <input type="text"
+                   id="name"
+                   name="name"
+                   placeholder="e.g. Chicken Rice"
+                   required>
+
+
+            <!-- Portion Controls -->
+
+            <div id="portionControls"
+                 class="portion-controls"
+                 hidden>
+
+                <label for="portionAmount">
+                    Number of Servings
+                </label>
+
+                <input type="number"
+                       id="portionAmount"
+                       value="1"
+                       min="0.01"
+                       step="any"
+                       disabled>
+
+                <div class="portion-buttons">
+
+                    <button type="button"
+                            data-portion="0.5">
+
+                        0.5
+
+                    </button>
+
+                    <button type="button"
+                            data-portion="1">
+
+                        1
+
+                    </button>
+
+                    <button type="button"
+                            data-portion="1.5">
+
+                        1.5
+
+                    </button>
+
+                    <button type="button"
+                            data-portion="2">
+
+                        2
+
+                    </button>
+
+                </div>
+
+                <p class="portion-description">
+
+                    Nutrition is calculated using
+                    <strong id="portionBasis">
+                        1 serving
+                    </strong>
+                    as the base amount.
+
+                </p>
+
+            </div>
+
+
+            <!-- Nutrition Fields -->
 
             <div class="nutrition-inputs">
+
                 <div>
-                    <label for="calories">Calories</label>
-                    <input type="number" id="calories" name="calories"
-                           min="0" step="any" required>
+
+                    <label for="calories">
+                        Calories (kcal)
+                    </label>
+
+                    <input type="number"
+                           id="calories"
+                           name="calories"
+                           min="0"
+                           step="any"
+                           required>
+
                 </div>
 
                 <div>
-                    <label for="protein">Protein (g)</label>
-                    <input type="number" id="protein" name="protein"
-                           min="0" step="any" required>
+
+                    <label for="protein">
+                        Protein (g)
+                    </label>
+
+                    <input type="number"
+                           id="protein"
+                           name="protein"
+                           min="0"
+                           step="any"
+                           required>
+
                 </div>
 
                 <div>
-                    <label for="carbs">Carbs (g)</label>
-                    <input type="number" id="carbs" name="carbs"
-                           min="0" step="any" required>
+
+                    <label for="carbs">
+                        Carbs (g)
+                    </label>
+
+                    <input type="number"
+                           id="carbs"
+                           name="carbs"
+                           min="0"
+                           step="any"
+                           required>
+
                 </div>
 
                 <div>
-                    <label for="fat">Fat (g)</label>
-                    <input type="number" id="fat" name="fat"
-                           min="0" step="any" required>
+
+                    <label for="fat">
+                        Fat (g)
+                    </label>
+
+                    <input type="number"
+                           id="fat"
+                           name="fat"
+                           min="0"
+                           step="any"
+                           required>
+
                 </div>
+
             </div>
 
-            <button type="submit">Add Meal</button>
+
+            <button type="submit"
+                    class="save-meal-button">
+
+                + Add Meal
+
+            </button>
+
         </form>
+
     </section>
 
-    <!-- Meal History -->
+
+    <!-- ==================================
+         Meal History
+    =================================== -->
+
     <section>
+
         <div class="history-header">
+
             <h2>Meal History</h2>
+
             <span class="history-date"
-                  th:text="${selectedDate}">2026-11-02</span>
+                  th:text="${selectedDate}">
+
+                2026-11-15
+
+            </span>
+
         </div>
 
-        <!-- No Meals -->
+
+        <!-- Empty History -->
+
         <div class="empty-history"
              th:if="${#lists.isEmpty(meals)}">
-            <div class="empty-icon">🍽️</div>
+
+            <div class="empty-icon">
+
+                🍽️
+
+            </div>
+
             <h3>No meals recorded yet</h3>
-            <p>Add your first meal above to start tracking.</p>
+
+            <p>
+                Add your first meal above
+                to start tracking.
+            </p>
+
+            <a class="food-search-link"
+               th:href="@{/foodsearch}">
+
+                Discover Meals
+
+            </a>
+
         </div>
+
 
         <!-- Saved Meals -->
-        <div class="meal-card" th:each="meal : ${meals}">
 
-            <div class="meal-header">
-                <div>
-                    <h3 th:text="${meal.mealType}">Breakfast</h3>
-                    <h4 th:text="${meal.name}">Chicken Rice</h4>
-                </div>
+        <div class="meal-card meal-history-card"
+             th:each="meal : ${meals}">
 
-                <div class="meal-calories">
-                    <strong th:text="${meal.calories}">500</strong>
-                    <span>kcal</span>
-                </div>
+
+            <!-- Meal Image -->
+
+            <div class="meal-photo history-photo"
+                 th:attr="data-recipe-id=${meal.recipeId},
+                          data-meal-name=${meal.name}">
+
+                <span class="meal-photo-placeholder"
+                      aria-hidden="true">
+
+                    🍽️
+
+                </span>
+
+                <img class="meal-image"
+                     alt=""
+                     hidden>
+
             </div>
 
-            <div class="meal-macros">
-                <span>
-                    Protein:
-                    <b th:text="${meal.protein}">35</b> g
-                </span>
-                <span>
-                    Carbs:
-                    <b th:text="${meal.carbs}">60</b> g
-                </span>
-                <span>
-                    Fat:
-                    <b th:text="${meal.fat}">12</b> g
-                </span>
-            </div>
 
-            <div class="meal-actions">
-                <a class="edit-meal-btn"
-                   th:href="@{/meals/edit/{id}(id=${meal.id})}">
-                    Edit
-                </a>
+            <!-- Meal Information -->
 
-                <form th:action="@{/meals/delete/{id}(id=${meal.id})}"
-                      method="post"
-                      onsubmit="return confirm('Are you sure you want to delete this meal?');">
+            <div class="meal-history-info">
 
-                    <button class="delete-meal-btn" type="submit">
-                        Delete
-                    </button>
-                </form>
+                <div class="meal-header">
+
+                    <div>
+
+                        <span class="meal-type-label"
+                              th:text="${meal.mealType}">
+
+                            Breakfast
+
+                        </span>
+
+                        <h3 class="history-meal-name"
+                            th:text="${meal.name}">
+
+                            Chicken Rice
+
+                        </h3>
+
+                    </div>
+
+                    <div class="meal-calories">
+
+                        <strong th:text="${meal.calories}">
+
+                            500
+
+                        </strong>
+
+                        <span>kcal</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Nutrition -->
+
+                <div class="meal-macros">
+
+                    <span>
+
+                        Protein:
+
+                        <b th:text="${meal.protein}">
+
+                            35
+
+                        </b>
+
+                        g
+
+                    </span>
+
+                    <span>
+
+                        Carbs:
+
+                        <b th:text="${meal.carbs}">
+
+                            60
+
+                        </b>
+
+                        g
+
+                    </span>
+
+                    <span>
+
+                        Fat:
+
+                        <b th:text="${meal.fat}">
+
+                            12
+
+                        </b>
+
+                        g
+
+                    </span>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="meal-actions">
+
+                    <a class="edit-meal-btn"
+                       th:href="@{/meals/edit/{id}(id=${meal.id})}">
+
+                        Edit
+
+                    </a>
+
+                    <form
+                        th:action="@{/meals/delete/{id}(id=${meal.id})}"
+                        method="post"
+                        onsubmit="return confirm('Are you sure you want to delete this meal?');">
+
+                        <button class="delete-meal-btn"
+                                type="submit">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </div>
+
             </div>
 
         </div>
+
     </section>
 
+
+    <!-- ==================================
+         API Attribution
+    =================================== -->
+
+    <footer class="meal-attribution">
+
+        Powered by
+
+        <a href="https://platform.fatsecret.com/"
+           target="_blank"
+           rel="noopener noreferrer">
+
+            fatsecret Platform API
+
+        </a>
+
+    </footer>
+
 </div>
+
 </body>
 </html>

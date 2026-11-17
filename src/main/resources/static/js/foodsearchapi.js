@@ -1,384 +1,426 @@
-/*
-Food database, API integration, and food search
 
-*/
-
-    function parseRecipe(recipe_arr){
-        let recipe = "";
-        for(let i = 0; i < recipe_arr.length; i++){
-            recipe += recipe_arr[i] + " ";
-        }
-        return recipe;
-        
-    }
-    function parseIngredients(ingredient_arr){
-        let ingredients = "";
-        for(let i = 0; i < ingredient_arr.length; i++){
-            ingredients += "" + ingredient_arr[i]["name"] + "(" + ingredient_arr[i]["quantity"] + " " + ingredient_arr[i]["unit"] + "). ";
-        }
-
-
-
-        return ingredients;
-    }
-
-    function showNutrition(num){
-        let nutrition_text = document.getElementById("nutrition" + num);
-        let ingredient_text = document.getElementById("ingredients" + num);
-        let recipe_text = document.getElementById("recipe" + num);
-        //console.log(nutrition_text.style.display);
-        if(nutrition_text.style.display == "none"){
-            nutrition_text.style.display = "";
-            ingredient_text.style.display = "none";
-            recipe_text.style.display = "none"
-        }
-
-    }
-    function showIngredients(num){
-        let nutrition_text = document.getElementById("nutrition" + num);
-        let ingredient_text = document.getElementById("ingredients" + num);
-        let recipe_text = document.getElementById("recipe" + num);
-
-        if(ingredient_text.style.display == "none"){
-            ingredient_text.style.display = "";
-            nutrition_text.style.display = "none";
-            recipe_text.style.display = "none"
-        }
-    }
-    function showRecipe(num){
-        let nutrition_text = document.getElementById("nutrition" + num);
-        let ingredient_text = document.getElementById("ingredients" + num);
-        let recipe_text = document.getElementById("recipe" + num);
-
-        if(recipe_text.style.display == "none"){
-            recipe_text.style.display = "";
-            ingredient_text.style.display = "none";
-            nutrition_text.style.display = "none"
-        }
-    }
-
-
-    async function submitSearch(event){
-        event.preventDefault();
-        document.getElementById("item_list").innerHTML = "";
-        let search = document.getElementById("search").value;
-        document.getElementById("search").value = "";
-        console.log(search);
-
-        await getFoodList(search);
-    }
-
-
-    async function getFoodList(search){
-
-    let parse_str = search.replace(/\s+/g, '%20');
-
-    console.log(parse_str);
-   
-
-    try{
-        //spinner.style.display = "block"
-        const apiKey = 'OEMTy5t2BzkBRD1Y0JxMN4kqBbZFdLmNjf6X5CPH';
-
-        const response = await fetch(`https://api.api-ninjas.com/v3/recipe?title=${parse_str}&limit=5`, {
-              headers: {
-                'X-Api-Key': apiKey,
-                'Content-Type': 'application/json'
-              }
-
-            });
-
-        if (!response.ok) {
-            const errorText = await response.text(); // Get raw text to see server errors
-            throw new Error(`API returned status ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log(data);
-
-        /* single entry format:
-        
-            {title: "Elisa's Almost Fat-Free Potato Latkes", ingredients: Array(5), servings: '1 Servings', instructions: Array(7), nutrition: {…}}
-            ingredients: (5) [{…}, {…}, {…}, {…}, {…}]
-
-            instructions: (7) ['Shred the potatoes in the food processor.', 'Rinse the potatoes.', 'Toss the potatoes in a bowl with the pepper, dried onion flakes, and egg.', 'Mix until combined.', 'Line a pan with aluminum foil and spray with PAM.', 'Divide the potato mixture into 6 mounds on the pan.', 'Spray the mounds with PAM.'] 
-
-            nutrition: {calories: 3677.503181, total_fat: 345.178095, saturated_fat: 36.215579, protein: 38.662521, sodium: 671.590869, …}
-            
-            servings: "1 Servings"
-
-            title: "Elisa's Almost Fat-Free Potato Latkes"
-
-            [[Prototype]]
-            : 
-            Object
-
-
-        */
-
-        /*
-
-            "nutrition": {
-            "calories": 2459.801609,
-            "total_fat": 133.421434,
-            "saturated_fat": 56.038221,
-            "protein": 34.051346,
-            "sodium": 1093.891319,
-            "potassium": 506.742703,
-            "dietary_fiber": 20.048984,
-            "cholesterol": 202.196154,
-            "sugars": 69.58574,
-            "total_carbohydrate": 287.809611
-            }
-
-
-        */
-
-        let container = document.getElementById("item_list");
-
-        for(let i = 0; i < data.length; i++){
-            console.log(data[i]);
-
-            let item_container = document.createElement("div");
-            //item_container.innerHTML = "hello";
-            item_container.classList.add("col-md-12","mb-4");
-            item_container.id = "meal-card";
-            //console.log(item_container.id);
-
-            let item_container_main = document.createElement("div"); //meal content page
-            item_container_main.classList.add("p-3","bg-light","border", "rounded-4");
-            //item_container_main.id = "meal-content";
-
-            let item_container_add = document.createElement("div"); //where the add/submit button is
-            //item_container_add.id = "meal-add";
-
-            let item_ingredients = document.createElement("div"); // list of ingredients;
-            item_ingredients.style.display = "none";
-            let ingredient_title = document.createElement("h3");
-            ingredient_title.innerHTML = "Ingredients:"
-            item_ingredients.appendChild(ingredient_title);
-            item_ingredients.id = "ingredients" + i;
-
-            let item_nutrition = document.createElement("div"); // list of nutrition (calories, protein, etc)
-            item_nutrition.style.display = "none";
-            let nutrition_title = document.createElement("h3");
-            nutrition_title.innerHTML = "Nutrition:";
-            item_nutrition.appendChild(nutrition_title);
-            item_nutrition.id = "nutrition" + i;
-
-            let item_recipe = document.createElement("div"); // recipe
-            let recipe_title = document.createElement("h3");
-            recipe_title.innerHTML = "Recipe:";
-            item_recipe.appendChild(recipe_title);
-            item_recipe.id = "recipe" + i;
-
-            for(let j = 0; j < data[i]["ingredients"].length; j++){
-                let current_ingredient = document.createElement("p");
-                current_ingredient.innerHTML = "" + data[i]["ingredients"][j]["name"] + ": " + data[i]["ingredients"][j]["quantity"] + " " + data[i]["ingredients"][j]["unit"] + ".";
-                item_ingredients.appendChild(current_ingredient);
-            }
-
-            for(const [key, value] of Object.entries(data[i]["nutrition"])){
-                let current_nutrition = document.createElement("p");
-                current_nutrition.innerHTML = "" + key + ":  " + value + "g.";
-                item_nutrition.appendChild(current_nutrition);
-            }
-
-            for(let j = 0; j < data[i]["instructions"].length; j++){
-                let current_recipe = document.createElement("p");
-                current_recipe.innerHTML = "" + (j+1) + ":  " + data[i]["instructions"][j];
-                item_recipe.appendChild(current_recipe);
-            }
-
-
-
-
-            
-
-            let title = document.createElement("h3");
-            title.innerHTML = data[i]["title"];
-
-            title.style.color = "green";
-            //title.style.textAlign = "center";
-
-
-            let recipe_str = parseRecipe(data[i]["instructions"]);
-            let ingredients_str = parseIngredients(data[i]["ingredients"]);
-            
-            
-            let form = document.createElement("form");
-            form.style.float = "right";
-            form.style.padding = "0px";
-            form.style.margin = "0px";
-            form.method = "post";
-            form.action = "food/add";
-
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            if (csrfToken) {
-                let csrfInput = document.createElement("input");
-                csrfInput.type = "hidden";
-                csrfInput.name = "_csrf"; // Default parameter name Spring Security monitors
-                csrfInput.value = csrfToken;
-                form.appendChild(csrfInput);
-            }
-
-
-            let form_title = document.createElement("input");
-            form_title.value = data[i]["title"];
-            form_title.name = "title";
-            form_title.style.display = "none";
-
-            let serving = document.createElement("input");
-            serving.value = data[i]["servings"];
-            serving.name = "serving";
-            serving.style.display = "none";
-
-
-            let calories = document.createElement("input");
-            calories.value = data[i]["nutrition"]["calories"];
-            calories.name = "calories";
-            calories.style.display = "none";
-
-            let total_fat = document.createElement("input");
-            total_fat.value = data[i]["nutrition"]["total_fat"];
-            total_fat.name = "total_fat";
-            total_fat.style.display = "none";
-
-            let saturated_fat = document.createElement("input");
-            saturated_fat.value = data[i]["nutrition"]["saturated_fat"];
-            saturated_fat.name = "saturated_fat";
-            saturated_fat.style.display = "none";
-
-            let protein = document.createElement("input");
-            protein.value = data[i]["nutrition"]["protein"];
-            protein.name = "protein";
-            protein.style.display = "none";
-
-            let sodium = document.createElement("input");
-            sodium.value = data[i]["nutrition"]["sodium"];
-            sodium.name = "sodium";
-            sodium.style.display = "none";
-
-            let potassium = document.createElement("input");
-            potassium.value = data[i]["nutrition"]["potassium"];
-            potassium.name = "potassium";
-            potassium.style.display = "none";
-
-
-            let dietary_fiber = document.createElement("input");
-            dietary_fiber.value = data[i]["nutrition"]["dietary_fiber"];
-            dietary_fiber.name = "dietary_fiber";
-            dietary_fiber.style.display = "none";
-
-            let cholesterol = document.createElement("input");
-            cholesterol.value = data[i]["nutrition"]["cholesterol"];
-            cholesterol.name = "cholesterol"
-            cholesterol.style.display = "none";
-
-            let sugars = document.createElement("input");
-            sugars.value = data[i]["nutrition"]["sugars"];
-            sugars.name = "sugars"
-            sugars.style.display = "none";
-
-            let total_carbohydrate = document.createElement("input");
-            total_carbohydrate.value = data[i]["nutrition"]["total_carbohydrate"];
-            total_carbohydrate.name = "total_carbohydrate";
-            total_carbohydrate.style.display = "none";
-
-            let recipe = document.createElement("input");
-            recipe.value = recipe_str;
-            recipe.name = "recipe"
-            recipe.style.display = "none";
-
-            let ingredients = document.createElement("input");
-            ingredients.value = ingredients_str;
-            ingredients.name = "ingredients"
-            ingredients.style.display = "none";
-            
-            let submit = document.createElement("button");
-            //submit.id = "submitbutton";
-            submit.type = "submit";
-            submit.innerHTML = "+";
-            
-            form.appendChild(form_title);
-            form.appendChild(serving);
-            form.appendChild(calories);
-            form.appendChild(total_fat);
-            form.appendChild(saturated_fat);
-            form.appendChild(protein);
-            form.appendChild(sodium);
-            form.appendChild(potassium);
-            form.appendChild(dietary_fiber);
-            form.appendChild(cholesterol);
-            form.appendChild(sugars);
-            form.appendChild(total_carbohydrate);
-            form.appendChild(recipe);
-            form.appendChild(ingredients);
-            form.appendChild(submit);
-
-            
-            
-            
-            
-            //item_container_main.appendChild(title);
-            let nutrition_button = document.createElement("button");
-            nutrition_button.innerHTML = "Nutrition";
-            nutrition_button.onclick = function(){
-                showNutrition(i);
-            }
-
-            let ingredient_button = document.createElement("button");
-            ingredient_button.innerHTML = "Ingredients";
-            ingredient_button.onclick = function(){
-                showIngredients(i);
-            }
-
-            let recipe_button = document.createElement("button");
-            recipe_button.innerHTML = "Recipe";
-            recipe_button.onclick = function(){
-                showRecipe(i);
-            }
-
-            item_container_main.appendChild(title);
-
-            item_container_main.appendChild(item_ingredients);
-            item_container_main.appendChild(item_nutrition);
-            item_container_main.appendChild(item_recipe);
-
-
-
-            item_container_add.appendChild(nutrition_button);
-            item_container_add.appendChild(ingredient_button);
-            item_container_add.appendChild(recipe_button);
-            item_container_add.appendChild(form);
-            
-            item_container.appendChild(item_container_main);
-            item_container.appendChild(item_container_add);
-            container.appendChild(item_container);
-        }
-
-
-        //spinner.style.display = "none"
-        
-
-
-
-
-
-
-    }catch(error){
-        console.error(error.message);
-        //spinner.style.display = "none"
-    }
-
+const foodList = document.getElementById('item_list');
+const searchForm = document.getElementById('searchform');
+const searchInput = document.getElementById('search');
+
+const PAGE_SIZE = 12;
+let state;
+
+function el(tag, text = '', className = '') {
+    const node = document.createElement(tag);
+    node.textContent = text;
+    node.className = className;
+    return node;
 }
 
+function asArray(value) {
+    return value == null ? [] : Array.isArray(value) ? value : [value];
+}
 
+function validImage(url) {
+    try {
+        const u = new URL(url);
+        return u.protocol === 'https:' && (
+            u.hostname === 'fatsecret.com' ||
+            u.hostname.endsWith('.fatsecret.com') ||
+            u.hostname === 'ftscrt.com' ||
+            u.hostname.endsWith('.ftscrt.com')
+        );
+    } catch {
+        return false;
+    }
+}
 
-window.addEventListener('load', (event) => {
-    console.log('The page and all resources are fully loaded.');
-    getFoodList("apple");
+function makeButton(text, className, action) {
+    const button = el('button', text, className);
+    button.type = 'button';
+    button.onclick = action;
+    return button;
+}
+
+async function request(path, params, current, signal = current.abort.signal) {
+    const response = await fetch(
+        `/api/fatsecret/${path}?${new URLSearchParams(params)}`,
+        { signal, cache: 'no-store' }
+    );
+
+    if (response.redirected && new URL(response.url).pathname === '/login') {
+        window.location.assign('/login');
+        throw new Error('Please sign in.');
+    }
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+        throw new Error(
+            typeof data.error === 'string'
+                ? data.error
+                : data.error?.message || 'FatSecret request failed.'
+        );
+    }
+
+    return data;
+}
+
+function getNutrition(data) {
+    function number(value) {
+        if (value == null || String(value).trim() === '') return null;
+        const n = Number(value);
+        return Number.isFinite(n) && n >= 0 ? n : null;
+    }
+
+    return {
+        calories: number(data?.calories),
+        protein: number(data?.protein),
+        carbs: number(data?.carbohydrate),
+        fat: number(data?.fat)
+    };
+}
+
+function completeNutrition(nutrition) {
+    return Object.values(nutrition).every(n => Number.isFinite(n) && n >= 0);
+}
+
+function format(value) {
+    return Number.isFinite(value) ? Number(value.toFixed(2)) : 'Unavailable';
+}
+
+function nutritionPanel(recipe) {
+    const n = getNutrition(recipe.recipe_nutrition);
+    const panel = el('div', '', 'dish-nutrition');
+    const calories = el('div', '', 'dish-calories');
+    const macros = el('div', '', 'dish-macros');
+
+    calories.append(
+        el('span', 'Per serving', 'nutrition-caption'),
+        el('strong', `${format(n.calories)} kcal`)
+    );
+
+    for (const [label, value] of [
+        ['Protein', n.protein],
+        ['Carbs', n.carbs],
+        ['Fat', n.fat]
+    ]) {
+        const item = el('div', '', 'dish-macro');
+        item.append(el('strong', `${format(value)} g`), el('span', label));
+        macros.append(item);
+    }
+
+    panel.append(calories, macros);
+    return panel;
+}
+
+function addToMealLogger(recipe) {
+    const nutrition = getNutrition(recipe.recipe_nutrition);
+
+    if (!completeNutrition(nutrition)) {
+        alert('Nutrition information is incomplete.');
+        return;
+    }
+
+    const selected = {
+        name: recipe.recipe_name,
+        recipeId: recipe.recipe_id,
+        source: 'FatSecret',
+        basisLabel: '1 serving',
+        ...nutrition
+    };
+
+    try {
+        sessionStorage.setItem('selectedFood', JSON.stringify(selected));
+        window.location.assign('/meals');
+    } catch {
+        alert('Unable to transfer meal.');
+    }
+}
+
+function createFoodImage(recipe, className = 'dish-image', lazy = true) {
+    const placeholder = () =>
+        el('div', 'Photo unavailable', `${className} image-placeholder`);
+
+    if (!validImage(recipe.recipe_image)) return placeholder();
+
+    const image = el('img', '', className);
+    image.src = recipe.recipe_image;
+    image.alt = recipe.recipe_name;
+    image.loading = lazy ? 'lazy' : 'eager';
+    image.onerror = () => image.replaceWith(placeholder());
+
+    return image;
+}
+
+function renderRecipeInformation(container, recipe) {
+    container.replaceChildren();
+
+    const info = el('div', '', 'recipe-info');
+
+    for (const [value, label] of [
+        [recipe.number_of_servings, 'Makes'],
+        [recipe.preparation_time_min, 'Prep:'],
+        [recipe.cooking_time_min, 'Cook:']
+    ]) {
+        if (value != null) {
+            const unit = label === 'Makes' ? 'servings' : 'mins';
+            info.append(el('span', `${label} ${value} ${unit}`));
+        }
+    }
+
+    if (info.children.length) container.append(info);
+
+    container.append(el('h3', 'Ingredients'));
+
+    const ingredients = asArray(recipe.ingredients?.ingredient);
+    const ingredientList = el('div', '', 'ingredient-list');
+
+    for (const ingredient of ingredients) {
+        const label = el('label', '', 'recipe-ingredient');
+        const checkbox = el('input');
+        checkbox.type = 'checkbox';
+
+        label.append(
+            checkbox,
+            el('span', ingredient.ingredient_description ||
+                ingredient.food_name || 'Ingredient unavailable')
+        );
+
+        ingredientList.append(label);
+    }
+
+    container.append(ingredients.length
+        ? ingredientList
+        : el('p', 'Ingredients unavailable.'));
+
+    container.append(el('h3', 'Cooking Instructions'));
+
+    const directions = asArray(recipe.directions?.direction).slice().sort(
+        (a, b) => Number(a.direction_number) - Number(b.direction_number)
+    );
+
+    const steps = el('ol', '', 'recipe-steps');
+
+    for (const direction of directions) {
+        if (direction.direction_description) {
+            steps.append(el('li', direction.direction_description));
+        }
+    }
+
+    container.append(steps.children.length
+        ? steps
+        : el('p', 'Cooking instructions unavailable.'));
+}
+
+async function openRecipeModal(recipe, current, trigger) {
+    if (current !== state || document.querySelector('.recipe-dialog[open]')) {
+        return;
+    }
+
+    const abort = new AbortController();
+    const dialog = el('dialog', '', 'recipe-dialog');
+    dialog.setAttribute('aria-labelledby', 'recipe-modal-title');
+
+    const header = el('div', '', 'recipe-modal-header');
+    const heading = el('h2', 'Recipe Details');
+    heading.id = 'recipe-modal-title';
+
+    const close = makeButton('×', 'recipe-close', () => dialog.close());
+    close.setAttribute('aria-label', 'Close recipe');
+    header.append(heading, close);
+
+    const content = el('div', '', 'recipe-modal-content');
+
+    content.append(
+        createFoodImage(recipe, 'recipe-modal-image', false),
+        el('h2', recipe.recipe_name, 'recipe-title')
+    );
+
+    if (recipe.recipe_description) {
+        content.append(el('p', recipe.recipe_description, 'recipe-description'));
+    }
+
+    content.append(nutritionPanel(recipe));
+
+    const details = el('div', 'Loading recipe...', 'recipe-full-details');
+    details.setAttribute('aria-live', 'polite');
+    content.append(details);
+
+    const footer = el('div', '', 'recipe-modal-footer');
+
+    footer.append(
+        makeButton('Close', 'recipe-secondary-button', () => dialog.close()),
+        makeButton('+ Add to Meal Logger', 'dish-add-button',
+            () => addToMealLogger(recipe))
+    );
+
+    dialog.append(header, content, footer);
+    document.body.append(dialog);
+
+    dialog.addEventListener('close', () => {
+        abort.abort();
+        dialog.remove();
+        if (trigger.isConnected) trigger.focus();
+    });
+
+    dialog.addEventListener('click', event => {
+        if (event.target !== dialog) return;
+
+        const rect = dialog.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right ||
+            event.clientY < rect.top || event.clientY > rect.bottom) {
+            dialog.close();
+        }
+    });
+
+    dialog.showModal();
+    close.focus();
+
+    async function loadDetails() {
+        details.textContent = 'Loading recipe...';
+
+        try {
+            const result = await request(
+                'recipe', { id: recipe.recipe_id }, current, abort.signal
+            );
+
+            if (current !== state || !dialog.isConnected || abort.signal.aborted) {
+                return;
+            }
+
+            if (!result.recipe) throw new Error('Recipe details unavailable.');
+
+            renderRecipeInformation(details, result.recipe);
+        } catch (error) {
+            if (!dialog.isConnected || abort.signal.aborted) return;
+
+            details.replaceChildren(
+                el('p', error.message, 'recipe-error'),
+                makeButton('Retry', 'recipe-secondary-button', loadDetails)
+            );
+        }
+    }
+
+    await loadDetails();
+}
+
+function recipeCard(recipe, current) {
+    const card = el('article', '', 'dish-card');
+    const body = el('div', '', 'dish-body');
+    const title = el('h3', recipe.recipe_name, 'dish-title');
+
+    title.title = recipe.recipe_name;
+
+    body.append(
+        title,
+        el('p', recipe.recipe_description || '', 'dish-description'),
+        nutritionPanel(recipe)
+    );
+
+    const actions = el('div', '', 'dish-actions');
+
+    const viewButton = makeButton('View Recipe', 'dish-view-button',
+        () => openRecipeModal(recipe, current, viewButton));
+
+    actions.append(
+        makeButton('+ Add to Meal Logger', 'dish-add-button',
+            () => addToMealLogger(recipe)),
+        viewButton
+    );
+
+    body.append(actions);
+    card.append(createFoodImage(recipe), body);
+
+    return card;
+}
+
+async function loadPage(current) {
+    if (current !== state || current.busy) return;
+
+    current.busy = true;
+    current.more.disabled = true;
+    current.status.textContent = 'Searching dishes...';
+
+    try {
+        const result = await request('search', {
+            query: current.query,
+            page: current.page
+        }, current);
+
+        if (current !== state) return;
+
+        const recipes = asArray(result.recipes?.recipe);
+        const rawTotal = result.recipes?.total_results;
+        const total = rawTotal == null ? NaN : Number(rawTotal);
+
+        for (const recipe of recipes) {
+            if (!recipe?.recipe_id || !recipe.recipe_name ||
+                !validImage(recipe.recipe_image) ||
+                !completeNutrition(getNutrition(recipe.recipe_nutrition))) {
+                continue;
+            }
+
+            const id = String(recipe.recipe_id);
+            if (current.seen.has(id)) continue;
+
+            current.seen.add(id);
+            current.grid.append(recipeCard(recipe, current));
+        }
+
+        current.page++;
+
+        current.status.textContent = current.seen.size
+            ? `${current.seen.size} dishes displayed`
+            : 'No dishes with complete nutrition and images found.';
+
+        const hasMore = recipes.length > 0 && (
+            Number.isFinite(total)
+                ? current.page * PAGE_SIZE < total
+                : recipes.length === PAGE_SIZE
+        );
+
+        current.more.hidden = !hasMore;
+        current.more.textContent = 'Load More';
+
+    } catch (error) {
+        if (current !== state) return;
+
+        current.status.textContent = error.message;
+        current.more.hidden = false;
+        current.more.textContent = 'Retry';
+
+    } finally {
+        current.busy = false;
+        current.more.disabled = false;
+    }
+}
+
+async function search(query) {
+    state?.abort.abort();
+    document.querySelector('.recipe-dialog[open]')?.close();
+
+    const current = state = {
+        query,
+        page: 0,
+        busy: false,
+        seen: new Set(),
+        abort: new AbortController(),
+        status: el('p', '', 'search-status'),
+        grid: el('div', '', 'dish-grid'),
+        more: el('button', 'Load More', 'load-more-button')
+    };
+
+    current.status.setAttribute('role', 'status');
+    current.more.type = 'button';
+    current.more.hidden = true;
+    current.more.onclick = () => loadPage(current);
+
+    foodList.replaceChildren(current.status, current.grid, current.more);
+    await loadPage(current);
+}
+
+searchForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const query = searchInput.value.trim();
+    if (query) search(query);
 });
 
-
-
+searchInput.value = 'chicken';
+search('chicken');
