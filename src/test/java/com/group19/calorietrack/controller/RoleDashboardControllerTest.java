@@ -4,30 +4,25 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import org.springframework.security.core.Authentication;
-import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.models.TrainerGoalRecommendation;
+import com.group19.calorietrack.repositories.MealRepository;
 import com.group19.calorietrack.repositories.TrainerGoalRecommendationRepository;
 import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
-
-import com.group19.calorietrack.messaging.MessageService;
-
-import org.mockito.ArgumentCaptor;
 
 class RoleDashboardControllerTest {
 
@@ -37,8 +32,8 @@ class RoleDashboardControllerTest {
     private RoleDashboardController controller;
 
     private UserRepository userRepository;
+    private MealRepository mealRepository;
     private TrainerGoalRecommendationRepository recommendationRepository;
-
     private AppUser trainer;
     private AppUser user;
 
@@ -50,9 +45,9 @@ class RoleDashboardControllerTest {
     void setUp() {
 
         userRepository = mock(UserRepository.class);
+        mealRepository = mock(MealRepository.class);
         recommendationRepository =
-                mock(TrainerGoalRecommendationRepository.class);
-
+            mock(TrainerGoalRecommendationRepository.class);
         trainer = mock(AppUser.class);
         user = mock(AppUser.class);
 
@@ -86,9 +81,10 @@ class RoleDashboardControllerTest {
                 );
 
         controller = new RoleDashboardController(
-                userRepository,
-                messageService,
-                recommendationService
+            userRepository,
+            mealRepository,
+            messageService,
+            recommendationService
         );
     }
 
