@@ -43,8 +43,13 @@ Yes, the amount of work is enough for five group members. The project is divded 
 All the features have distinctive dev tasks, with group collaboration needed to connect the database/api and integrate the features as a whole, and test the app.
 
 ## 8. REST API
-Our group is considering using the Calorie API to retrieve nutritional information about different food items. 
-The API supports food search, barcode lookup, and food details. It requires an API key sent through the X-API-Key header and provides access to a catalog of over 4 million foods.
+Our group is using the FatSecret Platform API to retrieve nutritional information about different food items and recipes.
+
+The API supports food and recipe searches, including food images, calories, macronutrients, ingredients, and cooking instructions. It uses OAuth 2.0 authentication through our Spring Boot backend.
+
+Our group contacted FatSecret by email to request an upgrade to Premier API access, and our request was approved for free. This gives us access to additional API features.
+
+For deployment, we store the API credentials in Render environment variables and add Render's outbound IP ranges to the FatSecret whitelist.
 
 ## 9. Roles within the App
 Users will be able to create an account, manage their profile, and set personal calorie and macronutrient goals. They can search for foods, view nutritional information, log meals, and track their daily intake through a personalized dashboard. Users can also review their nutrition history, receive food recommendations based on their goals, and create meal plans with saved recipes and shopping lists to help them manage their eating habits.
@@ -53,6 +58,6 @@ Trainers will be able to connect with regular users through the application and 
 
 Admin manages user accounts (trainers or regular users). able to insert / delete data. Connects users to trainers or vice versa. modify user/trainer dashboards. Deals with maintenance.  Admin dashboard will contain user/trainer list of info, which is basically an overseer for its users.
 
-**API:** Ninja Recipe Api
+**API:** FatSecret Platform API
 
-**Documentation:** https://api-ninjas.com/api/recipe#recipe-endpoint
+**Documentation:** https://platform.fatsecret.com/docs/guides
