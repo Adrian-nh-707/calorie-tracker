@@ -1,0 +1,175 @@
+.settings-card {
+    margin-bottom: 25px;
+}
+
+.settings-section-heading {
+    margin-bottom: 25px;
+}
+
+.settings-section-heading h2 {
+    margin-bottom: 8px;
+    color: seagreen;
+}
+
+.settings-section-heading p {
+    margin: 0;
+    color: dimgray;
+    line-height: 1.5;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+}
+
+.settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-field label {
+    margin: 0;
+    font-weight: bold;
+}
+
+.settings-field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid lightgray;
+    border-radius: 7px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.settings-field input:focus {
+    outline: none;
+    border-color: seagreen;
+    box-shadow: 0 0 0 3px honeydew;
+}
+
+.settings-field small {
+    color: dimgray;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.field-error {
+    margin: 0;
+    color: firebrick;
+    font-size: 13px;
+}
+
+.settings-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.settings-save-button,
+.settings-cancel-button {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.settings-save-button {
+    background-color: seagreen;
+    color: white;
+}
+
+.settings-save-button:hover {
+    background-color: forestgreen;
+}
+
+.settings-cancel-button {
+    background-color: white;
+    color: seagreen;
+    border: 1px solid seagreen;
+}
+
+.settings-cancel-button:hover {
+    background-color: honeydew;
+}
+
+.settings-feedback {
+    padding: 14px 18px;
+    margin: 15px 0;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.feedback-success {
+    background-color: honeydew;
+    color: seagreen;
+}
+
+.feedback-error {
+    background-color: #fde8e7;
+    color: firebrick;
+}
+
+.feedback-error p {
+    margin: 4px 0;
+}
+
+.settings-placeholder {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: honeydew;
+    color: dimgray;
+}
+
+.account-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.account-information-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    border-radius: 8px;
+    background-color: honeydew;
+    border: 1px solid lightgray;
+    overflow-wrap: anywhere;
+}
+
+.account-information-item span {
+    color: dimgray;
+    font-size: 13px;
+}
+
+.account-information-item strong {
+    color: seagreen;
+    font-size: 16px;
+}
+
+@media (max-width: 600px) {
+    .settings-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .settings-save-button,
+    .settings-cancel-button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .account-information-grid {
+        grid-template-columns: 1fr;
+    }
+}

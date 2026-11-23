@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Account Settings | Calorie Tracker</title>
+
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/account-settings.css}">
+</head>
+
+<body>
+
+<main class="dashboard">
+
+    <nav class="app-nav" aria-label="Main navigation">
+
+        <a class="app-brand" th:href="@{/home}">
+            Calorie Tracker
+        </a>
+
+        <div class="app-nav-links">
+
+            <a class="nav-link" th:href="@{/home}">
+                Dashboard
+            </a>
+
+            <a class="nav-link active"
+               th:href="@{/account/settings}"
+               aria-current="page">
+                Account Settings
+            </a>
+
+            <form th:action="@{/logout}" method="post">
+                <button class="nav-link" type="submit">
+                    Log Out
+                </button>
+            </form>
+
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <div>
+            <h1>Account Settings</h1>
+            <p>Manage your personal information and account details.</p>
+        </div>
+    </div>
+
+    <div class="settings-feedback feedback-success"
+         th:if="${successMessage}"
+         th:text="${successMessage}">
+    </div>
+
+    <section class="card settings-card">
+
+        <div class="settings-section-heading">
+            <h2>Personal Information</h2>
+            <p>Update the personal information associated with your account.</p>
+        </div>
+
+        <form th:action="@{/account/settings}"
+              th:object="${profileForm}"
+              method="post"
+              class="settings-form">
+
+            <div class="settings-feedback feedback-error"
+                 th:if="${#fields.hasGlobalErrors()}">
+
+                <p th:each="error : ${#fields.globalErrors()}"
+                   th:text="${error}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="firstName">First Name</label>
+
+                <input type="text"
+                       id="firstName"
+                       th:field="*{firstName}"
+                       maxlength="50"
+                       autocomplete="given-name"
+                       required>
+
+                <p class="field-error"
+                   th:if="${#fields.hasErrors('firstName')}"
+                   th:errors="*{firstName}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="lastName">Last Name</label>
+
+                <input type="text"
+                       id="lastName"
+                       th:field="*{lastName}"
+                       maxlength="50"
+                       autocomplete="family-name"
+                       required>
+
+                <p class="field-error"
+                   th:if="${#fields.hasErrors('lastName')}"
+                   th:errors="*{lastName}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="email">Email Address</label>
+
+                <input type="email"
+                       id="email"
+                       th:field="*{email}"
+                       maxlength="254"
+                       autocomplete="email"
+                       required>
+
+                <p class="field-error"
+                   th:if="${#fields.hasErrors('email')}"
+                   th:errors="*{email}">
+                </p>
+
+                <small>
+                    Your email address is used to log in.
+                    Changing it requires you to log in again.
+                </small>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="currentPassword">Current Password</label>
+
+                <input type="password"
+                       id="currentPassword"
+                       th:field="*{currentPassword}"
+                       autocomplete="current-password">
+
+                <small>
+                    Required only when changing your email address.
+                </small>
+
+            </div>
+
+            <div class="settings-actions">
+
+                <button type="submit" class="settings-save-button">
+                    Save Changes
+                </button>
+
+                <a th:href="@{/home}" class="settings-cancel-button">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <section class="card settings-card">
+
+        <div class="settings-section-heading">
+            <h2>Account Information</h2>
+            <p>View your account type and trainer assignment.</p>
+        </div>
+
+        <div class="account-information-grid">
+
+            <div class="account-information-item">
+                <span>Account Type</span>
+
+                <strong th:text="${accountInformation.role}">
+                    USER
+                </strong>
+            </div>
+
+            <div class="account-information-item">
+                <span>Assigned Trainer</span>
+
+                <strong th:text="${accountInformation.assignedTrainerName}">
+                    Trainer Name
+                </strong>
+            </div>
+
+            <div class="account-information-item">
+                <span>Trainer Email</span>
+
+                <strong th:text="${accountInformation.assignedTrainerEmail}">
+                    trainer@email.com
+                </strong>
+            </div>
+
+        </div>
+
+        <p class="helper-text">
+            Your account type and trainer assignment are managed by the
+            system and cannot be changed here.
+        </p>
+
+    </section>
+
+    <section class="card settings-card">
+
+        <div class="settings-section-heading">
+            <h2>Security</h2>
+            <p>Change your account password.</p>
+        </div>
+
+        <form th:action="@{/account/settings/password}"
+            th:object="${passwordForm}"
+            method="post"
+            class="settings-form">
+
+            <div class="settings-feedback feedback-error"
+                th:if="${#fields.hasGlobalErrors()}">
+
+                <p th:each="error : ${#fields.globalErrors()}"
+                th:text="${error}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="currentPasswordChange">
+                    Current Password
+                </label>
+
+                <input type="password"
+                    id="currentPasswordChange"
+                    th:field="*{currentPassword}"
+                    autocomplete="current-password"
+                    required>
+
+                <p class="field-error"
+                th:if="${#fields.hasErrors('currentPassword')}"
+                th:errors="*{currentPassword}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="newPassword">New Password</label>
+
+                <input type="password"
+                    id="newPassword"
+                    th:field="*{newPassword}"
+                    autocomplete="new-password"
+                    required>
+
+                <small>Password must contain between 8 and 72 characters.</small>
+
+                <p class="field-error"
+                th:if="${#fields.hasErrors('newPassword')}"
+                th:errors="*{newPassword}">
+                </p>
+
+            </div>
+
+            <div class="settings-field">
+
+                <label for="confirmPassword">
+                    Confirm New Password
+                </label>
+
+                <input type="password"
+                    id="confirmPassword"
+                    th:field="*{confirmPassword}"
+                    autocomplete="new-password"
+                    required>
+
+                <p class="field-error"
+                th:if="${#fields.hasErrors('confirmPassword')}"
+                th:errors="*{confirmPassword}">
+                </p>
+
+            </div>
+
+            <div class="settings-actions">
+
+                <button type="submit" class="settings-save-button">
+                    Change Password
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>
