@@ -264,6 +264,10 @@
     <div class="header-actions">
         <a class="home-link" th:href="@{/}">Home</a>
 
+        <a class="home-link" th:href="@{/account/settings}">
+            Account Settings
+        </a>
+
         <form th:action="@{/logout}" method="post">
             <button class="logout-button" type="submit">Log Out</button>
         </form>
