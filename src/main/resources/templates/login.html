@@ -1,27 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Calorie Tracker</title>
+    <title>Login | MealMargin</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
 
     <main>
-        <h1>Welcome to Calorie Tracker</h1>
-        <p>Log in to track your nutrition.</p>
+        <div class="auth-brand">
+            <img th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin">
+        </div>
 
-        <p th:if="${param.error}">
+        <h1>Welcome back</h1>
+        <p>Sign in to manage your daily nutrition.</p>
+
+        <p class="error-message" th:if="${param.error}">
             Invalid email or password. Please try again.
         </p>
 
-        <p th:if="${param.logout}">
+        <p class="success-message" th:if="${param.logout}">
             You have successfully logged out.
         </p>
 
-        <p th:if="${successMessage}"
-           th:text="${successMessage}"></p>
+        <p class="success-message"
+           th:if="${successMessage}"
+           th:text="${successMessage}">
+        </p>
 
         <form th:action="@{/login}" method="post">
 
@@ -30,6 +38,7 @@
                 <input type="email"
                        id="username"
                        name="username"
+                       placeholder="Enter your email"
                        autocomplete="username"
                        required>
             </div>
@@ -39,14 +48,16 @@
                 <input type="password"
                        id="password"
                        name="password"
+                       placeholder="Enter your password"
                        autocomplete="current-password"
                        required>
             </div>
 
             <button type="submit">Log in</button>
+
         </form>
 
-        <p>
+        <p class="auth-footer">
             Don't have an account?
             <a th:href="@{/register}">Create one</a>
         </p>

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calorie Tracker Dashboard</title>
+    <title>Nutrition Dashboard | MealMargin</title>
 
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
@@ -18,11 +18,15 @@
     <main class="dashboard">
 
         <nav class="app-nav" aria-label="Main navigation">
+
             <a class="app-brand" th:href="@{/dashboard}">
-                Calorie Tracker
+                <img th:src="@{/images/mealmargin-logo.png}"
+                     alt="MealMargin"
+                     class="brand-logo">
             </a>
 
             <div class="app-nav-links">
+
                 <a class="nav-link active"
                    th:href="@{/dashboard}"
                    aria-current="page">
@@ -40,8 +44,8 @@
                 <a class="nav-link" th:href="@{/inbox}">
                     Inbox
                     <span class="unread-count"
-                        th:if="${unreadCount > 0}"
-                        th:text="${unreadCount}">
+                          th:if="${unreadCount > 0}"
+                          th:text="${unreadCount}">
                     </span>
                 </a>
 
@@ -54,13 +58,15 @@
                         Log Out
                     </button>
                 </form>
+
             </div>
+
         </nav>
 
         <div class="page-header">
             <div>
-                <h1>My Calorie Dashboard</h1>
-                <p>Track your daily nutrition progress</p>
+                <h1>Nutrition Dashboard</h1>
+                <p>Track your meals, nutrition and daily goals.</p>
             </div>
 
             <a class="primary-link" th:href="@{/meals}">
@@ -69,6 +75,7 @@
         </div>
 
         <section class="card">
+
             <div class="section-header">
                 <h2>Daily Calories</h2>
 
@@ -118,12 +125,15 @@
             </div>
 
             <div class="goal-section">
+
                 <h3>Update Daily Calorie Goal</h3>
 
                 <form th:action="@{/dashboard/goal}" method="post">
+
                     <label for="calorieGoal">New calorie goal:</label>
 
                     <div class="goal-input-group">
+
                         <input type="number"
                                id="calorieGoal"
                                name="calorieGoal"
@@ -132,18 +142,27 @@
                                max="10000"
                                required>
 
-                        <button type="submit">Update Goal</button>
+                        <button type="submit">
+                            Update Goal
+                        </button>
+
                     </div>
+
                 </form>
+
             </div>
+
         </section>
 
         <section class="card">
+
             <h2>Macronutrients</h2>
 
             <div class="macro-grid">
+
                 <div class="macro-card">
                     <h3>Protein</h3>
+
                     <p>
                         <strong th:text="${#numbers.formatDecimal(protein, 1, 1)}">
                             0.0
@@ -154,6 +173,7 @@
 
                 <div class="macro-card">
                     <h3>Carbs</h3>
+
                     <p>
                         <strong th:text="${#numbers.formatDecimal(carbs, 1, 1)}">
                             0.0
@@ -164,6 +184,7 @@
 
                 <div class="macro-card">
                     <h3>Fat</h3>
+
                     <p>
                         <strong th:text="${#numbers.formatDecimal(fat, 1, 1)}">
                             0.0
@@ -171,6 +192,7 @@
                         g
                     </p>
                 </div>
+
             </div>
 
             <p class="helper-text">
@@ -178,15 +200,17 @@
                 <span th:text="${proteinGoal}">150</span>
                 g per day
             </p>
+
         </section>
 
-        <!-- Weekly nutrition chart -->
         <section th:replace="~{fragments/weekly-nutrition-chart :: weeklyChart}">
         </section>
-        <!-- Trainer recommendations -->
+
         <section th:replace="~{fragments/trainer-goal-recommendations :: userGoals}">
         </section>
+
         <section class="card">
+
             <div class="section-header">
                 <h2>Food Recommendations</h2>
                 <span class="section-tag">Top 5</span>
@@ -207,6 +231,7 @@
                     No recommendations available because your
                     calorie goal has been reached or exceeded.
                 </p>
+
             </div>
 
             <div class="recommendation-grid"
@@ -216,6 +241,7 @@
                          th:each="recommendation : ${recommendations}">
 
                     <div class="recommendation-header">
+
                         <h3 th:text="${recommendation.food.name}">
                             Chicken Rice Bowl
                         </h3>
@@ -224,9 +250,11 @@
                               th:text="|${recommendation.matchScore}% match|">
                             95% match
                         </span>
+
                     </div>
 
                     <div class="food-details">
+
                         <span>
                             <strong th:text="${recommendation.food.calories}">
                                 600
@@ -240,6 +268,7 @@
                             </strong>
                             g protein
                         </span>
+
                     </div>
 
                     <p class="recommendation-reason"
@@ -255,9 +284,11 @@
                 Match scores reflect calorie and protein suitability
                 using the current sample food catalog.
             </p>
+
         </section>
 
     </main>
 
 </body>
+
 </html>

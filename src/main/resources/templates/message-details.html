@@ -1,15 +1,22 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Message Details | Calorie Tracker</title>
+    <title>Message Details | MealMargin</title>
 
     <link rel="stylesheet" th:href="@{/css/messaging.css}">
+    <link rel="stylesheet" th:href="@{/css/account-pages.css}">
 </head>
 <body>
 
 <main class="message-details-container">
+
+    <a class="message-brand" th:href="@{/home}">
+        <img th:src="@{/images/mealmargin-logo.png}"
+             alt="MealMargin">
+    </a>
 
     <header class="message-details-header">
         <h1>Message Details</h1>

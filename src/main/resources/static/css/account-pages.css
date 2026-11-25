@@ -1,0 +1,245 @@
+
+body {
+    background: whitesmoke;
+    color: darkslategray;
+    font-family: Arial, sans-serif;
+}
+
+.inbox-container,
+.message-details-container,
+.send-message-container {
+    max-width: 1152px;
+    margin: 28px auto;
+}
+
+.message-brand {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 12px 20px;
+    margin-bottom: 25px;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.message-brand img {
+    display: block;
+    width: 180px;
+    max-width: 100%;
+    height: 90px;
+    object-fit: contain;
+}
+
+.inbox-header,
+.message-details-header,
+.send-message-header {
+    margin-bottom: 25px;
+}
+
+.inbox-header > div {
+    flex: 1;
+}
+
+.inbox-header h1,
+.message-details-header h1,
+.send-message-header h1 {
+    color: seagreen;
+    font-size: 30px;
+}
+
+.message-details-header,
+.send-message-header {
+    display: block;
+}
+
+.dashboard-link {
+    margin: 0;
+    padding: 10px 0;
+    color: seagreen;
+    font-size: 14px;
+}
+
+.summary-card,
+.message-card,
+.message-details-card,
+.send-message-card,
+.empty-inbox {
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    box-shadow: none;
+    transition: none;
+}
+
+.message-card {
+    color: darkslategray;
+}
+
+.message-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: seagreen;
+    background-color: honeydew;
+}
+
+.message-card.unread {
+    border-left: 5px solid seagreen;
+}
+
+.message-card-header h2 {
+    color: darkgreen;
+    overflow-wrap: anywhere;
+}
+
+.message-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.message-sender strong,
+.message-content {
+    color: darkslategray;
+}
+
+.message-participants {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+
+.message-details-card h2 {
+    overflow-wrap: anywhere;
+}
+
+.compose-button,
+.primary-button,
+.secondary-button,
+.settings-save-button,
+.settings-cancel-button {
+    border-radius: 6px;
+    font-family: inherit;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+.settings-field input {
+    border: 1px solid silver;
+    border-radius: 6px;
+    font-size: 16px;
+    color: darkslategray;
+    background-color: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.settings-field input:focus {
+    outline: 2px solid seagreen;
+    outline-offset: 1px;
+    box-shadow: none;
+}
+
+.success-message,
+.settings-feedback.feedback-success {
+    background-color: honeydew;
+    color: darkgreen;
+    border: 1px solid seagreen;
+    border-radius: 6px;
+}
+
+.error-message,
+.settings-feedback.feedback-error {
+    background-color: mistyrose;
+    color: firebrick;
+    border: 1px solid indianred;
+    border-radius: 6px;
+}
+
+.settings-section-heading h2 {
+    color: darkgreen;
+}
+
+.settings-form {
+    max-width: 650px;
+}
+
+.settings-field label {
+    font-size: 14px;
+}
+
+.account-information-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.account-information-item {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+}
+
+.account-information-item strong {
+    color: darkgreen;
+}
+
+.message-brand:focus-visible,
+.message-card:focus-visible,
+.compose-button:focus-visible,
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.settings-save-button:focus-visible,
+.settings-cancel-button:focus-visible {
+    outline: 2px solid seagreen;
+    outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+    .account-information-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .inbox-container,
+    .message-details-container,
+    .send-message-container {
+        margin: 10px auto;
+    }
+
+    .message-brand {
+        padding: 12px;
+    }
+
+    .message-brand img {
+        width: 150px;
+        height: 75px;
+    }
+
+    .inbox-header h1,
+    .message-details-header h1,
+    .send-message-header h1 {
+        font-size: 26px;
+    }
+
+    .inbox-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dashboard-link {
+        text-align: center;
+    }
+
+    .message-card,
+    .message-details-card,
+    .send-message-card {
+        padding: 18px;
+    }
+
+    .account-information-grid {
+        grid-template-columns: 1fr;
+    }
+}

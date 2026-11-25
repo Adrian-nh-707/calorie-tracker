@@ -15,7 +15,7 @@
     <meta name="_csrf_header"
           th:content="${_csrf.headerName}">
 
-    <title>Food Search | Calorie Tracker</title>
+    <title>Food Search | MealMargin</title>
 
     <!-- Bootstrap -->
 
@@ -40,13 +40,16 @@
     <link rel="stylesheet"
           th:href="@{/css/foodsearch.css}">
 
+    <link rel="stylesheet"
+          th:href="@{/css/meal-pages.css}">
+
     <!-- JavaScript -->
 
     <script th:src="@{/js/foodsearchapi.js}" defer></script>
 
 </head>
 
-<body>
+<body class="food-page">
 
 <main class="dashboard">
 
@@ -58,7 +61,9 @@
         <a class="app-brand"
            th:href="@{/dashboard}">
 
-            Calorie Tracker
+            <img th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin"
+                 class="brand-logo">
 
         </a>
 
@@ -85,6 +90,32 @@
                 Food Search
 
             </a>
+
+            <a class="nav-link"
+               th:href="@{/inbox}">
+
+                Inbox
+
+            </a>
+
+            <a class="nav-link"
+               th:href="@{/account/settings}">
+
+                Account Settings
+
+            </a>
+
+            <form th:action="@{/logout}"
+                  method="post">
+
+                <button class="nav-link"
+                        type="submit">
+
+                    Log Out
+
+                </button>
+
+            </form>
 
         </div>
 

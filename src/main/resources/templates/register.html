@@ -1,39 +1,60 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | Calorie Tracker</title>
+    <title>Create Account | MealMargin</title>
     <link rel="stylesheet" th:href="@{/css/register.css}">
 </head>
 <body>
 
     <main>
-        <h1>Create your Calorie Tracker account</h1>
-        <p>Join Calorie Tracker to track your nutrition and goals.</p>
+
+        <div class="auth-brand">
+            <img th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin">
+        </div>
+
+        <h1>Create your account</h1>
+        <p>Start tracking your nutrition with MealMargin.</p>
 
         <form th:action="@{/register}"
               th:object="${registrationForm}"
               method="post">
 
-            <div>
-                <label for="firstName">First name</label>
-                <input type="text"
-                       id="firstName"
-                       th:field="*{firstName}"
-                       required>
-                <p th:if="${#fields.hasErrors('firstName')}"
-                   th:errors="*{firstName}"></p>
-            </div>
+            <div class="name-fields">
 
-            <div>
-                <label for="lastName">Last name</label>
-                <input type="text"
-                       id="lastName"
-                       th:field="*{lastName}"
-                       required>
-                <p th:if="${#fields.hasErrors('lastName')}"
-                   th:errors="*{lastName}"></p>
+                <div>
+                    <label for="firstName">First name</label>
+                    <input type="text"
+                           id="firstName"
+                           th:field="*{firstName}"
+                           placeholder="First name"
+                           autocomplete="given-name"
+                           required>
+
+                    <p class="error"
+                       th:if="${#fields.hasErrors('firstName')}"
+                       th:errors="*{firstName}">
+                    </p>
+                </div>
+
+                <div>
+                    <label for="lastName">Last name</label>
+                    <input type="text"
+                           id="lastName"
+                           th:field="*{lastName}"
+                           placeholder="Last name"
+                           autocomplete="family-name"
+                           required>
+
+                    <p class="error"
+                       th:if="${#fields.hasErrors('lastName')}"
+                       th:errors="*{lastName}">
+                    </p>
+                </div>
+
             </div>
 
             <div>
@@ -41,9 +62,14 @@
                 <input type="email"
                        id="email"
                        th:field="*{email}"
+                       placeholder="Enter your email"
+                       autocomplete="email"
                        required>
-                <p th:if="${#fields.hasErrors('email')}"
-                   th:errors="*{email}"></p>
+
+                <p class="error"
+                   th:if="${#fields.hasErrors('email')}"
+                   th:errors="*{email}">
+                </p>
             </div>
 
             <div>
@@ -51,52 +77,76 @@
                 <input type="password"
                        id="password"
                        th:field="*{password}"
+                       placeholder="Create a password"
+                       autocomplete="new-password"
                        minlength="8"
                        maxlength="72"
                        required>
-                <p th:if="${#fields.hasErrors('password')}"
-                   th:errors="*{password}"></p>
+
+                <p class="field-help">
+                    Use at least 8 characters.
+                </p>
+
+                <p class="error"
+                   th:if="${#fields.hasErrors('password')}"
+                   th:errors="*{password}">
+                </p>
             </div>
 
-            <div class="form-group">
-                <label>Account Type</label>
+            <fieldset class="account-type">
+
+                <legend>Account Type</legend>
 
                 <div class="role-options">
+
                     <label class="role-option">
                         <input type="radio"
-                            th:field="*{role}"
-                            value="USER"
-                            required>
+                               th:field="*{role}"
+                               value="USER"
+                               required>
+
                         <span>
                             <strong>Regular</strong>
-                            <small>Track your meals, set personal calorie & goals, and follow your progress on a personalized dashboard.</small>
+                            <small>
+                                Track meals, set nutrition goals and
+                                monitor your daily progress.
+                            </small>
                         </span>
                     </label>
 
                     <label class="role-option">
                         <input type="radio"
-                            th:field="*{role}"
-                            value="TRAINER"
-                            required>
+                               th:field="*{role}"
+                               value="TRAINER"
+                               required>
+
                         <span>
                             <strong>Trainer</strong>
-                            <small>Guide your clients with feedback and regular check-ins, monitor their nutrition progress, and suggest goal adjustments to keep them on track.</small>
+                            <small>
+                                Monitor client progress, provide feedback
+                                and recommend nutrition goals.
+                            </small>
                         </span>
                     </label>
+
                 </div>
 
                 <p class="error"
-                th:if="${#fields.hasErrors('role')}"
-                th:errors="*{role}"></p>
-            </div>
+                   th:if="${#fields.hasErrors('role')}"
+                   th:errors="*{role}">
+                </p>
+
+            </fieldset>
 
             <button type="submit">Create account</button>
+
         </form>
 
-        <p>
+        <p class="auth-footer">
             Already have an account?
             <a th:href="@{/login}">Log in</a>
         </p>
+
     </main>
 
 </body>

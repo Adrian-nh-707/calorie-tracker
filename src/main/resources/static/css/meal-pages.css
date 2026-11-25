@@ -1,0 +1,323 @@
+
+body.meal-page,
+body.food-page {
+    background: whitesmoke;
+    color: darkslategray;
+    font-family: Arial, sans-serif;
+}
+
+.meal-page .container {
+    max-width: 1152px;
+    margin: 24px auto;
+}
+
+.food-page main.dashboard {
+    max-width: 1152px;
+    margin: 48px auto;
+}
+
+.meal-page .app-nav,
+.food-page .app-nav {
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 25px;
+    box-shadow: none;
+}
+
+.meal-page .app-brand,
+.food-page .app-brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.meal-page .app-nav-links,
+.food-page .app-nav-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.meal-page .app-nav-links .nav-link,
+.food-page .app-nav-links .nav-link {
+    display: inline-block;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    padding: 10px 14px;
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background-color: white;
+    color: darkslategray;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.meal-page .app-nav-links .nav-link:hover,
+.food-page .app-nav-links .nav-link:hover {
+    background-color: honeydew;
+    color: darkgreen;
+}
+
+.meal-page .app-nav-links .nav-link.active,
+.food-page .app-nav-links .nav-link.active {
+    background-color: seagreen;
+    color: white;
+}
+
+.meal-page .app-nav-links .nav-link.active:hover,
+.food-page .app-nav-links .nav-link.active:hover {
+    background-color: forestgreen;
+    color: white;
+}
+
+.meal-page .meal-page-header h1,
+.food-page #foodsearchtitle {
+    color: seagreen;
+    font-size: 30px;
+}
+
+.meal-page section {
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    padding: 26px;
+    margin-top: 20px;
+    box-shadow: none;
+    transition: none;
+}
+
+.meal-page section:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.meal-page h2 {
+    color: darkslategray;
+    font-size: 22px;
+}
+
+.meal-page label {
+    color: darkslategray;
+}
+
+.meal-page input,
+.meal-page select {
+    border: 1px solid silver;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: white;
+}
+
+.meal-page input:focus,
+.meal-page select:focus {
+    outline: 2px solid seagreen;
+    outline-offset: 1px;
+    box-shadow: none;
+}
+
+.meal-page button,
+.meal-page .food-search-link {
+    border-radius: 6px;
+}
+
+.meal-page .nutrition-card {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: none;
+}
+
+.meal-page .nutrition-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.meal-page .nutrition-card h3 {
+    color: darkslategray;
+}
+
+.meal-page .nutrition-card p {
+    color: seagreen;
+}
+
+.meal-page .meal-history-card {
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    box-shadow: none;
+    transition: none;
+}
+
+.meal-page .meal-history-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.meal-page .meal-preview,
+.meal-page .portion-controls {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+}
+
+.meal-page .meal-photo {
+    border-radius: 8px;
+}
+
+.meal-page .empty-history {
+    background-color: whitesmoke;
+    border: 1px dashed silver;
+    border-radius: 8px;
+}
+
+.meal-page .container > section:first-of-type form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.meal-page .container > section:first-of-type form label {
+    margin: 0;
+}
+
+.meal-page .container > section:first-of-type form input {
+    width: auto;
+    max-width: 100%;
+}
+
+.meal-page .container > section:first-of-type form button {
+    margin: 0;
+}
+
+.food-page .dashboard > section.bg-success {
+    background: white !important;
+    border: 1px solid gainsboro;
+    border-radius: 10px !important;
+    padding: 26px !important;
+    text-align: left !important;
+}
+
+.food-page .dashboard > section.bg-success p {
+    color: dimgray;
+    margin: 0;
+}
+
+.food-page .dashboard > section.bg-white {
+    border-radius: 10px !important;
+    border-color: gainsboro !important;
+}
+
+.food-page #search {
+    border: 1px solid silver;
+    border-radius: 6px 0 0 6px;
+}
+
+.food-page #search:focus {
+    outline: 2px solid seagreen;
+    outline-offset: -2px;
+}
+
+.food-page #searchbutton {
+    border-radius: 0 6px 6px 0;
+}
+
+.food-page #searchbutton:hover {
+    background-color: forestgreen;
+}
+
+.food-page .dish-card {
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    box-shadow: none;
+    transition: none;
+}
+
+.food-page .dish-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.food-page .dish-title {
+    color: darkgreen;
+}
+
+.food-page .dish-description {
+    color: dimgray;
+}
+
+.food-page .dish-nutrition {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+}
+
+.food-page .dish-add-button,
+.food-page .dish-view-button,
+.food-page .recipe-secondary-button,
+.food-page .load-more-button {
+    border-radius: 6px;
+}
+
+.food-page .recipe-dialog {
+    border-radius: 10px;
+}
+
+.food-page .recipe-dialog[open] {
+    animation: none;
+}
+
+.food-page .recipe-dialog::backdrop {
+    backdrop-filter: none;
+}
+
+.food-page .recipe-modal-image,
+.food-page .ingredient-list,
+.food-page .recipe-steps li {
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .meal-page .container {
+        margin: 10px auto;
+    }
+
+    .food-page main.dashboard {
+        margin: 10px auto;
+    }
+
+    .meal-page section {
+        padding: 18px;
+    }
+
+    .meal-page .app-nav,
+    .food-page .app-nav {
+        padding: 14px;
+    }
+
+    .meal-page .app-nav-links,
+    .food-page .app-nav-links {
+        width: 100%;
+    }
+
+    .meal-page .app-nav-links .nav-link,
+    .food-page .app-nav-links .nav-link {
+        width: 100%;
+        text-align: center;
+    }
+
+    .meal-page .container > section:first-of-type form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .meal-page .container > section:first-of-type form input {
+        width: 100%;
+    }
+}

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
@@ -5,11 +6,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Account Settings | Calorie Tracker</title>
+    <title>Account Settings | MealMargin</title>
 
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/navigation.css}">
     <link rel="stylesheet" th:href="@{/css/account-settings.css}">
+    <link rel="stylesheet" th:href="@{/css/account-pages.css}">
 </head>
 
 <body>
@@ -19,7 +21,9 @@
     <nav class="app-nav" aria-label="Main navigation">
 
         <a class="app-brand" th:href="@{/home}">
-            Calorie Tracker
+            <img th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin"
+                 class="brand-logo">
         </a>
 
         <div class="app-nav-links">
