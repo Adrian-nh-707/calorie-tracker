@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
@@ -149,6 +150,51 @@ public class DashboardController {
         model.addAttribute("weeklySummary", weeklySummary);
 
         return "dashboard";
+    }
+
+    @GetMapping("/dashboard/day/{date}")
+    public String showDayDetail(
+            Model model,
+            HttpSession session,
+            Principal principal,
+            @PathVariable("date") java.time.LocalDate date) {
+
+        if (principal == null) {
+            throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "Please log in."
+            );
+        }
+
+        // Get logged-in user
+        AppUser user = userRepository
+            .findByEmail(principal.getName())
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "User not found."
+            ));
+
+        // Get calorie goal from session
+        Integer calorieGoal =
+            (Integer) session.getAttribute("calorieGoal");
+
+        if (calorieGoal == null) {
+            calorieGoal = 2500;
+        }
+
+        // Get day details using the service
+        var dayDetails = weeklyNutritionService.getDayDetails(
+            user.getId(),
+            date,
+            calorieGoal
+        );
+
+        model.addAttribute("dayDetails", dayDetails);
+        model.addAttribute("calorieGoal", calorieGoal);
+        model.addAttribute("unreadCount",
+            messageService.getUnreadCount(principal.getName()));
+
+        return "day-detail";
     }
 
     @PostMapping("/dashboard/goal")

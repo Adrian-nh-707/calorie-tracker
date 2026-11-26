@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day Detail | MealMargin</title>
+
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
+    <link rel="stylesheet" th:href="@{/css/day-detail.css}">
+</head>
+
+<body>
+
+    <main class="dashboard">
+
+        <nav class="app-nav" aria-label="Main navigation">
+
+            <a class="app-brand" th:href="@{/dashboard}">
+                <img th:src="@{/images/mealmargin-logo.png}"
+                     alt="MealMargin"
+                     class="brand-logo">
+            </a>
+
+            <div class="app-nav-links">
+
+                <a class="nav-link" th:href="@{/dashboard}">
+                    Dashboard
+                </a>
+
+                <a class="nav-link" th:href="@{/meals}">
+                    Meal Logger
+                </a>
+
+                <a class="nav-link" th:href="@{/foodsearch}">
+                    Food Search
+                </a>
+
+                <a class="nav-link" th:href="@{/inbox}">
+                    Inbox
+                    <span class="unread-count"
+                          th:if="${unreadCount > 0}"
+                          th:text="${unreadCount}">
+                    </span>
+                </a>
+
+                <a class="nav-link" th:href="@{/account/settings}">
+                    Account Settings
+                </a>
+
+                <form th:action="@{/logout}" method="post">
+                    <button class="nav-link" type="submit">
+                        Log Out
+                    </button>
+                </form>
+
+            </div>
+
+        </nav>
+        <div class="page-header">
+            <div>
+                <a class="back-link" th:href="@{/dashboard}">
+                    ← Back to Dashboard
+                </a>
+                <h1 th:text="|Day Detail: ${dayDetails.dayLabel}, ${dayDetails.dateLabel}|">
+                    Day Detail: Monday, Nov 9
+                </h1>
+            </div>
+
+            <a class="primary-link" th:href="@{/meals}">
+                + Log Food
+            </a>
+        </div>
+
+        <!-- Day summary card -->
+        <section class="card day-summary-card">
+            <div class="section-header">
+                <h2>Summary</h2>
+
+                <span class="date-label" th:text="${dayDetails.dateLabel}">
+                    Nov 9
+                </span>
+            </div>
+
+            <div class="day-summary-grid">
+                <div class="day-summary-item">
+                    <p>Calories</p>
+                    <strong th:classappend="${dayDetails.aboveGoal} ? 'over-goal' : ''"
+                            th:text="|${#numbers.formatDecimal(dayDetails.calories, 1, 1)}|">
+                        0.0
+                    </strong>
+                    <span>kcal / <span th:text="${calorieGoal}">2500</span> kcal</span>
+                </div>
+
+                <div class="day-summary-item">
+                    <p>Protein</p>
+                    <strong th:text="|${#numbers.formatDecimal(dayDetails.protein, 1, 1)} g|">
+                        0.0 g
+                    </strong>
+                </div>
+
+                <div class="day-summary-item">
+                    <p>Carbs</p>
+                    <strong th:text="|${#numbers.formatDecimal(dayDetails.carbs, 1, 1)} g|">
+                        0.0 g
+                    </strong>
+                </div>
+
+                <div class="day-summary-item">
+                    <p>Fat</p>
+                    <strong th:text="|${#numbers.formatDecimal(dayDetails.fat, 1, 1)} g|">
+                        0.0 g
+                    </strong>
+                </div>
+            </div>
+
+            <p class="helper-text" th:if="${dayDetails.aboveGoal}">
+                ⚠️ You exceeded your daily calorie goal.
+            </p>
+            <p class="helper-text" th:unless="${dayDetails.aboveGoal}">
+                ✅ You are within your daily calorie goal.
+            </p>
+        </section>
+        <!-- Meals table -->
+        <section class="card">
+            <h2>Meals Logged</h2>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(dayDetails.meals)}">
+                No meals were logged on this day.
+                <a th:href="@{/meals}">Log a meal</a>
+            </div>
+
+            <div class="meals-table-wrapper" th:unless="${#lists.isEmpty(dayDetails.meals)}">
+                <table class="meals-table">
+                    <thead>
+                        <tr>
+                            <th>Meal Type</th>
+                            <th>Food Name</th>
+                            <th>Calories</th>
+                            <th>Protein</th>
+                            <th>Carbs</th>
+                            <th>Fat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="meal : ${dayDetails.meals}">
+                            <td class="meal-type" th:text="${meal.mealType}">Breakfast</td>
+                            <td class="meal-name" th:text="${meal.name}">Oatmeal</td>
+                            <td class="nutrition-value" th:text="|${#numbers.formatDecimal(meal.calories, 1, 0)} kcal|">0 kcal</td>
+                            <td class="nutrition-value" th:text="|${#numbers.formatDecimal(meal.protein, 1, 1)} g|">0.0 g</td>
+                            <td class="nutrition-value" th:text="|${#numbers.formatDecimal(meal.carbs, 1, 1)} g|">0.0 g</td>
+                            <td class="nutrition-value" th:text="|${#numbers.formatDecimal(meal.fat, 1, 1)} g|">0.0 g</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Totals row -->
+                <div class="meal-totals">
+                    <p>
+                        <strong>Total:</strong>
+                        <span th:text="|${#numbers.formatDecimal(dayDetails.calories, 1, 0)} kcal|">0 kcal</span>
+                        | Protein:
+                        <span th:text="|${#numbers.formatDecimal(dayDetails.protein, 1, 1)} g|">0.0 g</span>
+                        | Carbs:
+                        <span th:text="|${#numbers.formatDecimal(dayDetails.carbs, 1, 1)} g|">0.0 g</span>
+                        | Fat:
+                        <span th:text="|${#numbers.formatDecimal(dayDetails.fat, 1, 1)} g|">0.0 g</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
