@@ -23,6 +23,7 @@ import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
+import com.group19.calorietrack.services.AdminAccountManagementService;
 
 class RoleDashboardControllerTest {
 
@@ -46,8 +47,7 @@ class RoleDashboardControllerTest {
 
         userRepository = mock(UserRepository.class);
         mealRepository = mock(MealRepository.class);
-        recommendationRepository =
-            mock(TrainerGoalRecommendationRepository.class);
+        recommendationRepository = mock(TrainerGoalRecommendationRepository.class);
         trainer = mock(AppUser.class);
         user = mock(AppUser.class);
 
@@ -80,11 +80,14 @@ class RoleDashboardControllerTest {
                         userRepository
                 );
 
+        AdminAccountManagementService accountManagementService = new AdminAccountManagementService(userRepository);
+
         controller = new RoleDashboardController(
-            userRepository,
-            mealRepository,
-            messageService,
-            recommendationService
+                userRepository,
+                mealRepository,
+                messageService,
+                recommendationService,
+                accountManagementService
         );
     }
 

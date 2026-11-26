@@ -19,4 +19,10 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
     List<AppUser> findByRole(UserRole role);
 
     List<AppUser> findByAssignedTrainer_IdAndRole(Long trainerId, UserRole role);
+
+    long countByAssignedTrainer_IdAndRole(Long trainerId, UserRole role);
+
+    long countByEnabled(boolean enabled);
+
+    long countByRoleAndEnabled(UserRole role, boolean enabled);
 }
