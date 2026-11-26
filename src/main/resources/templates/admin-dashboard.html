@@ -232,6 +232,127 @@
             font-size: 13px;
         }
 
+        .account-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .account-filters input,
+        .account-filters select {
+            padding: 11px 13px;
+            border: 1px solid #cbd8ce;
+            border-radius: 7px;
+            background-color: white;
+            color: #26352d;
+            font-size: 14px;
+        }
+
+        .account-filters input {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .account-filters select {
+            min-width: 180px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #e5f3e9;
+            color: #246b45;
+        }
+
+        .status-inactive {
+            background-color: #fde8e7;
+            color: #a32924;
+        }
+
+        .protected-label {
+            color: #68766e;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .deactivate-button {
+            background-color: #b42318;
+        }
+
+        .deactivate-button:hover {
+            background-color: #8f1c13;
+        }
+
+        .reactivate-button {
+            background-color: #246b45;
+        }
+
+        .reactivate-button:hover {
+            background-color: #174a2e;
+        }
+
+        .account-access-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .access-stat {
+            padding: 20px;
+            border-radius: 9px;
+            background-color: #f5f8f5;
+            border-top: 4px solid #3d9664;
+        }
+
+        .access-stat h3 {
+            margin: 0 0 12px;
+            color: #647269;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        .access-stat-number {
+            margin: 0 0 8px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #246b45;
+        }
+
+        .access-stat span {
+            color: #68766e;
+            font-size: 12px;
+        }
+
+        .access-inactive {
+            border-top-color: #b42318;
+        }
+
+        .access-inactive .access-stat-number {
+            color: #b42318;
+        }
+
+        .access-management-info {
+            margin-top: 22px;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #f5f8f5;
+            color: #526057;
+            line-height: 1.6;
+        }
+
+        .access-management-info p {
+            margin: 8px 0 0;
+            font-size: 14px;
+        }
+
         @media (max-width: 760px) {
             header {
                 padding: 20px;
@@ -247,6 +368,10 @@
             }
 
             .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .account-access-stats {
                 grid-template-columns: 1fr;
             }
         }
@@ -318,6 +443,26 @@
             each account's email address and assigned role.
         </p>
 
+        <div class="account-filters">
+            <input type="search"
+                id="accountSearch"
+                placeholder="Search by name or email..."
+                aria-label="Search accounts">
+
+            <select id="roleFilter" aria-label="Filter accounts by role">
+                <option value="ALL">All Account Types</option>
+                <option value="USER">Users</option>
+                <option value="TRAINER">Trainers</option>
+                <option value="ADMIN">Administrators</option>
+            </select>
+
+            <select id="statusFilter" aria-label="Filter accounts by status">
+                <option value="ALL">All Account Status</option>
+                <option value="ACTIVE">Active Accounts</option>
+                <option value="INACTIVE">Inactive Accounts</option>
+            </select>
+        </div>
+
         <div class="table-container">
             <table>
                 <thead>
@@ -325,11 +470,15 @@
                         <th>Name</th>
                         <th>Email Address</th>
                         <th>Role</th>
+                        <th>Account Access</th>
                         <th>Assigned Trainer</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr th:each="user : ${users}">
+                <tbody id="accountTableBody">
+                    <tr th:each="user : ${users}"
+                        th:attr="data-role=${user.role},data-enabled=${user.enabled}">
                         <td th:text="${user.firstName + ' ' + user.lastName}">
                             Example User
                         </td>
@@ -339,7 +488,51 @@
                         </td>
 
                         <td>
-                            <span class="role-badge" th:text="${user.role}">USER</span>
+                            <span class="role-badge" th:text="${user.role}">
+                                USER
+                            </span>
+                        </td>
+
+                        <td>
+                            <form th:if="${user.role.name() == 'USER'}"
+                                th:action="@{/admin/change-role}"
+                                method="post">
+
+                                <input type="hidden"
+                                    name="userId"
+                                    th:value="${user.id}">
+
+                                <input type="hidden"
+                                    name="newRole"
+                                    value="TRAINER">
+
+                                <button type="submit">
+                                    Promote to Trainer
+                                </button>
+
+                            </form>
+
+                            <form th:if="${user.role.name() == 'TRAINER'}"
+                                th:action="@{/admin/change-role}"
+                                method="post">
+
+                                <input type="hidden"
+                                    name="userId"
+                                    th:value="${user.id}">
+
+                                <input type="hidden"
+                                    name="newRole"
+                                    value="USER">
+
+                                <button type="submit">
+                                    Change to User
+                                </button>
+
+                            </form>
+
+                            <span th:if="${user.role.name() == 'ADMIN'}">
+                                Protected
+                            </span>
                         </td>
 
                         <td>
@@ -349,8 +542,11 @@
 
                                 <input type="hidden" name="userId" th:value="${user.id}">
 
-                                <select name="trainerId" required>
-                                    <option value="">Select a trainer</option>
+                                <select name="trainerId">
+                                    <option value=""
+                                            th:selected="${user.assignedTrainer == null}">
+                                        Unassigned
+                                    </option>
 
                                     <option th:each="trainer : ${trainers}"
                                             th:value="${trainer.id}"
@@ -365,11 +561,66 @@
 
                             <span th:if="${user.role.name() != 'USER'}">—</span>
                         </td>
+
+                        <td>
+                            <span th:if="${user.enabled}"
+                                class="status-badge status-active">
+                                Active
+                            </span>
+
+                            <span th:unless="${user.enabled}"
+                                class="status-badge status-inactive">
+                                Inactive
+                            </span>
+                        </td>
+
+                        <td>
+                            <span th:if="${user.role.name() == 'ADMIN'}"
+                                class="protected-label">
+                                Protected
+                            </span>
+
+                            <form th:if="${user.role.name() != 'ADMIN' and user.enabled}"
+                                th:action="@{/admin/deactivate-account}"
+                                method="post"
+                                onsubmit="return confirm('Are you sure you want to deactivate this account?')">
+
+                                <input type="hidden"
+                                    name="userId"
+                                    th:value="${user.id}">
+
+                                <button type="submit" class="deactivate-button">
+                                    Deactivate
+                                </button>
+                            </form>
+
+                            <form th:if="${user.role.name() != 'ADMIN' and !user.enabled}"
+                                th:action="@{/admin/reactivate-account}"
+                                method="post">
+
+                                <input type="hidden"
+                                    name="userId"
+                                    th:value="${user.id}">
+
+                                <button type="submit" class="reactivate-button">
+                                    Reactivate
+                                </button>
+                            </form>
+                        </td>
                     </tr>
 
                     <tr th:if="${#lists.isEmpty(users)}">
-                        <td colspan="4" class="empty-message">
+                        <td colspan="7" class="empty-message">
                             No registered accounts found.
+                        </td>
+                    </tr>
+
+                    <tr id="noAccountResults"
+                        th:if="${!#lists.isEmpty(users)}"
+                        style="display: none;">
+
+                        <td colspan="7" class="empty-message">
+                            No accounts match your search.
                         </td>
                     </tr>
                 </tbody>
@@ -381,27 +632,127 @@
     <div class="section-grid">
         <section class="card">
             <h2>Trainer Assignments</h2>
+
             <p class="card-description">
-                Trainer assignment management.
+                Monitor trainer workloads and the distribution of assigned users.
             </p>
 
-            <div class="placeholder">
-                Trainer-to-user assignments have not been implemented yet.
-                Assignment statistics will become available once the
-                assignment functionality is connected to the database.
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Assigned Users</h3>
+                    <p class="stat-number" th:text="${assignedUserCount}">0</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Unassigned Users</h3>
+                    <p class="stat-number" th:text="${unassignedUsers}">0</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Average Users per Trainer</h3>
+                    <p class="stat-number"
+                    th:text="${#numbers.formatDecimal(averageUsersPerTrainer, 1, 1)}">
+                        0.0
+                    </p>
+                </div>
             </div>
+
+            <h3>Trainer Workload</h3>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trainer Name</th>
+                            <th>Email Address</th>
+                            <th>Assigned Users</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="trainer : ${trainers}">
+
+                            <td th:text="${trainer.firstName + ' ' + trainer.lastName}">
+                                Trainer Name
+                            </td>
+
+                            <td th:text="${trainer.email}">
+                                trainer@example.com
+                            </td>
+
+                            <td>
+                                <span class="role-badge"
+                                    th:text="${trainerWorkloads[trainer.id]}">
+                                    0
+                                </span>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(trainers)}">
+                            <td colspan="3" class="empty-message">
+                                No trainers are currently registered.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="card-description" style="margin-top: 18px;">
+                To assign or reassign a user, use the Assigned Trainer
+                dropdown in the User Management table above.
+            </p>
         </section>
 
         <section class="card">
-            <h2>Administration</h2>
+            <h2>Account &amp; Access Management</h2>
+
             <p class="card-description">
-                Account and access management.
+                Monitor account availability and manage access.
             </p>
 
-            <div class="placeholder">
-                This dashboard currently provides an overview of registered
-                accounts. Account editing, deletion, and role changes have
-                not yet been implemented.
+            <div class="account-access-stats">
+                <div class="access-stat access-active">
+                    <h3>Active Accounts</h3>
+                    <p class="access-stat-number"
+                    th:text="${activeAccounts}">
+                        0
+                    </p>
+                </div>
+
+                <div class="access-stat access-inactive">
+                    <h3>Inactive Accounts</h3>
+                    <p class="access-stat-number"
+                    th:text="${inactiveAccounts}">
+                        0
+                    </p>
+                </div>
+
+                <div class="access-stat access-total">
+                    <h3>Total Accounts</h3>
+                    <p class="access-stat-number"
+                    th:text="${totalAccounts}">
+                        0
+                    </p>
+                </div>
+            </div>
+
+            <div class="access-management-info">
+                <strong>Account access controls</strong>
+
+                <p>
+                    Active accounts can log in to the application.
+                    Inactive accounts cannot authenticate.
+                </p>
+
+                <p>
+                    Deactivating an account preserves its existing
+                    meals, messages, and account information.
+                </p>
+
+                <p>
+                    Use the User Management table above to activate
+                    or deactivate individual accounts.
+                </p>
             </div>
         </section>
     </div>
@@ -411,5 +762,61 @@
     MealMargin &copy; 2026
 </footer>
 
+<script>
+    const accountSearch = document.getElementById("accountSearch");
+    const roleFilter = document.getElementById("roleFilter");
+    const statusFilter = document.getElementById("statusFilter");
+
+    const accountRows = Array.from(
+        document.querySelectorAll("#accountTableBody tr[data-role]")
+    );
+
+    const noAccountResults =
+        document.getElementById("noAccountResults");
+
+    function filterAccounts() {
+        const searchText = accountSearch.value.trim().toLowerCase();
+        const selectedRole = roleFilter.value;
+        const selectedStatus = statusFilter.value;
+
+        let visibleCount = 0;
+
+        accountRows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            const rowRole = row.dataset.role;
+            const rowEnabled = row.dataset.enabled === "true";
+
+            const matchesSearch = rowText.includes(searchText);
+
+            const matchesRole =
+                selectedRole === "ALL" || rowRole === selectedRole;
+
+            const matchesStatus =
+                selectedStatus === "ALL" ||
+                (selectedStatus === "ACTIVE" && rowEnabled) ||
+                (selectedStatus === "INACTIVE" && !rowEnabled);
+
+            const visible =
+                matchesSearch && matchesRole && matchesStatus;
+
+            row.style.display = visible ? "" : "none";
+
+            if (visible) {
+                visibleCount++;
+            }
+        });
+
+        if (noAccountResults) {
+            noAccountResults.style.display =
+                accountRows.length > 0 && visibleCount === 0
+                    ? "table-row"
+                    : "none";
+        }
+    }
+
+    accountSearch.addEventListener("input", filterAccounts);
+    roleFilter.addEventListener("change", filterAccounts);
+    statusFilter.addEventListener("change", filterAccounts);
+</script>
 </body>
 </html>

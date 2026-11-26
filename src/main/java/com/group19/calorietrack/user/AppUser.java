@@ -40,6 +40,9 @@ public class AppUser {
     @JoinColumn(name = "trainer_id")
     private AppUser assignedTrainer;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean enabled = true;
+
     public AppUser() {
     }
 
@@ -93,5 +96,13 @@ public class AppUser {
 
     public void setAssignedTrainer(AppUser assignedTrainer) {
         this.assignedTrainer = assignedTrainer;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
