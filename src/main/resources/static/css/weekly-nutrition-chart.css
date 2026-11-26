@@ -119,6 +119,174 @@
     background-color: chocolate;
 }
 
+/* Wrapper for clickable bars and tooltips */
+
+.weekly-bar-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.weekly-bar-link {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.weekly-bar-link:hover .weekly-bar {
+    background-color: forestgreen;
+    opacity: 0.85;
+}
+
+.weekly-bar-link:hover .weekly-bar.weekly-over-goal {
+    background-color: chocolate;
+}
+
+/* Tooltip styles */
+
+.weekly-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 100;
+    pointer-events: none;
+    min-width: 300px;
+}
+
+.weekly-bar-link:hover > .weekly-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Tooltip for days without meals */
+
+.weekly-tooltip-no-meals {
+    min-width: 180px;
+}
+
+.weekly-tooltip-message {
+    color: #95a5a6;
+    font-size: 12px;
+    text-align: center;
+    padding: 8px 0;
+    font-style: italic;
+}
+
+.weekly-tooltip-inner {
+    background-color: #2c3e50;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+    white-space: nowrap;
+    position: relative;
+}
+
+.weekly-tooltip-inner::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #2c3e50;
+}
+
+.weekly-tooltip-date {
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    color: #ecf0f1;
+}
+
+.weekly-tooltip-date strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.weekly-tooltip-meals {
+    margin-bottom: 6px;
+}
+
+.weekly-tooltip-meal-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    margin-bottom: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #95a5a6;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.weekly-tooltip-meal-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: 6px;
+    padding: 3px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.weekly-tooltip-meal-row:last-child {
+    border-bottom: none;
+}
+
+.meal-name {
+    color: #bdc3c7;
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+}
+
+.tooltip-nutrition {
+    color: #ecf0f1;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.weekly-tooltip-total {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: 6px;
+    padding-top: 6px;
+    border-top: 2px solid rgba(255, 255, 255, 0.25);
+    margin-top: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #2ecc71;
+}
+
+.weekly-tooltip-total span:first-child {
+    color: #ffffff;
+    font-size: 11px;
+}
+
+.weekly-tooltip-total .tooltip-nutrition {
+    color: #2ecc71;
+}
+
 .weekly-chart-labels {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));

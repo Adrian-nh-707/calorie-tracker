@@ -1,0 +1,188 @@
+
+/* Day detail page styles */
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: seagreen;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: forestgreen;
+    text-decoration: underline;
+}
+
+.page-header h1 {
+    font-size: 24px;
+    margin-top: 5px;
+}
+
+.day-summary-card {
+    background: linear-gradient(135deg, honeydew, white);
+}
+
+.day-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.day-summary-item {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid gainsboro;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.day-summary-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px lightgray;
+}
+
+.day-summary-item p {
+    color: dimgray;
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+
+.day-summary-item strong {
+    display: block;
+    color: seagreen;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.day-summary-item strong.over-goal {
+    color: firebrick;
+}
+
+.day-summary-item span {
+    color: dimgray;
+    font-size: 12px;
+}
+
+/* Meals table */
+
+.meals-table-wrapper {
+    margin-top: 20px;
+}
+
+.meals-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.meals-table th {
+    background-color: seagreen;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meals-table th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.meals-table th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.meals-table td {
+    padding: 12px;
+    border-bottom: 1px solid gainsboro;
+    font-size: 14px;
+}
+
+.meals-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.meals-table tbody tr:hover {
+    background-color: honeydew;
+}
+
+.meal-type {
+    font-weight: 600;
+    color: seagreen;
+}
+
+.meal-name {
+    color: darkslategray;
+}
+
+.nutrition-value {
+    font-weight: 500;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.meal-totals {
+    background-color: honeydew;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 2px solid seagreen;
+    margin-top: 10px;
+}
+
+.meal-totals p {
+    margin: 0;
+    font-size: 15px;
+    color: darkslategray;
+}
+
+.meal-totals strong {
+    color: seagreen;
+    font-size: 16px;
+}
+
+.meal-totals span {
+    font-weight: 600;
+    color: darkslategray;
+}
+
+/* Empty state for day detail */
+
+.empty-state a {
+    color: seagreen;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .day-summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .meals-table {
+        font-size: 12px;
+    }
+
+    .meals-table th,
+    .meals-table td {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .day-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .meals-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .meals-table {
+        min-width: 600px;
+    }
+}

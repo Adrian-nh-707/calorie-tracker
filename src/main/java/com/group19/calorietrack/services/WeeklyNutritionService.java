@@ -46,9 +46,10 @@ public class WeeklyNutritionService {
         );
 
         Map<LocalDate, Double> caloriesByDate = new HashMap<>();
+        Map<LocalDate, List<Meal>> mealsByDate = new HashMap<>();
         Set<LocalDate> datesWithMeals = new HashSet<>();
 
-        // Add calories from meals on the same date
+        // Group meals by date and calculate totals
         for (Meal meal : meals) {
             LocalDate date = meal.getMealDate();
 
@@ -62,6 +63,7 @@ public class WeeklyNutritionService {
                         Double::sum
                 );
 
+                mealsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(meal);
                 datesWithMeals.add(date);
             }
         }
@@ -78,7 +80,7 @@ public class WeeklyNutritionService {
                 Math.max(highestCalories, calorieGoal) * 1.12
         );
 
-        List<DayCalories> days = new ArrayList<>();
+        List<DayWithMeals> days = new ArrayList<>();
 
         double weeklyTotal = 0;
 
@@ -99,13 +101,16 @@ public class WeeklyNutritionService {
 
             barHeight = Math.min(100, barHeight);
 
-            days.add(new DayCalories(
+            List<Meal> dayMeals = mealsByDate.getOrDefault(date, List.of());
+
+            days.add(new DayWithMeals(
                     date,
                     date.format(DAY_FORMAT),
                     date.format(DATE_FORMAT),
                     calories,
                     barHeight,
-                    calories > calorieGoal
+                    calories > calorieGoal,
+                    dayMeals
             ));
         }
 
@@ -124,20 +129,97 @@ public class WeeklyNutritionService {
         );
     }
 
-    // Information for one day
-    public record DayCalories(
+    // Get details for a single day
+    public DayDetails getDayDetails(
+            Long userId,
+            LocalDate date,
+            int calorieGoal) {
+
+        List<Meal> meals = mealRepository.findByUser_IdAndMealDate(
+                userId,
+                date
+        );
+
+        double totalCalories = 0;
+        double totalProtein = 0;
+        double totalCarbs = 0;
+        double totalFat = 0;
+
+        for (Meal meal : meals) {
+            totalCalories += meal.getCalories();
+            totalProtein += meal.getProtein();
+            totalCarbs += meal.getCarbs();
+            totalFat += meal.getFat();
+        }
+
+        boolean aboveGoal = totalCalories > calorieGoal;
+
+        return new DayDetails(
+                date,
+                date.format(DAY_FORMAT),
+                date.format(DATE_FORMAT),
+                totalCalories,
+                totalProtein,
+                totalCarbs,
+                totalFat,
+                aboveGoal,
+                meals
+        );
+    }
+
+    // Information for one day with meals
+    public record DayWithMeals(
             LocalDate date,
             String dayLabel,
             String dateLabel,
             double calories,
             int barHeightPercent,
-            boolean aboveGoal
+            boolean aboveGoal,
+            List<Meal> meals,
+            double totalProtein,
+            double totalCarbs,
+            double totalFat
+    ) {
+        // Convenience constructor for backward compatibility
+        public DayWithMeals(LocalDate date, String dayLabel, String dateLabel,
+                           double calories, int barHeightPercent, boolean aboveGoal,
+                           List<Meal> meals) {
+            this(date, dayLabel, dateLabel, calories, barHeightPercent, aboveGoal,
+                    meals, calculateSum(meals, "protein"),
+                    calculateSum(meals, "carbs"), calculateSum(meals, "fat"));
+        }
+
+        private static double calculateSum(List<Meal> meals, String field) {
+            double sum = 0;
+            for (Meal m : meals) {
+                switch (field) {
+                    case "protein" -> sum += m.getProtein();
+                    case "carbs" -> sum += m.getCarbs();
+                    case "fat" -> sum += m.getFat();
+                    default -> sum += 0;
+                }
+            }
+            return sum;
+        }
+    }
+
+    // Information for a single day
+    public record DayDetails(
+            LocalDate date,
+            String dayLabel,
+            String dateLabel,
+            double calories,
+            double protein,
+            double carbs,
+            double fat,
+            boolean aboveGoal,
+            List<Meal> meals
     ) {
     }
 
     // Information for the entire week
     public record WeeklySummary(
-            List<DayCalories> days,
+            List<DayWithMeals> days,
             double totalCalories,
             double averageCalories,
             int daysLogged,

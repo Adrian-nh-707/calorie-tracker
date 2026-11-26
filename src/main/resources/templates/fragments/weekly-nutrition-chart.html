@@ -70,12 +70,65 @@
                 <div class="weekly-bar-column"
                      th:each="day : ${weeklySummary.days}">
 
-                    <div class="weekly-bar"
-                         th:classappend="${day.aboveGoal} ? 'weekly-over-goal' : ''"
-                         th:style="|height: ${day.barHeightPercent}%;|"
-                         th:attr="aria-label=${day.dateLabel + ': ' + day.calories + ' calories'}"
-                         th:title="${day.dateLabel + ': ' + day.calories + ' kcal'}"
-                         role="img">
+                    <div class="weekly-bar-wrapper">
+
+                        <a class="weekly-bar-link"
+                           th:href="@{/dashboard/day/{date}(date=${day.date})}"
+                           th:style="|--bar-height: ${day.barHeightPercent}%; height: var(--bar-height);|"
+                           th:attr="aria-label='View details for ' + ${day.dateLabel}">
+                            <div class="weekly-bar"
+                                 th:classappend="${day.aboveGoal} ? 'weekly-over-goal' : ''"
+                                 style="height: 100%;">
+                            </div>
+
+                            <!-- Tooltip for days without meals -->
+                            <div class="weekly-tooltip weekly-tooltip-no-meals"
+                                 th:if="${#lists.isEmpty(day.meals)}">
+                                <div class="weekly-tooltip-inner">
+                                    <div class="weekly-tooltip-date">
+                                        <strong th:text="${day.dayLabel} + ', ' + ${day.dateLabel}">Mon, Nov 9</strong>
+                                    </div>
+                                    <div class="weekly-tooltip-message">
+                                        No meals logged for this day.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hover tooltip showing meals -->
+                            <div class="weekly-tooltip"
+                                 th:if="${day.meals != null}">
+                                <div class="weekly-tooltip-inner">
+                                    <div class="weekly-tooltip-date">
+                                        <strong th:text="${day.dayLabel} + ', ' + ${day.dateLabel}">Mon, Nov 9</strong>
+                                    </div>
+                                    <div class="weekly-tooltip-meals">
+                                        <div class="weekly-tooltip-meal-header">
+                                            <span>Meal</span>
+                                            <span class="tooltip-nutrition">Cal</span>
+                                            <span class="tooltip-nutrition">Protein</span>
+                                            <span class="tooltip-nutrition">Carbs</span>
+                                            <span class="tooltip-nutrition">Fat</span>
+                                        </div>
+                                        <div th:each="meal : ${day.meals}" class="weekly-tooltip-meal-row">
+                                            <span class="meal-name" th:text="${meal.mealType + ': ' + meal.name}">Breakfast: Oatmeal</span>
+                                            <span class="tooltip-nutrition" th:text="${#numbers.formatDecimal(meal.calories, 1, 0)}">0</span>
+                                            <span class="tooltip-nutrition" th:text="${#numbers.formatDecimal(meal.protein, 1, 1)} + 'g'">0.0 g</span>
+                                            <span class="tooltip-nutrition" th:text="${#numbers.formatDecimal(meal.carbs, 1, 1)} + 'g'">0.0 g</span>
+                                            <span class="tooltip-nutrition" th:text="${#numbers.formatDecimal(meal.fat, 1, 1)} + 'g'">0.0 g</span>
+                                        </div>
+                                    </div>
+                                    <div class="weekly-tooltip-total">
+                                        <span>Total</span>
+                                        <span th:text="${#numbers.formatDecimal(day.calories, 1, 0)} + 'kcal'">0 kcal</span>
+                                        <span th:text="${#numbers.formatDecimal(day.totalProtein, 1, 1)} + 'g'">0.0 g</span>
+                                        <span th:text="${#numbers.formatDecimal(day.totalCarbs, 1, 1)} + 'g'">0.0 g</span>
+                                        <span th:text="${#numbers.formatDecimal(day.totalFat, 1, 1)} + 'g'">0.0 g</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </a>
+
                     </div>
 
                 </div>
