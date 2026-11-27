@@ -204,3 +204,52 @@
         font-size: 16px;
     }
 }
+
+/* Iteration 3: decision controls, comparison and tracking. */
+.goal-status {
+    display: inline-block;
+    padding: .3rem .65rem;
+    border-radius: .4rem;
+    font-size: .82rem;
+    font-weight: 700;
+    width: fit-content;
+}
+.goal-status.pending { background: #fff1d5; color: #805000; }
+.goal-status.accepted { background: #e6f4e9; color: #24633b; }
+.goal-status.rejected { background: #fbe8e8; color: #9b3030; }
+.goal-comparison, .goal-tracking-item {
+    background: #f6f8f6;
+    border: 1px solid #dce5dd;
+    border-radius: .6rem;
+    padding: .85rem;
+    margin: .75rem 0;
+    overflow-wrap: anywhere;
+}
+.goal-comparison p, .goal-tracking-item p { margin: .3rem 0; }
+.goal-response-form { display: grid; gap: .5rem; margin-top: .75rem; }
+.goal-response-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: .6rem;
+    font: inherit;
+    border: 1px solid #aab8ae;
+    border-radius: .4rem;
+    resize: vertical;
+}
+.goal-actions, .goal-tracking-header { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; }
+.goal-tracking-header { justify-content: space-between; }
+.goal-actions button {
+    flex: 1 1 125px;
+    padding: .7rem;
+    border-radius: .4rem;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+.goal-accept { background: #39764f; color: white; border: 1px solid #39764f; }
+.goal-reject { background: white; color: #9b3030; border: 1px solid #9b3030; }
+.goal-actions button:focus-visible { outline: 3px solid #344e55; outline-offset: 2px; }
+.goal-feedback, .goal-error { padding: .7rem; border-radius: .4rem; }
+.goal-feedback { background: #e6f4e9; color: #24633b; }
+.goal-error { background: #fbe8e8; color: #9b3030; }
+@media (max-width: 600px) { .goal-actions { flex-direction: column; align-items: stretch; } .goal-actions button { flex: auto; } }

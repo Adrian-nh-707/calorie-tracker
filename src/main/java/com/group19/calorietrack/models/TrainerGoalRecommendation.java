@@ -7,6 +7,8 @@ import com.group19.calorietrack.user.AppUser;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -44,6 +46,41 @@ public class TrainerGoalRecommendation {
     private String note;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    // Existing rows with a null status are treated as pending.
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private RecommendationStatus status = RecommendationStatus.PENDING;
+
+    @Column(name = "responded_at")
+    private LocalDateTime respondedAt;
+
+    @Column(name = "rejection_reason", length = 1000)
+    private String rejectionReason;
+
+    public RecommendationStatus getStatus() {
+        return status == null ? RecommendationStatus.PENDING : status;
+    }
+
+    public LocalDateTime getRespondedAt() {
+        return respondedAt;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void respond(RecommendationStatus decision, String reason) {
+        if (getStatus() != RecommendationStatus.PENDING) {
+            throw new IllegalStateException("This recommendation has already been answered.");
+        }
+        if (decision != RecommendationStatus.ACCEPTED && decision != RecommendationStatus.REJECTED) {
+            throw new IllegalArgumentException("Invalid recommendation decision.");
+        }
+        status = decision;
+        respondedAt = LocalDateTime.now();
+        rejectionReason = decision == RecommendationStatus.REJECTED ? reason : null;
+    }
 
     public TrainerGoalRecommendation() {
     }

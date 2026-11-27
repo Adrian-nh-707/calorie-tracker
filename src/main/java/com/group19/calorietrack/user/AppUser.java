@@ -40,6 +40,28 @@ public class AppUser {
     @JoinColumn(name = "trainer_id")
     private AppUser assignedTrainer;
 
+    @Column(name = "daily_calorie_goal")
+    private Integer dailyCalorieGoal;
+
+    @Column(name = "daily_protein_goal")
+    private Integer dailyProteinGoal;
+
+    public Integer getDailyCalorieGoal() {
+        return dailyCalorieGoal;
+    }
+
+    public void setDailyCalorieGoal(Integer dailyCalorieGoal) {
+        this.dailyCalorieGoal = dailyCalorieGoal;
+    }
+
+    public Integer getDailyProteinGoal() {
+        return dailyProteinGoal;
+    }
+
+    public void setDailyProteinGoal(Integer dailyProteinGoal) {
+        this.dailyProteinGoal = dailyProteinGoal;
+    }
+
     public AppUser() {
     }
 

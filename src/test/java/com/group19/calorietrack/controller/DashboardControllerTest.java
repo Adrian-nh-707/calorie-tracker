@@ -8,29 +8,25 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.ui.ExtendedModelMap;
 
+import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
 import com.group19.calorietrack.services.FoodRecommendationService;
 import com.group19.calorietrack.services.WeeklyNutritionService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
-
-import com.group19.calorietrack.messaging.MessageService;
 
 class DashboardControllerTest {
 
@@ -42,9 +38,10 @@ class DashboardControllerTest {
     private ExtendedModelMap model;
     private MockHttpSession session;
     private Principal principal;
+    private AppUser user;
 
     @Mock
-        private MessageService messageService;
+    private MessageService messageService;
 
     @BeforeEach
     void setUp() {
@@ -54,8 +51,14 @@ class DashboardControllerTest {
         userRepository = mock(UserRepository.class);
         messageService = Mockito.mock(MessageService.class);
 
-        AppUser user = mock(AppUser.class);
+        user = mock(AppUser.class);
+
         when(user.getId()).thenReturn(1L);
+
+        // Default nutrition goals stored in the database
+        when(user.getDailyCalorieGoal()).thenReturn(2500);
+        when(user.getDailyProteinGoal()).thenReturn(150);
+
         when(userRepository.findByEmail("test@example.com"))
                 .thenReturn(Optional.of(user));
 
@@ -131,7 +134,7 @@ class DashboardControllerTest {
         when(mealRepository.findByUser_IdAndMealDate(1L, today))
                 .thenReturn(List.of(lunch));
 
-        session.setAttribute("calorieGoal", 3000);
+        when(user.getDailyCalorieGoal()).thenReturn(3000);
 
         controller.showDashboard(model, session, principal);
 
@@ -184,20 +187,24 @@ class DashboardControllerTest {
 
     @Test
     void testUpdateCalorieGoal() {
-        String result = controller.updateGoal(3000, session);
+        String result = controller.updateGoal(3000, principal);
 
         assertEquals("redirect:/dashboard", result);
-        assertEquals(3000, session.getAttribute("calorieGoal"));
+
+        verify(user).setDailyCalorieGoal(3000);
+        verify(userRepository).save(user);
     }
 
     @Test
     void testInvalidCalorieGoals() {
-        session.setAttribute("calorieGoal", 2500);
+        controller.updateGoal(0, principal);
+        controller.updateGoal(10001, principal);
 
-        controller.updateGoal(0, session);
-        controller.updateGoal(10001, session);
+        Mockito.verify(user, Mockito.never())
+                .setDailyCalorieGoal(any());
 
-        assertEquals(2500, session.getAttribute("calorieGoal"));
+        Mockito.verify(userRepository, Mockito.never())
+                .save(any());
     }
 
     @Test
@@ -267,7 +274,7 @@ class DashboardControllerTest {
     void testWeeklySummaryUsesUpdatedCalorieGoal() {
         LocalDate today = LocalDate.now();
 
-        session.setAttribute("calorieGoal", 1800);
+        when(user.getDailyCalorieGoal()).thenReturn(1800);
 
         controller.showDashboard(model, session, principal);
 
