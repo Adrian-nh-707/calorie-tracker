@@ -18,34 +18,7 @@
 
 <main class="dashboard">
 
-    <nav class="app-nav" aria-label="Main navigation">
-
-        <a class="app-brand" th:href="@{/home}">
-            <img th:src="@{/images/mealmargin-logo.png}"
-                 alt="MealMargin"
-                 class="brand-logo">
-        </a>
-
-        <div class="app-nav-links">
-
-            <a class="nav-link" th:href="@{/home}">
-                Dashboard
-            </a>
-
-            <a class="nav-link active"
-               th:href="@{/account/settings}"
-               aria-current="page">
-                Account Settings
-            </a>
-
-            <form th:action="@{/logout}" method="post">
-                <button class="nav-link" type="submit">
-                    Log Out
-                </button>
-            </form>
-
-        </div>
-    </nav>
+    <nav th:replace="~{fragments/navigation :: navigation('settings')}"></nav>
 
     <div class="page-header">
         <div>

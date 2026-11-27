@@ -1,0 +1,311 @@
+
+body {
+    margin: 0;
+    padding: 48px 24px 24px;
+    background-color: whitesmoke;
+    color: darkslategray;
+    font-family: Arial, sans-serif;
+}
+
+header,
+main {
+    max-width: 1152px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header {
+    background-color: white;
+    padding: 12px 20px;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.trainer-brand {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+}
+
+.brand-logo {
+    display: block;
+    width: 180px;
+    max-width: 100%;
+    height: 90px;
+    object-fit: contain;
+}
+
+h1 {
+    color: seagreen;
+    font-size: 24px;
+    margin: 0 0 8px;
+}
+
+.subtitle {
+    color: dimgray;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.header-actions form {
+    margin: 0;
+}
+
+.header-actions a,
+.header-actions button {
+    display: inline-block;
+    padding: 10px 14px;
+    background-color: white;
+    color: darkslategray;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.header-actions a:hover,
+.header-actions button:hover {
+    background-color: honeydew;
+    color: darkgreen;
+}
+
+.header-actions .active {
+    background-color: seagreen;
+    color: white;
+}
+
+.header-actions .active:hover {
+    background-color: forestgreen;
+    color: white;
+}
+
+.unread-count {
+    display: inline-block;
+    min-width: 18px;
+    padding: 3px 5px;
+    margin-left: 5px;
+    background-color: firebrick;
+    color: white;
+    border-radius: 10px;
+    font-size: 11px;
+    text-align: center;
+}
+
+.card {
+    min-width: 0;
+    background-color: white;
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+    padding: 26px;
+    margin-bottom: 20px;
+    box-shadow: none;
+}
+
+.card h2 {
+    color: darkslategray;
+    font-size: 22px;
+    margin-bottom: 16px;
+}
+
+.stats {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.stat {
+    background-color: honeydew;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.stat h3 {
+    color: darkslategray;
+    font-size: 15px;
+}
+
+.stat-value {
+    color: seagreen;
+    font-size: 32px;
+}
+
+.description {
+    color: dimgray;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+}
+
+table {
+    min-width: 560px;
+}
+
+thead {
+    background-color: honeydew;
+}
+
+th {
+    color: darkgreen;
+}
+
+th,
+td {
+    padding: 14px 16px;
+    border-bottom: 1px solid gainsboro;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background-color: whitesmoke;
+}
+
+.status-label {
+    background-color: honeydew;
+    color: darkgreen;
+    border-radius: 6px;
+}
+
+input,
+select,
+textarea {
+    max-width: 100%;
+    padding: 12px;
+    border: 1px solid silver;
+    border-radius: 6px;
+    background-color: white;
+    color: darkslategray;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+.form-group label {
+    color: darkslategray;
+    font-size: 14px;
+}
+
+.logout-button {
+    padding: 12px 18px;
+    background-color: seagreen;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.logout-button:hover {
+    background-color: forestgreen;
+}
+
+.placeholder {
+    background-color: whitesmoke;
+    border: 1px solid gainsboro;
+    border-radius: 8px;
+    color: dimgray;
+    font-size: 14px;
+}
+
+.feedback-success {
+    background-color: honeydew;
+    color: darkgreen;
+    border: 1px solid seagreen;
+}
+
+.feedback-error {
+    background-color: mistyrose;
+    color: firebrick;
+    border: 1px solid indianred;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid seagreen;
+    outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+    body {
+        padding: 16px;
+    }
+
+    header {
+        padding: 14px;
+    }
+
+    .brand-logo {
+        width: 150px;
+        height: 75px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-actions a,
+    .header-actions form {
+        flex: 1 1 40%;
+        text-align: center;
+    }
+
+    .header-actions button {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+    }
+
+    th,
+    td {
+        padding: 12px;
+    }
+
+    .card form input[type="date"] {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .card form button {
+        width: 100%;
+    }
+}

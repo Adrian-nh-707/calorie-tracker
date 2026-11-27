@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<nav class="app-nav"
+     aria-label="Main navigation"
+     th:fragment="navigation(activePage)">
+
+    <a class="app-brand" th:href="@{/home}">
+        <img th:src="@{/images/mealmargin-logo.png}"
+             alt="MealMargin"
+             class="brand-logo">
+    </a>
+
+    <div class="app-nav-links">
+
+        <a class="nav-link"
+           th:href="@{/home}"
+           th:classappend="${activePage == 'dashboard'} ? 'active' : ''"
+           th:attr="aria-current=${activePage == 'dashboard'} ? 'page' : null">
+            Dashboard
+        </a>
+
+        <a class="nav-link"
+           th:if="${navigationRole == 'USER'}"
+           th:href="@{/meals}"
+           th:classappend="${activePage == 'meals'} ? 'active' : ''"
+           th:attr="aria-current=${activePage == 'meals'} ? 'page' : null">
+            Meal Logger
+        </a>
+
+        <a class="nav-link"
+           th:if="${navigationRole == 'USER'}"
+           th:href="@{/foodsearch}"
+           th:classappend="${activePage == 'foodsearch'} ? 'active' : ''"
+           th:attr="aria-current=${activePage == 'foodsearch'} ? 'page' : null">
+            Food Search
+        </a>
+
+        <a class="nav-link"
+           th:if="${navigationRole == 'USER' or navigationRole == 'TRAINER'}"
+           th:href="@{/inbox}"
+           th:classappend="${activePage == 'inbox'} ? 'active' : ''"
+           th:attr="aria-current=${activePage == 'inbox'} ? 'page' : null">
+            Inbox
+
+            <span class="unread-count"
+                  th:if="${unreadCount != null and unreadCount > 0}"
+                  th:text="${unreadCount}">
+            </span>
+        </a>
+
+        <a class="nav-link"
+           th:href="@{/account/settings}"
+           th:classappend="${activePage == 'settings'} ? 'active' : ''"
+           th:attr="aria-current=${activePage == 'settings'} ? 'page' : null">
+            Account Settings
+        </a>
+
+        <form th:action="@{/logout}" method="post">
+            <button class="nav-link" type="submit">
+                Log Out
+            </button>
+        </form>
+
+    </div>
+
+</nav>
+
+</body>
+</html>

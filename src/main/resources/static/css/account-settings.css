@@ -1,241 +1,172 @@
-
-body {
-    background: whitesmoke;
-    color: darkslategray;
-    font-family: Arial, sans-serif;
-}
-
-.inbox-container,
-.message-details-container,
-.send-message-container {
-    max-width: 1152px;
-    margin: 28px auto;
-}
-
-.message-brand {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    padding: 12px 20px;
-    margin-bottom: 25px;
-    border: 1px solid lightgray;
-    border-radius: 8px;
-    text-decoration: none;
-}
-
-.message-brand img {
-    display: block;
-    width: 180px;
-    height: 90px;
-    object-fit: contain;
-}
-
-.inbox-header,
-.message-details-header,
-.send-message-header {
+.settings-card {
     margin-bottom: 25px;
 }
 
-.inbox-header > div {
-    flex: 1;
-}
-
-.inbox-header h1,
-.message-details-header h1,
-.send-message-header h1 {
-    color: seagreen;
-    font-size: 30px;
-}
-
-.message-details-header,
-.send-message-header {
-    display: block;
-}
-
-.dashboard-link {
-    margin: 0;
-    padding: 10px 0;
-    color: seagreen;
-    font-size: 14px;
-}
-
-.summary-card,
-.message-card,
-.message-details-card,
-.send-message-card,
-.empty-inbox {
-    border: 1px solid gainsboro;
-    border-radius: 10px;
-    box-shadow: none;
-    transition: none;
-}
-
-.message-card {
-    color: darkslategray;
-}
-
-.message-card:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: seagreen;
-    background-color: honeydew;
-}
-
-.message-card.unread {
-    border-left: 5px solid seagreen;
-}
-
-.message-card-header h2 {
-    color: darkgreen;
-    overflow-wrap: anywhere;
-}
-
-.message-preview {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.message-sender strong,
-.message-content {
-    color: darkslategray;
-}
-
-.message-participants {
-    background-color: honeydew;
-    border: 1px solid gainsboro;
-    border-radius: 8px;
-    overflow-wrap: anywhere;
-}
-
-.message-details-card h2 {
-    overflow-wrap: anywhere;
-}
-
-.compose-button,
-.primary-button,
-.secondary-button,
-.settings-save-button,
-.settings-cancel-button {
-    border-radius: 6px;
-    font-family: inherit;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea,
-.settings-field input {
-    border: 1px solid silver;
-    border-radius: 6px;
-    font-size: 16px;
-    color: darkslategray;
-    background-color: white;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus,
-.settings-field input:focus {
-    outline: 2px solid seagreen;
-    outline-offset: 1px;
-    box-shadow: none;
-}
-
-.success-message,
-.settings-feedback.feedback-success {
-    background-color: honeydew;
-    color: darkgreen;
-    border: 1px solid seagreen;
-    border-radius: 6px;
-}
-
-.error-message,
-.settings-feedback.feedback-error {
-    background-color: mistyrose;
-    color: firebrick;
-    border: 1px solid indianred;
-    border-radius: 6px;
+.settings-section-heading {
+    margin-bottom: 25px;
 }
 
 .settings-section-heading h2 {
-    color: darkgreen;
+    margin-bottom: 8px;
+    color: seagreen;
+}
+
+.settings-section-heading p {
+    margin: 0;
+    color: dimgray;
+    line-height: 1.5;
 }
 
 .settings-form {
-    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+}
+
+.settings-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .settings-field label {
+    margin: 0;
+    font-weight: bold;
+}
+
+.settings-field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid lightgray;
+    border-radius: 7px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.settings-field input:focus {
+    outline: none;
+    border-color: seagreen;
+    box-shadow: 0 0 0 3px honeydew;
+}
+
+.settings-field small {
+    color: dimgray;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.field-error {
+    margin: 0;
+    color: firebrick;
+    font-size: 13px;
+}
+
+.settings-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+.settings-save-button,
+.settings-cancel-button {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-family: Arial, sans-serif;
     font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.settings-save-button {
+    background-color: seagreen;
+    color: white;
+}
+
+.settings-save-button:hover {
+    background-color: forestgreen;
+}
+
+.settings-cancel-button {
+    background-color: white;
+    color: seagreen;
+    border: 1px solid seagreen;
+}
+
+.settings-cancel-button:hover {
+    background-color: honeydew;
+}
+
+.settings-feedback {
+    padding: 14px 18px;
+    margin: 15px 0;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.feedback-success {
+    background-color: honeydew;
+    color: seagreen;
+}
+
+.feedback-error {
+    background-color: #fde8e7;
+    color: firebrick;
+}
+
+.feedback-error p {
+    margin: 4px 0;
+}
+
+.settings-placeholder {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: honeydew;
+    color: dimgray;
 }
 
 .account-information-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
 }
 
 .account-information-item {
-    background-color: honeydew;
-    border: 1px solid gainsboro;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
     border-radius: 8px;
+    background-color: honeydew;
+    border: 1px solid lightgray;
+    overflow-wrap: anywhere;
+}
+
+.account-information-item span {
+    color: dimgray;
+    font-size: 13px;
 }
 
 .account-information-item strong {
-    color: darkgreen;
-}
-
-.message-brand:focus-visible,
-.message-card:focus-visible,
-.compose-button:focus-visible,
-.primary-button:focus-visible,
-.secondary-button:focus-visible,
-.settings-save-button:focus-visible,
-.settings-cancel-button:focus-visible {
-    outline: 2px solid seagreen;
-    outline-offset: 3px;
-}
-
-@media (max-width: 800px) {
-    .account-information-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    color: seagreen;
+    font-size: 16px;
 }
 
 @media (max-width: 600px) {
-    .inbox-container,
-    .message-details-container,
-    .send-message-container {
-        margin: 10px auto;
-    }
-
-    .message-brand {
-        padding: 12px;
-    }
-
-    .message-brand img {
-        width: 150px;
-        height: 75px;
-    }
-
-    .inbox-header h1,
-    .message-details-header h1,
-    .send-message-header h1 {
-        font-size: 26px;
-    }
-
-    .inbox-header {
+    .settings-actions {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .dashboard-link {
+    .settings-save-button,
+    .settings-cancel-button {
+        width: 100%;
         text-align: center;
-    }
-
-    .message-card,
-    .message-details-card,
-    .send-message-card {
-        padding: 18px;
     }
 
     .account-information-grid {

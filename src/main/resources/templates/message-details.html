@@ -8,15 +8,13 @@
 
     <link rel="stylesheet" th:href="@{/css/messaging.css}">
     <link rel="stylesheet" th:href="@{/css/account-pages.css}">
+    <link rel="stylesheet" th:href="@{/css/navigation.css}">
 </head>
 <body>
 
 <main class="message-details-container">
 
-    <a class="message-brand" th:href="@{/home}">
-        <img th:src="@{/images/mealmargin-logo.png}"
-             alt="MealMargin">
-    </a>
+    <nav th:replace="~{fragments/navigation :: navigation('inbox')}"></nav>
 
     <header class="message-details-header">
         <h1>Message Details</h1>

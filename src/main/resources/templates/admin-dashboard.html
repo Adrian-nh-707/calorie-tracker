@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -14,14 +15,19 @@
             margin: 0;
             padding: 0;
             font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f7f5;
-            color: #26352d;
+            background-color: whitesmoke;
+            color: darkslategray;
         }
 
         header {
-            background-color: #246b45;
-            color: white;
-            padding: 22px 7%;
+            max-width: 1152px;
+            width: calc(100% - 48px);
+            margin: 48px auto 25px;
+            background-color: white;
+            color: darkslategray;
+            padding: 12px 20px;
+            border: 1px solid lightgray;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -29,46 +35,85 @@
             gap: 15px;
         }
 
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            display: block;
+            width: 180px;
+            max-width: 100%;
+            height: 90px;
+            object-fit: contain;
+        }
+
         header h1 {
             margin: 0;
-            font-size: 26px;
+            font-size: 22px;
+            color: seagreen;
         }
 
         header p {
             margin: 6px 0 0;
             font-size: 14px;
-            color: #e3f2e8;
+            color: dimgray;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .header-actions form {
+            margin: 0;
         }
 
         .header-actions a,
         .header-actions button {
-            padding: 10px 16px;
-            border: none;
+            display: inline-block;
+            padding: 10px 14px;
+            border: 1px solid transparent;
             border-radius: 6px;
             text-decoration: none;
+            font-family: inherit;
             font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
         }
 
         .home-link {
             background-color: white;
-            color: #246b45;
+            color: darkslategray;
+        }
+
+        .home-link:hover {
+            background-color: honeydew;
+            color: darkgreen;
+        }
+
+        .home-link[aria-current="page"] {
+            background-color: seagreen;
+            color: white;
         }
 
         .logout-button {
-            background-color: #174a2e;
-            color: white;
+            background-color: white;
+            color: darkslategray;
+        }
+
+        .logout-button:hover {
+            background-color: honeydew;
+            color: darkgreen;
         }
 
         main {
             max-width: 1200px;
-            margin: 35px auto;
+            margin: 24px auto;
             padding: 0 24px;
         }
 
@@ -78,12 +123,13 @@
 
         .welcome h2 {
             margin: 0 0 8px;
-            font-size: 25px;
+            font-size: 30px;
+            color: seagreen;
         }
 
         .welcome p {
             margin: 0;
-            color: #68766e;
+            color: dimgray;
             line-height: 1.5;
         }
 
@@ -96,26 +142,28 @@
 
         .stat-card,
         .card {
+            min-width: 0;
             background-color: white;
-            border-radius: 12px;
+            border: 1px solid gainsboro;
+            border-radius: 10px;
             padding: 24px;
-            box-shadow: 0 3px 12px rgba(25, 55, 38, 0.07);
         }
 
         .stat-card {
-            border-top: 4px solid #3d9664;
+            background-color: honeydew;
+            border-top: 4px solid seagreen;
         }
 
         .stat-card h3 {
             margin: 0 0 14px;
-            color: #647269;
+            color: darkslategray;
             font-size: 15px;
-            font-weight: normal;
+            font-weight: bold;
         }
 
         .stat-number {
             margin: 0;
-            color: #246b45;
+            color: seagreen;
             font-size: 34px;
             font-weight: bold;
         }
@@ -126,18 +174,20 @@
 
         .card h2 {
             margin: 0 0 10px;
-            font-size: 21px;
+            font-size: 22px;
         }
 
         .card-description {
             margin: 0 0 20px;
-            color: #68766e;
+            color: dimgray;
             line-height: 1.5;
         }
 
         .table-container {
             width: 100%;
             overflow-x: auto;
+            border: 1px solid gainsboro;
+            border-radius: 8px;
         }
 
         table {
@@ -147,56 +197,70 @@
         }
 
         thead {
-            background-color: #edf5ef;
+            background-color: honeydew;
         }
 
         th,
         td {
             padding: 14px 16px;
-            border-bottom: 1px solid #e5ebe6;
+            border-bottom: 1px solid gainsboro;
             white-space: nowrap;
         }
 
         th {
-            color: #315b41;
+            color: darkgreen;
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
 
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
         tbody tr:hover {
-            background-color: #f8fbf8;
+            background-color: whitesmoke;
         }
 
         td select {
-            padding: 8px;
-            border: 1px solid #cbd8ce;
-            border-radius: 5px;
+            padding: 10px;
+            border: 1px solid silver;
+            border-radius: 6px;
             background-color: white;
-            color: #26352d;
+            color: darkslategray;
             max-width: 180px;
+            font-family: inherit;
+            font-size: 16px;
         }
 
         td button {
-            padding: 8px 12px;
+            padding: 10px 14px;
             margin-left: 5px;
             border: none;
-            border-radius: 5px;
-            background-color: #246b45;
+            border-radius: 6px;
+            background-color: seagreen;
             color: white;
+            font-family: inherit;
             cursor: pointer;
         }
 
         td button:hover {
-            background-color: #174a2e;
+            background-color: forestgreen;
+        }
+
+        a:focus-visible,
+        button:focus-visible,
+        select:focus-visible {
+            outline: 2px solid seagreen;
+            outline-offset: 3px;
         }
 
         .role-badge {
             display: inline-block;
             padding: 5px 10px;
-            border-radius: 20px;
-            background-color: #e5f3e9;
-            color: #246b45;
+            border-radius: 6px;
+            background-color: honeydew;
+            color: darkgreen;
             font-size: 12px;
             font-weight: bold;
         }
@@ -204,7 +268,7 @@
         .empty-message {
             padding: 24px;
             text-align: center;
-            color: #68766e;
+            color: dimgray;
         }
 
         .section-grid {
@@ -219,22 +283,25 @@
 
         .placeholder {
             padding: 16px;
-            background-color: #f5f8f5;
+            background-color: whitesmoke;
+            border: 1px solid gainsboro;
             border-radius: 8px;
-            color: #68766e;
+            color: dimgray;
             line-height: 1.6;
         }
 
         footer {
             padding: 25px;
             text-align: center;
-            color: #7b887f;
+            color: dimgray;
             font-size: 13px;
         }
 
         @media (max-width: 760px) {
             header {
-                padding: 20px;
+                width: calc(100% - 32px);
+                margin: 16px auto;
+                padding: 16px;
             }
 
             main {
@@ -244,10 +311,54 @@
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
             .section-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions a,
+            .header-actions form {
+                flex: 1;
+                text-align: center;
+            }
+
+            .header-actions button {
+                width: 100%;
+            }
+
+            .card,
+            .stat-card {
+                padding: 18px;
+            }
+
+            .brand-logo {
+                width: 150px;
+                height: 75px;
+            }
+
+            header h1 {
+                font-size: 18px;
+            }
+
+            .welcome h2 {
+                font-size: 26px;
+            }
+
+            th,
+            td {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .header-brand {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -256,13 +367,21 @@
 <body>
 
 <header>
-    <div>
-        <h1>MealMargin</h1>
-        <p>Administrator Dashboard</p>
+    <div class="header-brand">
+        <a th:href="@{/home}" aria-label="MealMargin home">
+            <img class="brand-logo"
+                 th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin">
+        </a>
+
+        <div>
+            <h1>MealMargin</h1>
+            <p>Administrator Dashboard</p>
+        </div>
     </div>
 
     <div class="header-actions">
-        <a class="home-link" th:href="@{/}">Home</a>
+        <a class="home-link" th:href="@{/admin/dashboard}" aria-current="page">Dashboard</a>
 
         <a class="home-link" th:href="@{/account/settings}">
             Account Settings
@@ -318,14 +437,17 @@
             each account's email address and assigned role.
         </p>
 
-        <div class="table-container">
+        <div class="table-container"
+             tabindex="0"
+             role="region"
+             aria-label="Registered user accounts">
             <table>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Email Address</th>
-                        <th>Role</th>
-                        <th>Assigned Trainer</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email Address</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Assigned Trainer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -349,7 +471,9 @@
 
                                 <input type="hidden" name="userId" th:value="${user.id}">
 
-                                <select name="trainerId" required>
+                                <select name="trainerId"
+                                        aria-label="Select assigned trainer"
+                                        required>
                                     <option value="">Select a trainer</option>
 
                                     <option th:each="trainer : ${trainers}"

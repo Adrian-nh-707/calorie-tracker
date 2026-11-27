@@ -251,17 +251,31 @@
             }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/trainer-ui.css}">
 </head>
 
 <body>
 
 <header>
-    <div>
+    <div class="trainer-brand">
+        <a th:href="@{/home}" aria-label="MealMargin home">
+            <img class="brand-logo"
+                 th:src="@{/images/mealmargin-logo.png}"
+                 alt="MealMargin">
+        </a>
+        <div>
         <h1>Trainer Dashboard</h1>
         <p class="subtitle">Monitor your assigned users' progress</p>
     </div>
 
+    </div>
+
     <div class="header-actions">
+        <a th:href="@{/trainer/dashboard}"
+           class="inbox-button active"
+           aria-current="page">
+            Dashboard
+        </a>
         <a th:href="@{/inbox}" class="inbox-button">
             Inbox
             <span class="unread-count"
