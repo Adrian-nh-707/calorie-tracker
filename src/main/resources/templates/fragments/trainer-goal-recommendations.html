@@ -11,14 +11,19 @@
             <h2>My Trainer's Recommendations</h2>
 
             <p class="section-description">
-                Nutrition goals suggested by your trainer.
+                Review new recommendations and your previous decisions.
             </p>
         </div>
 
         <span class="section-tag">
             Trainer Goals
+            <span th:if="${trainerGoalRecommendations != null}"
+                  th:text="${'(' + #lists.size(trainerGoalRecommendations.?[status == 'PENDING']) + ' pending)'}"></span>
         </span>
     </div>
+
+    <p th:if="${goalSuccess}" th:text="${goalSuccess}" class="goal-feedback" role="status"></p>
+    <p th:if="${goalError}" th:text="${goalError}" class="goal-error" role="alert"></p>
 
     <!-- No recommendations -->
     <div class="trainer-goal-empty"
@@ -58,6 +63,17 @@
                     Nov 14, 2026
                 </span>
 
+            </div>
+
+            <p class="goal-status" th:classappend="${recommendation.status.toLowerCase()}"
+               th:text="${recommendation.status}"></p>
+
+            <div th:if="${recommendation.status == 'PENDING'}" class="goal-comparison">
+                <h4>Current vs. recommended goals</h4>
+                <p>Calories: <span th:text="${calorieGoal}"></span> &rarr;
+                    <strong th:text="${recommendation.calorieGoal}"></strong> kcal/day</p>
+                <p>Protein: <span th:text="${proteinGoal}"></span> &rarr;
+                    <strong th:text="${recommendation.proteinGoal}"></strong> g/day</p>
             </div>
 
             <!-- Recommended daily targets -->
@@ -105,10 +121,27 @@
 
             </div>
 
-            <p class="trainer-goal-info">
-                These are recommendations from your trainer.
-                Your current nutrition goals will not change automatically.
-            </p>
+            <div th:if="${recommendation.status == 'PENDING'}">
+                <p class="trainer-goal-info">
+                    Accept to replace both daily targets, or reject to keep your current goals.
+                </p>
+                <form method="post" class="goal-response-form"
+                      th:action="@{/dashboard/recommendations/{id}/respond(id=${recommendation.id})}">
+                    <label th:for="${'reason-' + recommendation.id}">Rejection reason (optional)</label>
+                    <textarea th:id="${'reason-' + recommendation.id}" name="reason"
+                              maxlength="1000" rows="2" placeholder="Only used if you reject"></textarea>
+                    <div class="goal-actions">
+                        <button type="submit" name="decision" value="ACCEPTED" class="goal-accept">Accept Goals</button>
+                        <button type="submit" name="decision" value="REJECTED" class="goal-reject">Reject Goals</button>
+                    </div>
+                </form>
+            </div>
+            <div th:unless="${recommendation.status == 'PENDING'}" class="trainer-goal-info">
+                <p>Responded: <span th:text="${recommendation.respondedAtLabel}"></span></p>
+                <p th:if="${recommendation.rejectionReason != null and !#strings.isEmpty(recommendation.rejectionReason)}">
+                    Feedback: <span th:text="${recommendation.rejectionReason}"></span>
+                </p>
+            </div>
 
         </article>
 

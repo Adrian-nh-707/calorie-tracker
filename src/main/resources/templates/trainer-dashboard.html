@@ -251,6 +251,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/trainer-goal-recommendations.css}">
 </head>
 
 <body>
@@ -505,6 +506,31 @@
             th:if="${#lists.isEmpty(assignedUsers)}">
             You currently have no assigned users...
             Assign users to your trainer account before sending recommendations...
+        </div>
+    </section>
+    <section class="card trainer-goal-section">
+        <h2>Sent Recommendations</h2>
+        <p>Track your clients' decisions and optional feedback.</p>
+        <div th:if="${sentGoalRecommendations != null}">
+            <p class="goal-summary">
+                Pending: <strong th:text="${#lists.size(sentGoalRecommendations.?[status == 'PENDING'])}"></strong>
+                &nbsp; Accepted: <strong th:text="${#lists.size(sentGoalRecommendations.?[status == 'ACCEPTED'])}"></strong>
+                &nbsp; Rejected: <strong th:text="${#lists.size(sentGoalRecommendations.?[status == 'REJECTED'])}"></strong>
+            </p>
+            <p th:if="${#lists.isEmpty(sentGoalRecommendations)}">No recommendations sent yet.</p>
+            <article class="goal-tracking-item" th:each="rec : ${sentGoalRecommendations}">
+                <div class="goal-tracking-header">
+                    <strong th:text="${rec.userName}">Client</strong>
+                    <span class="goal-status" th:classappend="${rec.status.toLowerCase()}" th:text="${rec.status}"></span>
+                </div>
+                <p><span th:text="${rec.calorieGoal}"></span> kcal/day &middot;
+                    <span th:text="${rec.proteinGoal}"></span> g protein/day</p>
+                <p>Sent: <span th:text="${rec.createdAtLabel}"></span></p>
+                <p th:if="${rec.status != 'PENDING'}">Responded: <span th:text="${rec.respondedAtLabel}"></span></p>
+                <p th:if="${rec.rejectionReason != null and !#strings.isEmpty(rec.rejectionReason)}">
+                    Feedback: <span th:text="${rec.rejectionReason}"></span>
+                </p>
+            </article>
         </div>
     </section>
 </main>

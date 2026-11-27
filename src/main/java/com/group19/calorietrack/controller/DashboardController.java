@@ -73,9 +73,8 @@ public class DashboardController {
                 messageService.getUnreadCount(principal.getName())
             );
 
-        // Get calorie goal from session
-        Integer calorieGoal =
-            (Integer) session.getAttribute("calorieGoal");
+        // Use the authenticated user's persisted target (not a session-only goal).
+        Integer calorieGoal = user.getDailyCalorieGoal();
 
         if (calorieGoal == null) {
             calorieGoal = 2500;
@@ -103,7 +102,7 @@ public class DashboardController {
             fat += meal.getFat();
         }
 
-        int proteinGoal = 150;
+        int proteinGoal = user.getDailyProteinGoal() == null ? 150 : user.getDailyProteinGoal();
 
         double caloriesRemaining =
             calorieGoal - caloriesConsumed;
@@ -174,9 +173,8 @@ public class DashboardController {
                 "User not found."
             ));
 
-        // Get calorie goal from session
-        Integer calorieGoal =
-            (Integer) session.getAttribute("calorieGoal");
+        // Use the authenticated user's persisted target (not a session-only goal).
+        Integer calorieGoal = user.getDailyCalorieGoal();
 
         if (calorieGoal == null) {
             calorieGoal = 2500;
@@ -200,10 +198,16 @@ public class DashboardController {
     @PostMapping("/dashboard/goal")
     public String updateGoal(
             @RequestParam("calorieGoal") int calorieGoal,
-            HttpSession session) {
+            Principal principal) {
 
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please log in.");
+        }
+        AppUser user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found."));
         if (calorieGoal >= 1 && calorieGoal <= 10000) {
-            session.setAttribute("calorieGoal", calorieGoal);
+            user.setDailyCalorieGoal(calorieGoal);
+            userRepository.save(user);
         }
 
         return "redirect:/dashboard";

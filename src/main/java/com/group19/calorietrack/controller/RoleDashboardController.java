@@ -1,3 +1,4 @@
+
 package com.group19.calorietrack.controller;
 
 import java.time.LocalDate;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.group19.calorietrack.dto.NutritionProgress;
+import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.models.Meal;
 import com.group19.calorietrack.repositories.MealRepository;
-import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.services.TrainerGoalRecommendationService;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
 import com.group19.calorietrack.user.UserRole;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class RoleDashboardController {
@@ -104,8 +108,18 @@ public class RoleDashboardController {
     public String trainerDashboard(
             Authentication authentication,
             Model model,
+            HttpServletRequest request,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        // Initialize CSRF before rendering the dashboard.
+        // Prevents session creation after the response is committed.
+        CsrfToken csrfToken = (CsrfToken)
+                request.getAttribute(CsrfToken.class.getName());
+
+        if (csrfToken != null) {
+            csrfToken.getToken();
+        }
 
         if (date == null) {
             date = LocalDate.now();
@@ -165,6 +179,12 @@ public class RoleDashboardController {
         model.addAttribute("nutritionProgress", nutritionProgress);
         model.addAttribute("selectedDate", date);
         model.addAttribute("unreadCount", messageService.getUnreadCount(email));
+
+        // Iteration 3: Display sent recommendations and their statuses.
+        model.addAttribute(
+                "sentGoalRecommendations",
+                recommendationService.getRecommendationsForTrainer(email)
+        );
 
         return "trainer-dashboard";
     }

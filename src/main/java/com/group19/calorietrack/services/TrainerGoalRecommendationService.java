@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.group19.calorietrack.models.TrainerGoalRecommendation;
+import com.group19.calorietrack.models.RecommendationStatus;
+import com.group19.calorietrack.messaging.MessageService;
 import com.group19.calorietrack.repositories.TrainerGoalRecommendationRepository;
 import com.group19.calorietrack.user.AppUser;
 import com.group19.calorietrack.user.UserRepository;
@@ -23,13 +25,16 @@ public class TrainerGoalRecommendationService {
 
     private final TrainerGoalRecommendationRepository recommendationRepository;
     private final UserRepository userRepository;
+    private final MessageService messageService;
 
     public TrainerGoalRecommendationService(
             TrainerGoalRecommendationRepository recommendationRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            MessageService messageService) {
 
         this.recommendationRepository = recommendationRepository;
         this.userRepository = userRepository;
+        this.messageService = messageService;
     }
 
     @Transactional
@@ -127,7 +132,12 @@ public class TrainerGoalRecommendationService {
                         cleanedNote
                 );
 
-        return recommendationRepository.save(recommendation);
+        TrainerGoalRecommendation saved = recommendationRepository.save(recommendation);
+        messageService.sendMessage(trainerEmail, user.getId(),
+                "New nutrition goal recommendation",
+                "Your trainer recommended " + calorieGoal + " kcal/day and " + proteinGoal
+                        + " g protein/day. Open your dashboard to review the recommendation.");
+        return saved;
     }
 
     //Get recommendations for the logged-in regular user
@@ -159,9 +169,69 @@ public class TrainerGoalRecommendationService {
                 );
 
         return recommendations.stream() // Prepare the values used by the dashboard
-                .limit(1)
                 .map(this::toRecommendationView)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<RecommendationView> getRecommendationsForTrainer(String trainerEmail) {
+        AppUser trainer = userRepository.findByEmail(trainerEmail)
+                .orElseThrow(() -> new AccessDeniedException("Trainer account not found."));
+        if (trainer.getRole() != UserRole.TRAINER) {
+            throw new AccessDeniedException("Only trainers can view sent recommendations.");
+        }
+        return recommendationRepository.findByTrainer_IdOrderByCreatedAtDesc(trainer.getId())
+                .stream().map(this::toRecommendationView).toList();
+    }
+
+    @Transactional
+    public void respondToRecommendation(String userEmail, Long recommendationId,
+                                        RecommendationStatus decision, String reason) {
+        if (userEmail == null || userEmail.isBlank()) {
+            throw new AccessDeniedException("User authentication is required.");
+        }
+        AppUser user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new AccessDeniedException("User account not found."));
+        if (user.getRole() != UserRole.USER) {
+            throw new AccessDeniedException("Only regular users can respond.");
+        }
+        if (decision != RecommendationStatus.ACCEPTED && decision != RecommendationStatus.REJECTED) {
+            throw new IllegalArgumentException("Invalid recommendation decision.");
+        }
+        String cleanedReason = decision == RecommendationStatus.REJECTED && reason != null
+                ? reason.trim() : null;
+        if (cleanedReason != null && cleanedReason.length() > 1000) {
+            throw new IllegalArgumentException("Feedback cannot exceed 1000 characters.");
+        }
+        TrainerGoalRecommendation recommendation = recommendationRepository.findForResponse(recommendationId)
+                .orElseThrow(() -> new AccessDeniedException("Recommendation not found or access denied."));
+        if (!Objects.equals(recommendation.getUser().getId(), user.getId())) {
+            throw new AccessDeniedException("Recommendation not found or access denied.");
+        }
+        // The row lock and state check prevent duplicate decisions and messages.
+        recommendation.respond(decision, cleanedReason);
+        if (decision == RecommendationStatus.ACCEPTED) {
+            user.setDailyCalorieGoal(recommendation.getCalorieGoal());
+            user.setDailyProteinGoal(recommendation.getProteinGoal());
+            userRepository.save(user);
+        }
+        recommendationRepository.save(recommendation);
+        // The messaging service allows only currently assigned trainer/user pairs.
+        // Old recommendations remain answerable after reassignment, without a new message.
+        AppUser assigned = user.getAssignedTrainer();
+        if (assigned != null && Objects.equals(assigned.getId(), recommendation.getTrainer().getId())) {
+            String subject = decision == RecommendationStatus.ACCEPTED
+                    ? "Nutrition goals accepted" : "Nutrition goals rejected";
+            String body = decision == RecommendationStatus.ACCEPTED
+                    ? "Your client accepted your recommendation. Their nutrition targets have been updated."
+                    : "Your client rejected your recommendation. Their nutrition targets remain unchanged.";
+            body += " Recommended: " + recommendation.getCalorieGoal() + " kcal/day, "
+                    + recommendation.getProteinGoal() + " g protein/day.";
+            if (cleanedReason != null && !cleanedReason.isBlank()) {
+                body += " Feedback: " + cleanedReason;
+            }
+            messageService.sendMessage(userEmail, assigned.getId(), subject, body);
+        }
     }
 
     private RecommendationView toRecommendationView( //Convert a database record into dashboard information
@@ -189,7 +259,13 @@ public class TrainerGoalRecommendationService {
                 recommendation.getCalorieGoal(),
                 recommendation.getProteinGoal(),
                 recommendation.getNote(),
-                dateLabel
+                dateLabel,
+                recommendation.getId(),
+                recommendation.getStatus().name(),
+                recommendation.getRespondedAt() == null ? "" : recommendation.getRespondedAt().format(DATE_FORMAT),
+                recommendation.getRejectionReason(),
+                ((recommendation.getUser().getFirstName() == null ? "" : recommendation.getUser().getFirstName())
+                        + " " + (recommendation.getUser().getLastName() == null ? "" : recommendation.getUser().getLastName())).trim()
         );
     }
 
@@ -199,7 +275,12 @@ public class TrainerGoalRecommendationService {
             int calorieGoal,
             int proteinGoal,
             String note,
-            String createdAtLabel
+            String createdAtLabel,
+            Long id,
+            String status,
+            String respondedAtLabel,
+            String rejectionReason,
+            String userName
     ) {
     }
 }

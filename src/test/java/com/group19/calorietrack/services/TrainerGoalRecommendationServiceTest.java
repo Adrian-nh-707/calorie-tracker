@@ -48,7 +48,8 @@ class TrainerGoalRecommendationServiceTest {
 
         service = new TrainerGoalRecommendationService(
                 recommendationRepository,
-                userRepository
+                userRepository,
+                mock(com.group19.calorietrack.messaging.MessageService.class)
         );
 
         // Create fake trainer
@@ -382,7 +383,7 @@ class TrainerGoalRecommendationServiceTest {
     }
 
     @Test
-    void testUserOnlySeesLatestRecommendation() {
+    void testUserSeesRecommendationHistoryNewestFirst() {
 
         TrainerGoalRecommendation older =
                 new TrainerGoalRecommendation(
@@ -407,7 +408,7 @@ class TrainerGoalRecommendationServiceTest {
 
         var results = service.getRecommendationsForUser("user@example.com");
 
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
         assertEquals(1000, results.get(0).calorieGoal());
         assertEquals(120, results.get(0).proteinGoal());
         assertEquals("Latest recommendation", results.get(0).note());

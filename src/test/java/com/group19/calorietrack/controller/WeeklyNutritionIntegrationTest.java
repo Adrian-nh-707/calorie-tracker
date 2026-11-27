@@ -250,17 +250,10 @@ class WeeklyNutritionIntegrationTest {
         .andExpect(redirectedUrl("/dashboard"))
         .andReturn();
 
-        // Get the session cookie
-        Cookie sessionCookie = goalUpdate.getResponse()
-                .getCookie("SESSION");
-
-        assertNotNull(sessionCookie);
-
-        // Open the dashboard using the updated session
+        // Open the dashboard in a fresh request: the goal is stored per user.
         MvcResult result = mockMvc.perform(
                 get("/dashboard")
                     .with(user("weekly-a@example.com").roles("USER"))
-                    .cookie(sessionCookie)
         )
         .andExpect(status().isOk())
         .andReturn();

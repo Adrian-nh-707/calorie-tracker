@@ -61,6 +61,9 @@ class TrainerGoalDashboardIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.group19.calorietrack.messaging.MessageRepository messageRepository;
+
     private AppUser trainer;
     private AppUser userA;
     private AppUser userB;
@@ -101,6 +104,7 @@ class TrainerGoalDashboardIntegrationTest {
 
     // Clear test data
     private void clearTestData() {
+        messageRepository.deleteAll();
         recommendationRepository.deleteAll();
         mealRepository.deleteAll();
 
@@ -113,6 +117,94 @@ class TrainerGoalDashboardIntegrationTest {
 
         userRepository.flush();
         userRepository.deleteAll();
+    }
+
+    private com.group19.calorietrack.models.TrainerGoalRecommendation newRecommendation() {
+        return recommendationService.createRecommendation("trainer@example.com", userA.getId(), 2200, 140, "Test targets");
+    }
+
+    private void respond(Long id, String email, String decision, String reason) throws Exception {
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/dashboard/recommendations/{id}/respond", id)
+                .with(user(email).roles("USER"))
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf())
+                .param("decision", decision).param("reason", reason))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void acceptingPersistsBothGoalsAndNotifiesTrainer() throws Exception {
+        var rec = newRecommendation();
+        respond(rec.getId(), userA.getEmail(), "ACCEPTED", "");
+        var savedUser = userRepository.findById(userA.getId()).orElseThrow();
+        assertEquals(2200, savedUser.getDailyCalorieGoal());
+        assertEquals(140, savedUser.getDailyProteinGoal());
+        var savedRec = recommendationRepository.findById(rec.getId()).orElseThrow();
+        assertEquals("ACCEPTED", savedRec.getStatus().name());
+        assertNotNull(savedRec.getRespondedAt());
+        var dashboard = openDashboard(userA.getEmail()).getModelAndView().getModel();
+        assertEquals(2200, dashboard.get("calorieGoal"));
+        assertEquals(140, dashboard.get("proteinGoal"));
+        assertEquals(1, messageRepository.findByRecipient_IdOrderByCreatedAtDesc(trainer.getId()).size());
+        assertEquals(1, messageRepository.findByRecipient_IdOrderByCreatedAtDesc(userA.getId()).size());
+    }
+
+    @Test
+    void rejectingKeepsExistingGoalsAndRecordsFeedback() throws Exception {
+        userA.setDailyCalorieGoal(2600);
+        userA.setDailyProteinGoal(175);
+        userRepository.save(userA);
+        var rec = newRecommendation();
+        respond(rec.getId(), userA.getEmail(), "REJECTED", "Prefer my current targets");
+        var saved = recommendationRepository.findById(rec.getId()).orElseThrow();
+        assertEquals("REJECTED", saved.getStatus().name());
+        assertEquals("Prefer my current targets", saved.getRejectionReason());
+        var account = userRepository.findById(userA.getId()).orElseThrow();
+        assertEquals(2600, account.getDailyCalorieGoal());
+        assertEquals(175, account.getDailyProteinGoal());
+        assertEquals(1, messageRepository.findByRecipient_IdOrderByCreatedAtDesc(trainer.getId()).size());
+    }
+
+    @Test
+    void rejectsDuplicateDecisionsWithoutDuplicateNotifications() throws Exception {
+        var rec = newRecommendation();
+        respond(rec.getId(), userA.getEmail(), "ACCEPTED", "");
+        respond(rec.getId(), userA.getEmail(), "REJECTED", "Duplicate attempt");
+        assertEquals("ACCEPTED", recommendationRepository.findById(rec.getId()).orElseThrow().getStatus().name());
+        assertEquals(1, messageRepository.findByRecipient_IdOrderByCreatedAtDesc(trainer.getId()).size());
+    }
+
+    @Test
+    void otherUserCannotRespondToRecommendation() {
+        var rec = newRecommendation();
+        assertThrows(AccessDeniedException.class, () -> recommendationService.respondToRecommendation(
+                userB.getEmail(), rec.getId(), com.group19.calorietrack.models.RecommendationStatus.ACCEPTED, null));
+        assertEquals("PENDING", recommendationRepository.findById(rec.getId()).orElseThrow().getStatus().name());
+    }
+
+    @Test
+    void historyAndTrainerTrackingIncludeAllDecisions() throws Exception {
+        var first = newRecommendation();
+        respond(first.getId(), userA.getEmail(), "REJECTED", "Not now");
+        newRecommendation();
+        assertEquals(2, getRecommendations(openDashboard(userA.getEmail())).size());
+        var sent = recommendationService.getRecommendationsForTrainer(trainer.getEmail());
+        assertEquals(2, sent.size());
+        assertTrue(sent.stream().anyMatch(v -> v.status().equals("REJECTED") && "Not now".equals(v.rejectionReason())));
+        assertTrue(sent.stream().anyMatch(v -> v.status().equals("PENDING")));
+        mockMvc.perform(get("/trainer/dashboard").with(user(trainer.getEmail()).roles("TRAINER")))
+                .andExpect(status().isOk()).andExpect(content().string(containsString("Sent Recommendations")))
+                .andExpect(content().string(containsString("Not now")));
+    }
+
+    @Test
+    void csrfIsRequiredForGoalResponse() throws Exception {
+        var rec = newRecommendation();
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/dashboard/recommendations/{id}/respond", rec.getId())
+                .with(user(userA.getEmail()).roles("USER")).param("decision", "ACCEPTED"))
+                .andExpect(status().isForbidden());
+        assertEquals("PENDING", recommendationRepository.findById(rec.getId()).orElseThrow().getStatus().name());
     }
 
     //Create a test user

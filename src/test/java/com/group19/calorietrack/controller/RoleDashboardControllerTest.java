@@ -1,3 +1,4 @@
+
 package com.group19.calorietrack.controller;
 
 import java.util.Optional;
@@ -34,11 +35,11 @@ class RoleDashboardControllerTest {
     private UserRepository userRepository;
     private MealRepository mealRepository;
     private TrainerGoalRecommendationRepository recommendationRepository;
+
     private AppUser trainer;
     private AppUser user;
 
     private Authentication authentication;
-
     private MessageService messageService;
 
     @BeforeEach
@@ -46,13 +47,14 @@ class RoleDashboardControllerTest {
 
         userRepository = mock(UserRepository.class);
         mealRepository = mock(MealRepository.class);
+
         recommendationRepository =
-            mock(TrainerGoalRecommendationRepository.class);
+                mock(TrainerGoalRecommendationRepository.class);
+
         trainer = mock(AppUser.class);
         user = mock(AppUser.class);
 
         authentication = mock(Authentication.class);
-
         messageService = mock(MessageService.class);
 
         when(authentication.getName()).thenReturn(TRAINER_EMAIL);
@@ -74,17 +76,19 @@ class RoleDashboardControllerTest {
                 any(TrainerGoalRecommendation.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
+        // Iteration 3: Include MessageService for automatic notifications.
         TrainerGoalRecommendationService recommendationService =
                 new TrainerGoalRecommendationService(
                         recommendationRepository,
-                        userRepository
+                        userRepository,
+                        messageService
                 );
 
         controller = new RoleDashboardController(
-            userRepository,
-            mealRepository,
-            messageService,
-            recommendationService
+                userRepository,
+                mealRepository,
+                messageService,
+                recommendationService
         );
     }
 
@@ -106,7 +110,8 @@ class RoleDashboardControllerTest {
         assertEquals("redirect:/trainer/dashboard", result);
 
         ArgumentCaptor<TrainerGoalRecommendation> captor =
-                ArgumentCaptor.forClass(TrainerGoalRecommendation.class);
+                ArgumentCaptor.forClass(
+                        TrainerGoalRecommendation.class);
 
         verify(recommendationRepository).save(captor.capture());
 
@@ -126,7 +131,8 @@ class RoleDashboardControllerTest {
 
         assertEquals(
                 "Goal recommendation sent successfully.",
-                redirectAttributes.getFlashAttributes().get("successMessage")
+                redirectAttributes.getFlashAttributes()
+                        .get("successMessage")
         );
     }
 
@@ -134,8 +140,8 @@ class RoleDashboardControllerTest {
     void testTrainerCannotSubmitRecommendationForUnassignedUser() {
 
         AppUser otherTrainer = mock(AppUser.class);
-        when(otherTrainer.getId()).thenReturn(99L);
 
+        when(otherTrainer.getId()).thenReturn(99L);
         when(user.getAssignedTrainer()).thenReturn(otherTrainer);
 
         RedirectAttributesModelMap redirectAttributes =
@@ -154,7 +160,8 @@ class RoleDashboardControllerTest {
 
         assertEquals(
                 "You can only recommend goals to your assigned users.",
-                redirectAttributes.getFlashAttributes().get("errorMessage")
+                redirectAttributes.getFlashAttributes()
+                        .get("errorMessage")
         );
 
         verify(recommendationRepository, never())
